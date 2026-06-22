@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  HOMEOWNER
+  TRADIE
+  ADMIN
+}
+
+enum JobStatus {
+  OPEN
+  QUOTED
+  BOOKED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum BookingStatus {
+  CONFIRMED
+  PENDING
+  PENDING_CONFIRMATION
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum QuoteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String
+  phone         String?
+  role          UserRole       @default(HOMEOWNER)
+  passwordHash  String
+  suburb        String?
+  state         String?
+  postcode      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  sentMessages     Message[]
+  receivedMessages Message[] @relation("ReceivedMessages")
+  jobs          Job[]
+  reviews       Review[]
+  notifications Notification[]
+  tradieProfile TradieProfile?
+}
+
+model TradieProfile {
+  id              String           @id @default(cuid())
+  userId          String           @unique
+  user            User             @relation(fields: [userId], references: [id])
+  businessName    String
+  specialty       String
+  licenseNumber   String?
+  isVerified      Boolean          @default(false)
+  rating          Float            @default(0)
+  totalReviews    Int              @default(0)
+  bio             String?
+  suburb          String?
+  state           String?
+  profilePhoto    String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  quotes          Quote[]
+  bookings        Booking[]
+  photos          TradiePhoto[]
+  documents       TradieDocument[]
+}
+
+model Job {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  title       String
+  description String
+  trade       String
+  suburb      String
+  state       String
+  postcode    String?
+  status      JobStatus  @default(OPEN)
+  aiEstimate  String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  quotes      Quote[]
+  bookings    Booking[]
+  photos      JobPhoto[]
+  messages    Message[]
+}
+
+model Quote {
+  id              String        @id @default(cuid())
+  jobId           String
+  job             Job           @relation(fields: [jobId], references: [id])
+  tradieProfileId String
+  tradieProfile   TradieProfile @relation(fields: [tradieProfileId], references: [id])
+  amount          Float
+  description     String
+  status          QuoteStatus   @default(PENDING)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  jobId           String
+  job             Job           @relation(fields: [jobId], references: [id])
+  tradieProfileId String
+  tradieProfile   TradieProfile @relation(fields: [tradieProfileId], references: [id])
+  scheduledAt     DateTime
+  status          BookingStatus @default(PENDING)
+  totalAmount     Float
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  payment         Payment?
+  review          Review?
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
+}
+
+model Payment {
+  id          String    @id @default(cuid())
+  bookingId   String    @unique
+  booking     Booking   @relation(fields: [bookingId], references: [id])
+  amount      Float
+  status      String    @default("pending")
+  method      String?
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model JobPhoto {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id])
+  url       String
+  createdAt DateTime @default(now())
+}
+
+model TradiePhoto {
+  id              String        @id @default(cuid())
+  tradieProfileId String
+  tradieProfile   TradieProfile @relation(fields: [tradieProfileId], references: [id])
+  url             String
+  caption         String?
+  createdAt       DateTime      @default(now())
+}
+
+model TradieDocument {
+  id              String        @id @default(cuid())
+  tradieProfileId String
+  tradieProfile   TradieProfile @relation(fields: [tradieProfileId], references: [id])
+  url             String
+  type            String
+  createdAt       DateTime      @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  jobId      String
+  job        Job      @relation(fields: [jobId], references: [id])
+  senderId   String
+  sender     User     @relation(fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  content    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
