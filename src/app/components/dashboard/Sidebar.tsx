@@ -28,8 +28,8 @@ const myJobs = [
 const myAccount = [
   { label: "Profile", icon: User, href: "/profile" },
   { label: "Payment Methods", icon: CreditCard, href: "#" },
-  { label: "Notifications", icon: Bell, href: "#" },
-  { label: "Help & Support", icon: HelpCircle, href: "#" },
+  { label: "Notifications", icon: Bell, href: "/notifications", badge: null },
+  { label: "Help & Support", icon: HelpCircle, href: "/help" },
 ];
 
 export function Sidebar() {

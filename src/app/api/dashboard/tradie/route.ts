@@ -38,9 +38,14 @@ export async function GET(req: NextRequest) {
         where: {
           trade: tradieProfile.specialty,
           status: "OPEN",
-          OR: [
-            { suburb: { contains: tradieProfile.suburb || "", mode: "insensitive" } },
-            { state: tradieProfile.state || "" },
+          AND: [
+            { state: tradieProfile.state || "NSW" },
+            {
+              OR: [
+                { suburb: { equals: tradieProfile.suburb || "", mode: "insensitive" } },
+                { suburb: "" },
+              ],
+            },
           ],
         },
         orderBy: { createdAt: "desc" },

@@ -1,0 +1,331 @@
+export type Job = {
+  name: string;
+  min: number;
+  max: number;
+  unit: string;
+  notes: string;
+};
+
+export type TradeGuide = {
+  slug: string;
+  name: string;
+  emoji: string;
+  tagline: string;
+  description: string;
+  avgMin: number;
+  avgMax: number;
+  hourlyMin: number;
+  hourlyMax: number;
+  color: string;
+  bgColor: string;
+  jobs: Job[];
+  factors: string[];
+  savingTips: string[];
+  faqs: { q: string; a: string }[];
+};
+
+export const tradeGuides: TradeGuide[] = [
+  {
+    slug: "plumbing",
+    name: "Plumbing",
+    emoji: "🔧",
+    tagline: "How Much Does a Plumber Cost in Australia?",
+    description: "Plumbing costs in Australia vary based on job complexity, location and urgency. Sydney and Melbourne typically cost 15–20% more than other cities.",
+    avgMin: 150,
+    avgMax: 600,
+    hourlyMin: 80,
+    hourlyMax: 250,
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
+    jobs: [
+      { name: "Fix leaking tap", min: 80, max: 200, unit: "per job", notes: "Includes parts and labour" },
+      { name: "Blocked drain", min: 150, max: 400, unit: "per job", notes: "Higher for severe blockages" },
+      { name: "Toilet repair", min: 100, max: 300, unit: "per job", notes: "Includes new cistern parts if needed" },
+      { name: "Hot water system replacement", min: 800, max: 2000, unit: "per job", notes: "Varies by system type" },
+      { name: "Pipe replacement", min: 200, max: 1500, unit: "per job", notes: "Depends on pipe length and access" },
+      { name: "Shower installation", min: 500, max: 1500, unit: "per job", notes: "Excludes tiling" },
+      { name: "Water pressure issue", min: 100, max: 350, unit: "per job", notes: "Diagnosis and fix included" },
+      { name: "Emergency callout", min: 200, max: 500, unit: "per callout", notes: "After-hours rates apply" },
+    ],
+    factors: [
+      "Location — Sydney and Melbourne are 15–20% higher than regional areas",
+      "Urgency — Emergency and after-hours callouts cost $100–$200 more",
+      "Materials — Cost of parts like valves, pipes and fittings",
+      "Access — Hard-to-reach pipes increase labour time",
+      "Job complexity — Simple fixes vs full system replacements",
+    ],
+    savingTips: [
+      "Book during business hours to avoid after-hours callout fees",
+      "Get at least 3 quotes before committing",
+      "Bundle multiple small plumbing jobs into one visit",
+      "Ask if parts are included in the quote or billed separately",
+      "Regular maintenance prevents costly emergency repairs",
+    ],
+    faqs: [
+      { q: "How much does a plumber charge per hour in Australia?", a: "Most plumbers charge between $80 and $250 per hour depending on location and experience. Sydney and Melbourne tradies typically charge at the higher end." },
+      { q: "Do plumbers charge a call-out fee?", a: "Yes, most plumbers charge a call-out fee of $80–$150 on top of their hourly rate. Always ask about this upfront." },
+      { q: "How long does a typical plumbing job take?", a: "Simple jobs like fixing a tap take 30–60 minutes. More complex jobs like hot water system replacement can take 3–6 hours." },
+      { q: "Should I get multiple quotes for plumbing work?", a: "Yes, always get at least 3 quotes for jobs over $300. Use GeTradie to compare quotes from verified local plumbers." },
+    ],
+  },
+  {
+    slug: "electrical",
+    name: "Electrical",
+    emoji: "⚡",
+    tagline: "How Much Does an Electrician Cost in Australia?",
+    description: "Electrical work must be done by a licensed electrician in Australia. Costs depend on the complexity of work and your location.",
+    avgMin: 150,
+    avgMax: 800,
+    hourlyMin: 80,
+    hourlyMax: 200,
+    color: "text-yellow-600",
+    bgColor: "bg-yellow-50",
+    jobs: [
+      { name: "Power point installation", min: 80, max: 200, unit: "per point", notes: "New circuit may cost more" },
+      { name: "Light fitting installation", min: 80, max: 180, unit: "per fitting", notes: "Downlights cost more" },
+      { name: "Ceiling fan installation", min: 150, max: 300, unit: "per fan", notes: "Includes wiring" },
+      { name: "Exhaust fan installation", min: 150, max: 350, unit: "per fan", notes: "Includes ducting" },
+      { name: "Switchboard upgrade", min: 800, max: 2500, unit: "per job", notes: "Safety switch included" },
+      { name: "Safety switch installation", min: 150, max: 350, unit: "per switch", notes: "Required by law" },
+      { name: "EV charger installation", min: 800, max: 2000, unit: "per job", notes: "Includes new circuit" },
+      { name: "Emergency callout", min: 200, max: 600, unit: "per callout", notes: "After-hours rates apply" },
+    ],
+    factors: [
+      "Licensing requirements — All electrical work must be done by a licensed electrician",
+      "New circuits — Running new wiring costs more than connecting to existing circuits",
+      "Switchboard capacity — Older homes may need switchboard upgrades",
+      "Location — Sydney and Melbourne cost 15–20% more",
+      "Emergency work — After-hours callouts attract significant surcharges",
+    ],
+    savingTips: [
+      "Bundle multiple electrical jobs into one visit to save on call-out fees",
+      "Book in advance rather than calling for emergencies",
+      "Ask if your switchboard needs upgrading before starting other work",
+      "Check if your electrician is licensed on the state licensing board website",
+      "Get a fixed-price quote rather than hourly for defined jobs",
+    ],
+    faqs: [
+      { q: "Do I need a licensed electrician in Australia?", a: "Yes, all electrical work in Australia must be performed by a licensed electrician. DIY electrical work is illegal and dangerous." },
+      { q: "How much does an electrician charge per hour?", a: "Electricians typically charge $80–$200 per hour plus a call-out fee of $80–$150. Fixed-price quotes are common for defined jobs." },
+      { q: "How long does electrical work take?", a: "Simple jobs like installing a power point take 1–2 hours. Switchboard upgrades can take a full day." },
+      { q: "What is a safety switch and do I need one?", a: "Safety switches (RCDs) protect you from electrical shocks. They are required by law in all new Australian homes and are strongly recommended in older homes." },
+    ],
+  },
+  {
+    slug: "cleaning",
+    name: "Cleaning",
+    emoji: "🧹",
+    tagline: "How Much Does a Cleaner Cost in Australia?",
+    description: "Professional cleaning costs depend on the size of your home, type of clean and frequency. Regular cleans are cheaper per visit than one-off deep cleans.",
+    avgMin: 150,
+    avgMax: 400,
+    hourlyMin: 35,
+    hourlyMax: 60,
+    color: "text-cyan-600",
+    bgColor: "bg-cyan-50",
+    jobs: [
+      { name: "Standard house clean (3 bed)", min: 150, max: 300, unit: "per clean", notes: "2–4 hours depending on condition" },
+      { name: "End of lease clean", min: 300, max: 600, unit: "per job", notes: "Bond back guarantee available" },
+      { name: "Deep clean", min: 250, max: 500, unit: "per job", notes: "Includes inside appliances" },
+      { name: "Office clean", min: 100, max: 400, unit: "per visit", notes: "Depends on size" },
+      { name: "Carpet cleaning", min: 100, max: 350, unit: "per job", notes: "Steam clean per room" },
+      { name: "Window cleaning", min: 100, max: 300, unit: "per job", notes: "Internal and external" },
+      { name: "After builder clean", min: 300, max: 800, unit: "per job", notes: "Dust and debris removal" },
+      { name: "Regular weekly clean", min: 80, max: 180, unit: "per visit", notes: "Discounted for regular bookings" },
+    ],
+    factors: [
+      "Home size — More bedrooms and bathrooms mean longer clean times",
+      "Condition — Heavily soiled homes take significantly longer",
+      "Frequency — Regular cleans are cheaper per visit than one-offs",
+      "Type of clean — Deep cleans and end-of-lease cleans cost more",
+      "Supplies — Ask if the cleaner brings their own products",
+    ],
+    savingTips: [
+      "Book regular fortnightly cleans for a lower per-visit rate",
+      "Tidy up before the cleaner arrives so they focus on actual cleaning",
+      "Ask about bundle deals for cleaning + carpet cleaning",
+      "Compare hourly rates vs fixed-price quotes for your home size",
+      "Check reviews for bond-back guarantee on end-of-lease cleans",
+    ],
+    faqs: [
+      { q: "How much does a house cleaner cost per hour in Australia?", a: "Professional cleaners typically charge $35–$60 per hour. Most quote a fixed price based on home size and condition." },
+      { q: "What is included in an end of lease clean?", a: "End of lease cleans typically include all rooms, inside appliances (oven, fridge), windows, carpets and bathroom deep clean. Always confirm what is included." },
+      { q: "How often should I have my home professionally cleaned?", a: "Most households benefit from a fortnightly clean. Weekly cleans are recommended for larger families or pets." },
+      { q: "Do cleaners bring their own products?", a: "Most professional cleaners bring their own products. Confirm this when booking as some charge extra for supplies." },
+    ],
+  },
+  {
+    slug: "painting",
+    name: "Painting",
+    emoji: "🎨",
+    tagline: "How Much Does a Painter Cost in Australia?",
+    description: "Painting costs vary significantly based on surface area, number of coats, paint quality and prep work required. Get a detailed quote that includes prep and paint.",
+    avgMin: 300,
+    avgMax: 8000,
+    hourlyMin: 35,
+    hourlyMax: 60,
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
+    jobs: [
+      { name: "Single room interior", min: 300, max: 800, unit: "per room", notes: "Includes walls and ceiling" },
+      { name: "Full house interior", min: 3000, max: 8000, unit: "per house", notes: "3–4 bedroom home" },
+      { name: "Exterior house paint", min: 3000, max: 10000, unit: "per house", notes: "Includes prep and primer" },
+      { name: "Single wall feature", min: 150, max: 400, unit: "per wall", notes: "Feature colour wall" },
+      { name: "Fence painting", min: 200, max: 800, unit: "per job", notes: "Depends on fence length" },
+      { name: "Deck staining", min: 300, max: 1000, unit: "per job", notes: "Includes sanding prep" },
+      { name: "Touch-up painting", min: 100, max: 300, unit: "per job", notes: "Minor repairs and touch-ups" },
+      { name: "Ceiling repaint", min: 200, max: 500, unit: "per room", notes: "Single coat" },
+    ],
+    factors: [
+      "Surface area — Larger areas cost more in both labour and materials",
+      "Number of coats — Two coats are standard, dark colours may need three",
+      "Paint quality — Premium paints cost more but last longer",
+      "Prep work — Filling cracks, sanding and priming adds to cost",
+      "Height — Two-storey homes require scaffolding which adds cost",
+    ],
+    savingTips: [
+      "Move furniture yourself to save on preparation time",
+      "Buy your own paint — painters often charge a markup on materials",
+      "Paint multiple rooms at once to reduce setup costs",
+      "Get a quote that separates labour from materials",
+      "Choose light colours over dark to reduce the number of coats needed",
+    ],
+    faqs: [
+      { q: "How much does it cost to paint a room in Australia?", a: "Painting a standard bedroom costs $300–$800 including walls and ceiling. The price varies based on room size, condition and number of coats." },
+      { q: "How long does it take to paint a house?", a: "A full interior repaint of a 3-bedroom home typically takes 3–5 days. Exterior painting can take 4–7 days depending on weather." },
+      { q: "Should paint be included in a painter's quote?", a: "Quotes can include or exclude paint. Always clarify this upfront. Supplying your own paint can save 20–30% on material costs." },
+      { q: "How often should a house be repainted?", a: "Interiors typically last 5–10 years. Exteriors need repainting every 5–8 years depending on climate and paint quality." },
+    ],
+  },
+  {
+    slug: "handyman",
+    name: "Handyman",
+    emoji: "🔨",
+    tagline: "How Much Does a Handyman Cost in Australia?",
+    description: "Handyman services cover a wide range of small repairs and installations. Most handymen charge a minimum call-out fee plus hourly rate for their time.",
+    avgMin: 100,
+    avgMax: 400,
+    hourlyMin: 60,
+    hourlyMax: 120,
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
+    jobs: [
+      { name: "Furniture assembly", min: 80, max: 200, unit: "per job", notes: "IKEA and flat-pack furniture" },
+      { name: "Picture/TV mounting", min: 80, max: 200, unit: "per job", notes: "Includes wall anchor installation" },
+      { name: "Door repair/replacement", min: 100, max: 400, unit: "per door", notes: "Includes hardware" },
+      { name: "Gutter cleaning", min: 100, max: 300, unit: "per job", notes: "Single storey home" },
+      { name: "Curtain/blind installation", min: 80, max: 200, unit: "per window", notes: "Includes brackets" },
+      { name: "Lock replacement", min: 100, max: 250, unit: "per lock", notes: "Includes parts" },
+      { name: "Shelf installation", min: 80, max: 200, unit: "per shelf", notes: "Floating shelves" },
+      { name: "General repairs", min: 100, max: 300, unit: "per hour", notes: "Minimum 1 hour charge" },
+    ],
+    factors: [
+      "Minimum call-out fee — Most handymen charge 1–2 hours minimum",
+      "Materials — Small parts and fixings may be charged separately",
+      "Number of tasks — Batching multiple jobs saves on call-out costs",
+      "Complexity — Some jobs require specialist tools or skills",
+      "Access — Heights and hard-to-reach areas take longer",
+    ],
+    savingTips: [
+      "Batch multiple small jobs into one visit to save on call-out fees",
+      "Have all materials ready before the handyman arrives",
+      "Ask for a fixed price rather than hourly for defined jobs",
+      "Book during business hours for standard rates",
+      "Check if minor electrical and plumbing is included in their scope",
+    ],
+    faqs: [
+      { q: "What does a handyman do?", a: "Handymen handle small repairs and installations that don't require a licensed tradesperson — furniture assembly, mounting, door repairs, minor carpentry and general maintenance." },
+      { q: "How much does a handyman charge per hour in Australia?", a: "Handymen typically charge $60–$120 per hour with a minimum call-out of 1–2 hours. Fixed-price quotes are common for defined tasks." },
+      { q: "Can a handyman do electrical and plumbing work?", a: "No — licensed electricians and plumbers are required by law for electrical and plumbing work. A handyman can do minor tasks that don't involve mains power or plumbing connections." },
+      { q: "How do I find a reliable handyman?", a: "Use GeTradie to find verified handymen in your area with reviews from real customers. Always check their profile and past reviews before booking." },
+    ],
+  },
+  {
+    slug: "carpentry",
+    name: "Carpentry",
+    emoji: "🪚",
+    tagline: "How Much Does a Carpenter Cost in Australia?",
+    description: "Carpentry costs depend heavily on the materials used and complexity of the work. Custom joinery and hardwood timber work costs significantly more than standard pine.",
+    avgMin: 200,
+    avgMax: 1000,
+    hourlyMin: 70,
+    hourlyMax: 150,
+    color: "text-orange-600",
+    bgColor: "bg-orange-50",
+    jobs: [
+      { name: "Deck construction", min: 3000, max: 15000, unit: "per deck", notes: "Depends on size and materials" },
+      { name: "Custom shelving", min: 200, max: 1000, unit: "per unit", notes: "Built-in vs freestanding" },
+      { name: "Door installation", min: 200, max: 600, unit: "per door", notes: "Includes frame and hardware" },
+      { name: "Wardrobe installation", min: 500, max: 2000, unit: "per wardrobe", notes: "Custom vs flat-pack" },
+      { name: "Timber floor installation", min: 30, max: 80, unit: "per m²", notes: "Excludes materials" },
+      { name: "Fence installation", min: 80, max: 200, unit: "per metre", notes: "Timber paling fence" },
+      { name: "Pergola construction", min: 3000, max: 10000, unit: "per pergola", notes: "Depends on size" },
+      { name: "Cabinet making", min: 500, max: 3000, unit: "per cabinet", notes: "Custom made to measure" },
+    ],
+    factors: [
+      "Timber type — Hardwood costs 2–3x more than pine",
+      "Custom vs standard — Custom joinery costs significantly more",
+      "Complexity — Intricate designs and joints take more time",
+      "Finishing — Painting or staining adds to the cost",
+      "Site access — Difficult access areas increase labour time",
+    ],
+    savingTips: [
+      "Use standard timber sizes to reduce cutting waste and cost",
+      "Supply your own materials after getting a quote for labour only",
+      "Consider flat-pack options for wardrobes and shelving",
+      "Get multiple quotes as carpenter rates vary significantly",
+      "Plan jobs in advance — rush jobs cost more",
+    ],
+    faqs: [
+      { q: "How much does a carpenter charge per hour in Australia?", a: "Carpenters typically charge $70–$150 per hour depending on their specialisation and location. Custom joinery specialists charge at the higher end." },
+      { q: "What is the difference between a carpenter and a joiner?", a: "Carpenters work on-site with structural timber (frames, decking, doors). Joiners work in workshops making custom furniture and cabinetry. Many tradies do both." },
+      { q: "How long does deck construction take?", a: "A standard deck (20–40m²) typically takes 3–7 days to build depending on complexity and materials." },
+      { q: "Do carpenters supply materials or do I buy them?", a: "Carpenters can supply materials or work with customer-supplied materials. Supplying your own can save on markup but requires careful measurement." },
+    ],
+  },
+  {
+    slug: "removalists",
+    name: "Removalists",
+    emoji: "🚚",
+    tagline: "How Much Do Removalists Cost in Australia?",
+    description: "Removalist costs depend on distance, volume of items, number of workers needed and whether you need packing services. Local moves are charged hourly while interstate moves are usually fixed price.",
+    avgMin: 400,
+    avgMax: 1200,
+    hourlyMin: 100,
+    hourlyMax: 200,
+    color: "text-indigo-600",
+    bgColor: "bg-indigo-50",
+    jobs: [
+      { name: "Local move (1 bed)", min: 300, max: 600, unit: "per move", notes: "2 men, 2–4 hours" },
+      { name: "Local move (3 bed)", min: 600, max: 1200, unit: "per move", notes: "3 men, 4–8 hours" },
+      { name: "Local move (4+ bed)", min: 1000, max: 2500, unit: "per move", notes: "4 men, full day" },
+      { name: "Interstate move (Sydney to Melbourne)", min: 2000, max: 5000, unit: "per move", notes: "Fixed price, 3–5 days" },
+      { name: "Single item delivery", min: 100, max: 300, unit: "per delivery", notes: "Furniture and appliances" },
+      { name: "Packing service", min: 300, max: 800, unit: "per job", notes: "Full home packing" },
+      { name: "Storage (per month)", min: 100, max: 300, unit: "per month", notes: "Depends on volume" },
+      { name: "Piano removal", min: 300, max: 800, unit: "per move", notes: "Specialist equipment needed" },
+    ],
+    factors: [
+      "Distance — Local, interstate and regional moves are priced differently",
+      "Volume — More items means more truck space and labour time",
+      "Stairs and lifts — Access difficulty increases time and cost",
+      "Fragile items — Antiques and pianos require specialist handling",
+      "Packing — Full packing service adds significant cost but saves time",
+    ],
+    savingTips: [
+      "Move mid-week or mid-month for lower rates (avoid weekends and end of month)",
+      "Declutter before moving — fewer items means lower cost",
+      "Pack your own boxes to save on packing service fees",
+      "Book at least 2 weeks in advance for best availability and pricing",
+      "Ask about insurance coverage for your belongings during the move",
+    ],
+    faqs: [
+      { q: "How much do removalists charge per hour in Australia?", a: "Removalists typically charge $100–$200 per hour for a 2-man team plus truck. Most local moves have a minimum 2-hour charge." },
+      { q: "How far in advance should I book removalists?", a: "Book at least 2 weeks in advance, or 4–6 weeks for end-of-month moves which are the busiest. Interstate moves should be booked 4–8 weeks ahead." },
+      { q: "Are my belongings insured during a move?", a: "Basic liability coverage is usually included but may not cover full replacement value. Ask about transit insurance for valuable items." },
+      { q: "What is the cheapest day to hire removalists?", a: "Tuesday, Wednesday and Thursday are typically 15–20% cheaper than weekends. Avoid end of month as demand spikes significantly." },
+    ],
+  },
+];
+
+export const getTradeGuide = (slug: string) => tradeGuides.find(t => t.slug === slug);

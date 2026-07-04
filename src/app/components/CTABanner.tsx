@@ -2,18 +2,19 @@
 
 import { motion } from "motion/react";
 import { ArrowRight, Briefcase } from "lucide-react";
+import Link from "next/link";
 
 export function CTABanner() {
   return (
-    <section className="relative overflow-hidden bg-[#1a2744] py-16">
+    <section className="relative overflow-hidden bg-[#111827] py-16">
       {/* Animated gradient orbs */}
       <motion.div
-        className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-blue-600 opacity-20 blur-3xl"
+        className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-blue-600 opacity-20 "
         animate={{ scale: [1, 1.3, 1], x: [0, 30, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-orange-500 opacity-20 blur-3xl"
+        className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-orange-500 opacity-20 "
         animate={{ scale: [1, 1.3, 1], x: [0, -30, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -48,29 +49,33 @@ export function CTABanner() {
           </p>
         </motion.div>
 
-        <motion.div
+<motion.div
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="flex flex-col sm:flex-row gap-4"
         >
-          <motion.button
-            whileHover={{ scale: 1.06, boxShadow: "0 0 30px rgba(37,99,235,0.5)" }}
-            whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg"
-          >
-            Find a Tradie
-            <ArrowRight size={18} />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.06, boxShadow: "0 0 30px rgba(234,88,12,0.5)" }}
-            whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg"
-          >
-            <Briefcase size={18} />
-            I am a Tradie
-          </motion.button>
+          <Link href="/login">
+            <motion.button
+              whileHover={{ scale: 1.06, boxShadow: "0 0 30px rgba(37,99,235,0.5)" }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg"
+            >
+              Find a Tradie
+              <ArrowRight size={18} />
+            </motion.button>
+          </Link>
+          <Link href="/login-tradie">
+            <motion.button
+              whileHover={{ scale: 1.06, boxShadow: "0 0 30px rgba(234,88,12,0.5)" }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-lg"
+            >
+              <Briefcase size={18} />
+              I am a Tradie
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </section>

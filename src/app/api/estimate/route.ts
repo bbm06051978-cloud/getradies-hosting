@@ -74,9 +74,23 @@ Prices must match real ${location} tradie rates in 2024. Be specific to the exac
       }
 
       // Parse suburb and state from location
+      // Handle formats like "Parramatta, New South Wales 2150" or "Parramatta, NSW"
       const locationParts = location.split(",");
       const suburb = locationParts[0]?.trim() || "Unknown";
-      const state = locationParts[1]?.trim() || "NSW";
+      const rawState = locationParts[1]?.trim() || "NSW";
+      // Extract just the state abbreviation - remove postcode
+      const stateMap: Record<string, string> = {
+        "New South Wales": "NSW",
+        "Victoria": "VIC",
+        "Queensland": "QLD",
+        "Western Australia": "WA",
+        "South Australia": "SA",
+        "Tasmania": "TAS",
+        "Australian Capital Territory": "ACT",
+        "Northern Territory": "NT",
+      };
+      const stateClean = rawState.replace(/\d+/g, "").trim();
+      const state = stateMap[stateClean] || stateClean.split(" ")[0] || "NSW";
 
       if (user) {
         // Logged in — save to their account

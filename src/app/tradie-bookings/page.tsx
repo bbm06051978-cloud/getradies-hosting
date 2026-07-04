@@ -26,8 +26,20 @@ export default function TradieBookingsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState("ALL");
+  const [tradiePhoto, setTradiePhoto] = useState<string | null>(null);
+  const [tradieName, setTradieName] = useState<string>("");
 
   useEffect(() => {
+    fetch("/api/tradie/profile")
+      .then(r => r.json())
+      .then(d => {
+        if (d.user) {
+          setTradiePhoto(d.user.tradieProfile?.profilePhoto || null);
+          setTradieName(d.user.tradieProfile?.businessName || d.user.name || "");
+        }
+      })
+      .catch(() => {});
+
     fetch("/api/tradie-bookings")
       .then(r => r.json())
       .then(d => { if (d.bookings) setBookings(d.bookings); })
@@ -176,10 +188,18 @@ export default function TradieBookingsPage() {
                         </div>
                       </div>
 
+                      {/* Tradie + Homeowner row */}
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <User size={14} className="text-blue-600" />
+                          {/* Tradie photo */}
+                          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-2 border-orange-200">
+                            {tradiePhoto ? (
+                              <img src={tradiePhoto} alt={tradieName} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full bg-orange-500 flex items-center justify-center">
+                                <span className="text-white text-xs font-bold">{tradieName.charAt(0).toUpperCase() || "T"}</span>
+                              </div>
+                            )}
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-gray-800">{booking.homeowner?.name || "Homeowner"}</p>
@@ -202,7 +222,13 @@ export default function TradieBookingsPage() {
                             <div>
                               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Homeowner Contact</p>
                               <div className="space-y-2">
-                                <p className="text-sm font-semibold text-gray-900">{booking.homeowner?.name || "Unknown"}</p>
+                                {/* Homeowner avatar */}
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <User size={16} className="text-blue-600" />
+                                  </div>
+                                  <p className="text-sm font-semibold text-gray-900">{booking.homeowner?.name || "Unknown"}</p>
+                                </div>
                                 {booking.homeowner?.phone && (
                                   <a href={`tel:${booking.homeowner.phone}`} className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
                                     <Phone size={14} />{booking.homeowner.phone}
@@ -250,9 +276,7 @@ export default function TradieBookingsPage() {
                           {booking.status === "PENDING_CONFIRMATION" && (
                             <div className="mt-4 flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
                               <Clock size={16} className="text-yellow-600 flex-shrink-0" />
-                              <p className="text-sm text-yellow-700 font-semibold">
-                                Waiting for homeowner to confirm job completion
-                              </p>
+                              <p className="text-sm text-yellow-700 font-semibold">Waiting for homeowner to confirm job completion</p>
                             </div>
                           )}
 
@@ -268,9 +292,7 @@ export default function TradieBookingsPage() {
                           {booking.status === "DISPUTED" && (
                             <div className="mt-4 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                               <AlertCircle size={16} className="text-red-600 flex-shrink-0" />
-                              <p className="text-sm text-red-700 font-semibold">
-                                Dispute raised — GeTradie team is reviewing this booking
-                              </p>
+                              <p className="text-sm text-red-700 font-semibold">Dispute raised — GeTradie team is reviewing this booking</p>
                             </div>
                           )}
                         </motion.div>

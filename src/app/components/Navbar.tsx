@@ -2,12 +2,23 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { User, Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { usePathname } from "next/navigation";
+
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Services", href: "/services" },
+  { label: "Cost Guides", href: "/cost-guides" },
+  { label: "Contact", href: "/contact" },
+];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -15,30 +26,16 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navLinks = [
-    "Home",
-    "About Us",
-    "How It Works",
-    "Services",
-    "Cost Guides",
-    "Contact",
-  ];
-
   return (
-    <motion.nav
-      className={`sticky top-0 z-50 bg-cover bg-center bg-no-repeat transition-all duration-300 ${
-        scrolled
-          ? "shadow-lg border-b border-gray-100"
-          : "border-b border-transparent"
+    <nav
+      className={`sticky top-0 z-50 bg-white transition-shadow duration-300 ${
+        scrolled ? "shadow-lg border-b border-gray-100" : "border-b border-gray-100"
       }`}
-      style={{ backgroundColor: "white" }}
-      initial={{ y: -64 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        {/* Logo */}
-        <div className="relative h-16 w-40">
+      <div className="max-w-7xl mx-auto px-8 sm:px-6 lg:px-8 flex items-center justify-between h-16 relative">
+
+                {/* Logo */}
+        <a href="/" className="relative h-16 w-40 flex-shrink-0 block">
           <Image
             src="/imports/GeTradie_Logo.png"
             alt="GeTradie"
@@ -46,37 +43,32 @@ export function Navbar() {
             className="object-contain"
             priority
           />
-        </div>
+        </a>
 
-        {/* Nav links */}
-        <div className="hidden sm:flex items-center gap-8">
+        {/* Nav links — centered */}
+        <div className="hidden sm:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
           {navLinks.map((link) => (
             <a
-              key={link}
-              href="#"
-              className={`text-sm font-medium transition-colors ${
-                link === "Home"
+              key={link.label}
+              href={link.href}
+              className={`text-sm font-medium transition-colors whitespace-nowrap ${
+                (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href))
                   ? "text-red-600 border-b-2 border-red-600 pb-0.5"
                   : "text-gray-900 hover:text-red-600"
               }`}
             >
-              {link}
+              {link.label}
             </a>
           ))}
         </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-3">
-          
-
-          {/* Mobile hamburger */}
-          <button
-            className="sm:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
+        {/* Mobile hamburger */}
+        <button
+          className="sm:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </div>
 
       {/* Mobile menu */}
@@ -90,22 +82,16 @@ export function Navbar() {
           >
             {navLinks.map((link) => (
               <a
-                key={link}
-                href="#"
+                key={link.label}
+                href={link.href}
                 className="block text-sm text-gray-700 hover:text-red-600 font-medium py-1"
               >
-                {link}
+                {link.label}
               </a>
             ))}
-            <div className="flex gap-2 pt-2">
-              
-              <button className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-semibold">
-                Post a Job
-              </button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </nav>
   );
 }

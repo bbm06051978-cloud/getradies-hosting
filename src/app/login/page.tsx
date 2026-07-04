@@ -51,9 +51,9 @@ export default function LoginPage() {
     <div
       className="min-h-screen flex flex-col"
       style={{
-        backgroundImage: "url(/imports/hero_baground.png)",
+        backgroundImage: "url(/imports/hero_baground_4.png)",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: "left",
         backgroundRepeat: "no-repeat",
       }}
     >

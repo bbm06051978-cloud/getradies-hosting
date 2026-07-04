@@ -229,9 +229,11 @@ export default function TradieDashboard() {
                             Send Quote
                           </button>
                         </Link>
-                        <button className="border border-gray-200 hover:border-gray-300 text-gray-600 text-xs font-semibold px-3 py-2 rounded-lg transition-colors">
-                          View
-                        </button>
+                        <Link href={`/tradie-jobs/${job.id}`}>
+  <button className="text-sm text-gray-500 border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50">
+    View
+  </button>
+</Link>
                       </div>
                     </div>
                   ))}

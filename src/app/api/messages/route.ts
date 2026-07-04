@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
   const jobId = searchParams.get("jobId");
 
   if (jobId) {
-    // Fetch messages for a specific job
     const messages = await prisma.message.findMany({
       where: {
         jobId,
@@ -24,12 +23,16 @@ export async function GET(req: NextRequest) {
         ],
       },
       include: {
-        sender: { select: { id: true, name: true, role: true } },
+        sender: {
+          select: {
+            id: true, name: true, role: true,
+            tradieProfile: { select: { profilePhoto: true } },
+          },
+        },
       },
       orderBy: { createdAt: "asc" },
     });
 
-    // Mark messages as read
     await prisma.message.updateMany({
       where: { jobId, receiverId: decoded.id, isRead: false },
       data: { isRead: true },
@@ -38,7 +41,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ messages });
   }
 
-  // Fetch all conversations (grouped by job)
+  // Fetch all conversations grouped by job
   const messages = await prisma.message.findMany({
     where: {
       OR: [
@@ -48,19 +51,34 @@ export async function GET(req: NextRequest) {
     },
     include: {
       job: { select: { id: true, title: true, trade: true } },
-      sender: { select: { id: true, name: true, role: true } },
-      receiver: { select: { id: true, name: true, role: true } },
+      sender: {
+        select: {
+          id: true, name: true, role: true,
+          tradieProfile: { select: { profilePhoto: true } },
+        },
+      },
+      receiver: {
+        select: {
+          id: true, name: true, role: true,
+          tradieProfile: { select: { profilePhoto: true } },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
 
-  // Group by jobId and get latest message per job
   const conversations = messages.reduce((acc, msg) => {
     if (!acc[msg.jobId]) {
+      const rawOther = msg.senderId === decoded.id ? msg.receiver : msg.sender;
       acc[msg.jobId] = {
         jobId: msg.jobId,
         job: msg.job,
-        otherUser: msg.senderId === decoded.id ? msg.receiver : msg.sender,
+        otherUser: {
+          id: rawOther.id,
+          name: rawOther.name,
+          role: rawOther.role,
+          profilePhoto: (rawOther as any).tradieProfile?.profilePhoto || null,
+        },
         lastMessage: msg.content,
         lastMessageAt: msg.createdAt,
         unreadCount: 0,
@@ -73,7 +91,7 @@ export async function GET(req: NextRequest) {
   }, {} as Record<string, {
     jobId: string;
     job: { id: string; title: string; trade: string };
-    otherUser: { id: string; name: string; role: string };
+    otherUser: { id: string; name: string; role: string; profilePhoto: string | null };
     lastMessage: string;
     lastMessageAt: Date;
     unreadCount: number;
@@ -104,7 +122,12 @@ export async function POST(req: NextRequest) {
       content: content.trim(),
     },
     include: {
-      sender: { select: { id: true, name: true, role: true } },
+      sender: {
+        select: {
+          id: true, name: true, role: true,
+          tradieProfile: { select: { profilePhoto: true } },
+        },
+      },
     },
   });
 

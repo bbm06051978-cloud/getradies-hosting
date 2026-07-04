@@ -79,8 +79,10 @@ export default function TradieChatsPage() {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [selectedConv]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+useEffect(() => {
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "instant", block: "nearest" });
+    }
   }, [messages]);
 
   const fetchConversations = async () => {
@@ -142,15 +144,15 @@ export default function TradieChatsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+<div className="flex h-screen overflow-hidden bg-slate-50">
       <TradieSidebar />
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
         <TradieTopbar />
 
         <div className="flex flex-1 overflow-hidden" style={{ height: "calc(100vh - 64px)" }}>
 
           {/* LEFT — Conversations */}
-          <div className="w-80 bg-white border-r border-gray-100 flex flex-col flex-shrink-0">
+          <div className="w-64 bg-white border-r border-gray-100 flex flex-col flex-shrink-0">
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center gap-3 mb-3">
                 <Link href="/dashboard-tradie" className="text-gray-400 hover:text-gray-600">
@@ -247,7 +249,7 @@ export default function TradieChatsPage() {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50" style={{ overscrollBehavior: "contain" }}>
                   {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center">
                       <MessageSquare size={32} className="text-gray-200 mb-3" />

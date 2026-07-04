@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
       const job = await prisma.job.findUnique({
         where: { id: booking.jobId },
         include: {
-          user: { select: { name: true, phone: true, email: true, suburb: true, state: true } },
+          user: { select: { name: true, phone: true, email: true, suburb: true, state: true, profilePhoto: true } },
         },
       });
       return { ...booking, homeowner: job?.user };
