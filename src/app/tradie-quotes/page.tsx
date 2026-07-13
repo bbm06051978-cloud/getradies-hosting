@@ -131,9 +131,21 @@ export default function TradieQuotesPage() {
                             <MapPin size={11} />
                             {quote.job?.suburb}, {quote.job?.state}
                           </div>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Homeowner: {quote.job?.user?.name || "Unknown"}
-                          </p>
+                          <div className="mt-1 space-y-0.5">
+                            <p className="text-xs text-gray-500 font-medium">
+                              👤 {quote.job?.user?.name || "Homeowner"}
+                            </p>
+                            {quote.status === "ACCEPTED" && quote.job?.user?.phone && (
+                              <p className="text-xs text-green-600 font-bold">
+                                📞 {quote.job.user.phone}
+                              </p>
+                            )}
+                            {quote.status === "ACCEPTED" && !quote.job?.user?.phone && (
+                              <p className="text-xs text-green-600 font-semibold">
+                                ✅ Accepted — contact via messages
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
 

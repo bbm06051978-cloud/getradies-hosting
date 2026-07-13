@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ jobId: string }> }
 ) {
   const token = req.cookies.get("token")?.value;
   if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
@@ -12,8 +12,10 @@ export async function GET(
   const decoded = verifyToken(token);
   if (!decoded) return NextResponse.json({ error: "Invalid token." }, { status: 401 });
 
+  const { jobId } = await params;
+
   const job = await prisma.job.findUnique({
-    where: { id: params.jobId },
+    where: { id: jobId },
     include: {
       user: { select: { name: true, suburb: true, state: true } },
       _count: { select: { quotes: true } },

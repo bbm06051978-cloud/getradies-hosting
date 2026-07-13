@@ -1,5 +1,6 @@
 "use client";
 
+import { SmartQuoteBuilder } from "@/app/components/tradie/SmartQuoteBuilder";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -38,7 +39,7 @@ export default function SendQuotePage() {
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
+  const [showAIBuilder, setShowAIBuilder] = useState(false);
   const [form, setForm] = useState({
     amount: "",
     description: "",
@@ -204,7 +205,33 @@ export default function SendQuotePage() {
               {/* Quote Form */}
               <div className="lg:col-span-2">
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                  <h3 className="font-bold text-gray-900 mb-5">Your Quote</h3>
+                  <h3 className="font-bold text-gray-900 mb-4">Your Quote</h3>
+
+                  {/* AI Quote Builder button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowAIBuilder(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-white text-sm mb-5 w-full justify-center"
+                    style={{ background: "linear-gradient(135deg,#F97316,#EA580C)", boxShadow: "0 4px 16px rgba(249,115,22,0.35)" }}
+                  >
+                    <Zap size={14} style={{ fill: "white" }} /> ✨ Generate Quote with AI
+                  </button>
+
+                  {showAIBuilder && job && (
+                    <SmartQuoteBuilder
+                      job={job}
+                      onClose={() => setShowAIBuilder(false)}
+                      onApply={(fields) => {
+                        setForm({
+                          amount: fields.amount,
+                          description: fields.description,
+                          availability: fields.availability,
+                          warranty: fields.warranty,
+                        });
+                        setShowAIBuilder(false);
+                      }}
+                    />
+                  )}
 
                   {error && (
                     <motion.div

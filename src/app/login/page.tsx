@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { User, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +14,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +38,7 @@ export default function LoginPage() {
       }
 
       if (data.user.role === "HOMEOWNER") {
-        router.push("/dashboard");
+          router.push(redirect);
       } else {
         setError("Please use the Tradie login page.");
         setLoading(false);

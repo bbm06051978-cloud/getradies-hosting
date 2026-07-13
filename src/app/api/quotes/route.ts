@@ -52,10 +52,24 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  await prisma.job.update({
-    where: { id: jobId },
-    data: { status: "QUOTED" },
-  });
+// Notify homeowner about new quote
+  try {
+    const job = await prisma.job.findUnique({
+      where: { id: jobId },
+      select: { userId: true, title: true, suburb: true },
+    });
+    if (job) {
+      await prisma.notification.create({
+        data: {
+          userId: job.userId,
+          title: "📋 New Quote Received!",
+          message: `${tradieProfile.businessName} sent a quote of $${parseFloat(amount).toFixed(0)} for your "${job.title}" job in ${job.suburb}. Review now!`,
+        },
+      });
+    }
+  } catch (err) {
+    console.error("Failed to send quote notification:", err);
+  }
 
   return NextResponse.json({ success: true, quote });
 }

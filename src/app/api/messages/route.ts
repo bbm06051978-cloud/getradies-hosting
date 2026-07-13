@@ -12,14 +12,14 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const jobId = searchParams.get("jobId");
-
+  const receiverId = searchParams.get("receiverId");
   if (jobId) {
     const messages = await prisma.message.findMany({
       where: {
         jobId,
         OR: [
-          { senderId: decoded.id },
-          { receiverId: decoded.id },
+          { senderId: decoded.id, receiverId: receiverId || undefined },
+          { senderId: receiverId || undefined, receiverId: decoded.id },
         ],
       },
       include: {
@@ -34,7 +34,12 @@ export async function GET(req: NextRequest) {
     });
 
     await prisma.message.updateMany({
-      where: { jobId, receiverId: decoded.id, isRead: false },
+      where: {
+        jobId,
+        receiverId: decoded.id,
+        senderId: receiverId || undefined,
+        isRead: false,
+      },
       data: { isRead: true },
     });
 
@@ -68,9 +73,10 @@ export async function GET(req: NextRequest) {
   });
 
   const conversations = messages.reduce((acc, msg) => {
-    if (!acc[msg.jobId]) {
-      const rawOther = msg.senderId === decoded.id ? msg.receiver : msg.sender;
-      acc[msg.jobId] = {
+    const rawOther = msg.senderId === decoded.id ? msg.receiver : msg.sender;
+    const key = `${msg.jobId}_${rawOther.id}`;
+    if (!acc[key]) {
+      acc[key] = {
         jobId: msg.jobId,
         job: msg.job,
         otherUser: {
@@ -84,8 +90,10 @@ export async function GET(req: NextRequest) {
         unreadCount: 0,
       };
     }
+    const rawOther2 = msg.senderId === decoded.id ? msg.receiver : msg.sender;
+    const key2 = `${msg.jobId}_${rawOther2.id}`;
     if (msg.receiverId === decoded.id && !msg.isRead) {
-      acc[msg.jobId].unreadCount++;
+      acc[key2].unreadCount++;
     }
     return acc;
   }, {} as Record<string, {
