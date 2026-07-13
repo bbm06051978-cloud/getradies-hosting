@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
       const job = await prisma.job.findUnique({
         where: { id: booking.jobId },
         include: {
-          user: { select: { name: true, phone: true, email: true, suburb: true, state: true, profilePhoto: true } },
+          user: { select: { name: true, phone: true, email: true, suburb: true, state: true } },
         },
       });
       return { ...booking, homeowner: job?.user };
@@ -75,13 +75,48 @@ export async function PATCH(req: NextRequest) {
 
   const { bookingId, action } = await req.json();
 
+if (action === "confirm") {
+    const booking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: { status: "CONFIRMED" },
+      include: {
+        job: { select: { userId: true, title: true } },
+        tradieProfile: { select: { businessName: true } },
+      },
+    });
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: booking.job.userId,
+          title: "✅ Booking Confirmed!",
+          message: `${booking.tradieProfile.businessName} confirmed your booking for "${booking.job.title}" on ${new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "long" })} at ${new Date(booking.scheduledAt).toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" })}.`,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to send booking confirmed notification:", err);
+    }
+    return NextResponse.json({ success: true });
+  }
   if (action === "mark_done") {
-    // Tradie marks job done — sets to PENDING_CONFIRMATION
-    // Homeowner must confirm before it becomes COMPLETED
-    await prisma.booking.update({
+    const booking = await prisma.booking.update({
       where: { id: bookingId },
       data: { status: "PENDING_CONFIRMATION" },
+      include: {
+        job: { select: { userId: true, title: true } },
+        tradieProfile: { select: { businessName: true } },
+      },
     });
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: booking.job.userId,
+          title: "🔧 Job Complete — Please Confirm",
+          message: `${booking.tradieProfile.businessName} has marked "${booking.job.title}" as complete. Please confirm to release payment.`,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to send job complete notification:", err);
+    }
 
     await prisma.job.update({
       where: {

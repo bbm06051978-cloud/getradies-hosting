@@ -58,17 +58,25 @@ export default function BookingsPage() {
     setRescheduling(null);
   };
 
+  const refetchBookings = async () => {
+    try {
+      const res = await fetch("/api/bookings");
+      const data = await res.json();
+      if (data.bookings) setBookings(data.bookings);
+    } catch {}
+  };
+
   const handleConfirm = async (id: string) => {
     if (!confirm("Confirm job completed to your satisfaction?")) return;
     setBusy(id);
-    if (await patch(id, "confirm_complete").catch(() => false)) updateStatus(id, "COMPLETED");
+    if (await patch(id, "confirm_complete").catch(() => false)) await refetchBookings();
     setBusy(null);
   };
 
   const handleDispute = async (id: string) => {
     if (!confirm("Raise a dispute? GeTradie team will review within 24 hours.")) return;
     setBusy(id);
-    if (await patch(id, "dispute").catch(() => false)) updateStatus(id, "DISPUTED");
+    if (await patch(id, "dispute").catch(() => false)) await refetchBookings();
     setBusy(null);
   };
 

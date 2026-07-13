@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Briefcase,
@@ -58,15 +58,16 @@ const steps = [
 
 export default function PostJobPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [aiEstimate, setAiEstimate] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
+ const [form, setForm] = useState({
+    title: searchParams.get("job") || "",
+    description: searchParams.get("job") || "",
     trade: "",
     suburb: "",
     state: "",

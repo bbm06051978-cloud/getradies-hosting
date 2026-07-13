@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
     prisma.job.findMany({
       where: {
         trade: tradieProfile.specialty,
-        status: "OPEN",
+        status: { in: ["OPEN", "QUOTED"] },
         state: { equals: tradieState, mode: "insensitive" },
         ...(suburbsToSearch.length > 0 ? {
           suburb: { in: suburbsToSearch, mode: "insensitive" } as any,

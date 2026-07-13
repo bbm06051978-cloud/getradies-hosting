@@ -56,11 +56,26 @@ export default function TradieBookingsPage() {
     return r.ok;
   };
 
+const refetchBookings = async () => {
+    try {
+      const res = await fetch("/api/tradie-bookings");
+      const data = await res.json();
+      if (data.bookings) setBookings(data.bookings);
+    } catch {}
+  };
+
+  const handleConfirm = async (bookingId: string) => {
+    setBusy(bookingId);
+    const ok = await patch(bookingId, "confirm").catch(() => false);
+    if (ok) await refetchBookings();
+    setBusy(null);
+  };
+
   const handleMarkDone = async (bookingId: string) => {
     if (!confirm("Mark this job as done? The homeowner will be asked to confirm completion.")) return;
     setBusy(bookingId);
     const ok = await patch(bookingId, "mark_done").catch(() => false);
-    if (ok) setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "PENDING_CONFIRMATION" } : b));
+    if (ok) await refetchBookings();
     setBusy(null);
   };
 
@@ -257,6 +272,21 @@ export default function TradieBookingsPage() {
                               )}
                             </div>
                           </div>
+
+{booking.status === "PENDING" && (
+                            <div className="mt-5 pt-4 border-t border-gray-200">
+                              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Job Actions</p>
+                              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                onClick={() => handleConfirm(booking.id)} disabled={busy === booking.id}
+                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white px-6 py-3 rounded-xl font-bold text-sm transition-colors shadow-sm">
+                                <CheckCircle size={16} />
+                                {busy === booking.id ? "Confirming..." : "Confirm Booking"}
+                              </motion.button>
+                              <p className="text-xs text-gray-400 mt-2">
+                                Confirm you will attend this job on the scheduled date.
+                              </p>
+                            </div>
+                          )}
 
                           {booking.status === "CONFIRMED" && (
                             <div className="mt-5 pt-4 border-t border-gray-200">

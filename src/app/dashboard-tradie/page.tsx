@@ -17,6 +17,7 @@ import {
 
 import { TradieSidebar } from "@/app/components/tradie/TradieSidebar";
 import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
+import { QuickTools } from "@/app/components/tradie/TradiTools";
 
 type JobLead = {
   id: string;
@@ -240,6 +241,9 @@ export default function TradieDashboard() {
                 </div>
               )}
             </div>
+
+        {/* Quick Tools */}
+          <QuickTools />
 
             {/* Right column */}
             <div className="flex flex-col gap-6">

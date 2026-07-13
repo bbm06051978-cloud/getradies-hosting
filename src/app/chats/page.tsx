@@ -39,7 +39,7 @@ export default function ChatsPage() {
   const [listMinimized, setListMinimized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
-  const searchParams = useSearchParams();
+  const activeConvRef = useRef<string>("");  const searchParams = useSearchParams();
 
   useEffect(() => {
     const jobId = searchParams.get("jobId");
@@ -62,12 +62,28 @@ export default function ChatsPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedConv) {
-      fetchMessages(selectedConv.jobId);
-      pollRef.current = setInterval(() => fetchMessages(selectedConv.jobId), 3000);
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
     }
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [selectedConv]);
+    if (selectedConv) {
+      const rid = selectedConv.otherUser.id;
+      const jid = selectedConv.jobId;
+      const convKey = `${jid}_${rid}`;
+      activeConvRef.current = convKey;
+      setMessages([]);
+      fetchMessages(jid, rid);
+      pollRef.current = setInterval(() => {
+        fetchMessages(jid, rid);
+      }, 5000);
+    }
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    };
+  }, [selectedConv?.jobId, selectedConv?.otherUser?.id]);
 
   useEffect(() => {
     if (messages.length > 0 && !chatMinimized) {
@@ -83,11 +99,15 @@ export default function ChatsPage() {
     } catch {} finally { setLoading(false); }
   };
 
-  const fetchMessages = async (jobId: string) => {
+  const fetchMessages = async (jobId: string, receiverId: string) => {
+    const convKey = `${jobId}_${receiverId}`;
     try {
-      const res = await fetch(`/api/messages?jobId=${jobId}`);
+      const res = await fetch(`/api/messages?jobId=${jobId}&receiverId=${receiverId}`);
       const data = await res.json();
-      if (data.messages) setMessages(data.messages);
+      // Only update messages if this conversation is still active
+      if (data.messages && activeConvRef.current === convKey) {
+        setMessages(data.messages);
+      }
     } catch {}
   };
 
@@ -106,7 +126,7 @@ export default function ChatsPage() {
       if (data.message) {
         setMessages(prev => [...prev, data.message]);
         setConversations(prev => prev.map(c =>
-          c.jobId === selectedConv.jobId
+          c.jobId === selectedConv.jobId && c.otherUser.id === selectedConv.otherUser.id
             ? { ...c, lastMessage: content, lastMessageAt: new Date().toISOString() }
             : c
         ));
@@ -319,9 +339,9 @@ export default function ChatsPage() {
                     </div>
                   ) : (
                     filtered.map(conv => (
-                      <button key={conv.jobId} onClick={() => { setSelectedConv(conv); setChatMinimized(false); }}
+               <button key={`${conv.jobId}_${conv.otherUser.id}`} onClick={() => { setMessages([]); setSelectedConv(conv); setChatMinimized(false); }}
                         className={`w-full text-left px-3 py-3 border-b border-gray-50 hover:bg-blue-50 transition-colors ${
-                          selectedConv?.jobId === conv.jobId ? "bg-blue-50 border-l-4 border-l-blue-600" : ""
+                          selectedConv?.jobId === conv.jobId && selectedConv?.otherUser?.id === conv.otherUser.id ? "bg-blue-50 border-l-4 border-l-blue-600" : ""
                         }`}>
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-gray-100">
