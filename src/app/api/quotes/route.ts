@@ -97,6 +97,7 @@ export async function GET(req: NextRequest) {
         },
         tradieProfile: {
           select: {
+            id: true,
             businessName: true,
             specialty: true,
             rating: true,
