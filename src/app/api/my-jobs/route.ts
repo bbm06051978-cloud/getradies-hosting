@@ -21,7 +21,16 @@ export async function GET(req: NextRequest) {
         select: { id: true, amount: true, status: true },
       },
       bookings: {
-        select: { id: true, status: true, scheduledAt: true },
+        select: {
+          id: true, status: true, scheduledAt: true,
+          tradieProfile: {
+            select: {
+              businessName: true,
+              specialty: true,
+              user: { select: { phone: true } },
+            },
+          },
+        },
       },
     },
   });

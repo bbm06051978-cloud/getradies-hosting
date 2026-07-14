@@ -3,32 +3,20 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Home,
   Briefcase,
-  CreditCard,
-  FileText,
   MessageSquare,
-  Calendar,
   Clock,
-  Star,
-  DollarSign,
   User,
   Settings,
   Rocket,
 } from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard", icon: Home, href: "/dashboard-tradie", active: true },
-  { label: "Jobs", icon: Briefcase, href: "/tradie-jobs", badge: null },
-  { label: "Quotes", icon: FileText, href: "/tradie-quotes", badge: null },
-  { label: "Messages", icon: MessageSquare, href: "/tradie-chats", badge: null },
-  { label: "Bookings", icon: Calendar, href: "/tradie-bookings", badge: null },
-  { label: "My Schedule", icon: Clock, href: "/tradie-schedule", badge: null },
-  { label: "Reviews", icon: Star, href: "#", badge: null },
-  { label: "Earnings", icon: DollarSign, href: "#", badge: null },
-  { label: "Profile", icon: User, href: "/tradie-profile", badge: null },
-  { label: "Subscription", icon: CreditCard, href: "/tradie-subscription" },
-  { label: "Settings", icon: Settings, href: "#", badge: null },
+  { label: "Jobs",        icon: Briefcase,     href: "/tradie-jobs"    },
+  { label: "Messages",    icon: MessageSquare, href: "/tradie-chats"   },
+  { label: "My Schedule", icon: Clock,         href: "/tradie-schedule"},
+  { label: "Profile",     icon: User,          href: "/tradie-profile" },
+  { label: "Settings",    icon: Settings,      href: "#"               },
 ];
 
 export function TradieSidebar() {
