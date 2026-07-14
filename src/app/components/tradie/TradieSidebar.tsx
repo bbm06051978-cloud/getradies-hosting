@@ -9,9 +9,11 @@ import {
   User,
   Settings,
   Rocket,
+  Home,
 } from "lucide-react";
 
 const navItems = [
+  { label: "Dashboard",   icon: Home,          href: "/dashboard-tradie" },
   { label: "Jobs",        icon: Briefcase,     href: "/tradie-jobs"    },
   { label: "Messages",    icon: MessageSquare, href: "/tradie-chats"   },
   { label: "My Schedule", icon: Clock,         href: "/tradie-schedule"},

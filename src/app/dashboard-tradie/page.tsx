@@ -252,9 +252,9 @@ export default function TradieDashboard() {
               <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-base text-gray-900">My Schedule</h3>
-                  <Link href="#" className="text-blue-600 text-xs font-medium hover:text-blue-800">
-                    View Calendar
-                  </Link>
+                  <Link href="/tradie-schedule" className="text-blue-600 text-xs font-medium hover:text-blue-800">
+                      View Calendar
+                    </Link>
                 </div>
 
                 {schedule.length === 0 ? (
