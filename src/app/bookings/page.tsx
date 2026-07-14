@@ -1,5 +1,5 @@
 "use client";
-
+import { LeaveReview } from "@/app/components/LeaveReview";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
@@ -29,11 +29,18 @@ export default function BookingsPage() {
   const [rescheduling, setRescheduling] = useState<string | null>(null);
   const [newDate, setNewDate] = useState("");
   const [filter, setFilter] = useState("ALL");
-
+const [reviewBooking, setReviewBooking] = useState<{ id: string; tradieName: string; jobTitle: string } | null>(null);
   useEffect(() => {
     fetch("/api/bookings").then(r => r.json()).then(d => { if (d.bookings) setBookings(d.bookings); }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
+const refetchBookings = async () => {
+    try {
+      const res = await fetch("/api/bookings");
+      const data = await res.json();
+      if (data.bookings) setBookings(data.bookings);
+    } catch {}
+  };
   const patch = async (bookingId: string, action: string, extra?: object) => {
     const r = await fetch("/api/bookings", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bookingId, action, ...extra }) });
     return r.ok;
@@ -58,13 +65,6 @@ export default function BookingsPage() {
     setRescheduling(null);
   };
 
-  const refetchBookings = async () => {
-    try {
-      const res = await fetch("/api/bookings");
-      const data = await res.json();
-      if (data.bookings) setBookings(data.bookings);
-    } catch {}
-  };
 
   const handleConfirm = async (id: string) => {
     if (!confirm("Confirm job completed to your satisfaction?")) return;
@@ -279,9 +279,20 @@ export default function BookingsPage() {
                           )}
 
                           {booking.status === "COMPLETED" && (
-                            <div className="mt-4 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-                              <CheckCircle size={16} className="text-green-500" />
-                              <p className="text-sm text-green-700 font-semibold">Job completed — thank you for using GeTradie!</p>
+                            <div className="mt-4">
+                              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-3">
+                                <CheckCircle size={16} className="text-green-500" />
+                                <p className="text-sm text-green-700 font-semibold">Job completed — thank you for using GeTradie!</p>
+                              </div>
+                              <button
+                                onClick={() => setReviewBooking({
+                                  id: booking.id,
+                                  tradieName: booking.tradieProfile.businessName,
+                                  jobTitle: booking.job.title,
+                                })}
+                                className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-gray-900 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors">
+                                <Star size={14}/> Leave a Review
+                              </button>
                             </div>
                           )}
 
@@ -301,6 +312,16 @@ export default function BookingsPage() {
           )}
         </div>
       </main>
+
+      {reviewBooking && (
+        <LeaveReview
+          bookingId={reviewBooking.id}
+          tradieName={reviewBooking.tradieName}
+          jobTitle={reviewBooking.jobTitle}
+          onClose={() => setReviewBooking(null)}
+          onSubmitted={() => { setReviewBooking(null); refetchBookings(); }}
+        />
+      )}
     </div>
   );
 }
