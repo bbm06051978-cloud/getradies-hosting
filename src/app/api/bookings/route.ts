@@ -61,19 +61,15 @@ export async function PATCH(req: NextRequest) {
   const { bookingId, action, scheduledAt } = await req.json();
 
   if (action === "confirm_complete") {
-    // Homeowner confirms job is done
-    await prisma.booking.update({
+    const booking = await prisma.booking.update({
       where: { id: bookingId },
       data: { status: "COMPLETED" },
+      select: { jobId: true },
     });
-
     await prisma.job.update({
-      where: {
-        bookings: { some: { id: bookingId } },
-      },
+      where: { id: booking.jobId },
       data: { status: "COMPLETED" },
     });
-
     return NextResponse.json({ success: true });
   }
 

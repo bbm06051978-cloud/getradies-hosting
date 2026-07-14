@@ -37,8 +37,10 @@ export default function LoginPage() {
         return;
       }
 
-      if (data.user.role === "HOMEOWNER") {
-          router.push(redirect);
+     if (data.user.role === "HOMEOWNER") {
+        router.push(redirect);
+      } else if (data.user.role === "ADMIN") {
+        router.push("/admin");
       } else {
         setError("Please use the Tradie login page.");
         setLoading(false);
