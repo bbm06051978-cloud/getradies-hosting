@@ -1,18 +1,19 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import {
   ArrowLeft, Star, CheckCircle, Phone, MessageCircle,
-  ShieldCheck, DollarSign, Briefcase, MapPin, X,
+  ShieldCheck, DollarSign, Briefcase, MapPin, X, CreditCard,
 } from "lucide-react";
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
 
 type Quote = {
   id: string; amount: number; description: string; status: string; createdAt: string;
-  job: { id: string; title: string; trade: string; suburb: string; state: string; };
+  job: { id: string; title: string; trade: string; suburb: string; state: string; bookings?: { id: string; status: string }[] };
   tradieProfile: {
     id: string; businessName: string; specialty: string; rating: number; totalReviews: number; isVerified: boolean;
     user: { id: string; name: string; phone: string };
@@ -23,7 +24,8 @@ export default function MyQuotesPage() {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState<string | null>(null);
-
+const router = useRouter();
+  
   useEffect(() => {
     fetch("/api/quotes").then(r => r.json()).then(d => { if (d.quotes) setQuotes(d.quotes); }).catch(() => {}).finally(() => setLoading(false));
   }, []);
@@ -45,9 +47,7 @@ export default function MyQuotesPage() {
           return q;
         }));
         // Show homeowner contact details if returned
-        if (data.homeowner) {
-          alert(`✅ Quote accepted!\n\nTradie: ${data.tradie?.name}\n${data.tradie?.phone ? `Phone: ${data.tradie.phone}` : "Contact via messages"}`);
-        }
+        router.push(`/payment?quoteId=${quoteId}`);
       } else {
         alert(data.error || "Failed to accept quote.");
       }
@@ -198,12 +198,15 @@ export default function MyQuotesPage() {
                           </div>
                         )}
 
-                        {quote.status === "ACCEPTED" && (
-                          <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                            <CheckCircle size={13} className="text-green-500" />
-                            <p className="text-xs text-green-700 font-semibold">Quote accepted</p>
+                      {quote.status === "ACCEPTED" && (
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                              <CheckCircle size={13} className="text-green-500" />
+                              <p className="text-xs text-green-700 font-semibold">Quote accepted</p>
+                            </div>
                           </div>
                         )}
+
                         {quote.status === "REJECTED" && (
                           <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
                             <X size={13} className="text-gray-400" />

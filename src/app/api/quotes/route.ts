@@ -93,7 +93,10 @@ export async function GET(req: NextRequest) {
       },
       include: {
         job: {
-          select: { id: true, title: true, trade: true, suburb: true, state: true },
+          select: {
+            id: true, title: true, trade: true, suburb: true, state: true,
+            bookings: { select: { id: true, status: true }, take: 1, orderBy: { createdAt: "desc" } },
+          },
         },
         tradieProfile: {
           select: {
