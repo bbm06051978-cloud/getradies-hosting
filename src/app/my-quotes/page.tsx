@@ -14,7 +14,7 @@ type Quote = {
   id: string; amount: number; description: string; status: string; createdAt: string;
   job: { id: string; title: string; trade: string; suburb: string; state: string; };
   tradieProfile: {
-    businessName: string; specialty: string; rating: number; totalReviews: number; isVerified: boolean;
+    id: string; businessName: string; specialty: string; rating: number; totalReviews: number; isVerified: boolean;
     user: { id: string; name: string; phone: string };
   };
 };
@@ -131,13 +131,15 @@ export default function MyQuotesPage() {
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <div className="w-9 h-9 bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="text-white font-bold text-xs">
+<span className="text-white font-bold text-xs">
                                 {quote.tradieProfile?.businessName?.charAt(0) || "T"}
                               </span>
                             </div>
                             <div>
                               <div className="flex items-center gap-1">
-                                <p className="font-bold text-gray-900 text-xs">{quote.tradieProfile?.businessName || "Tradie"}</p>
+                                <Link href={`/tradie/${quote.tradieProfile?.id}`} className="font-bold text-gray-900 text-xs hover:text-orange-500 transition-colors">
+                                  {quote.tradieProfile?.businessName || "Tradie"}
+                                </Link>
                                 {quote.tradieProfile?.isVerified && <ShieldCheck size={11} className="text-green-500" />}
                               </div>
                               <p className="text-xs text-gray-400">{quote.tradieProfile?.specialty}</p>
