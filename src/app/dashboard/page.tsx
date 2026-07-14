@@ -40,6 +40,7 @@ export default function Dashboard() {
     upcomingBookings: 0,
     completedJobs: 0,
   });
+const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
     // Fetch user
@@ -57,13 +58,14 @@ export default function Dashboard() {
         if (data.jobs) setJobs(data.jobs);
         if (data.stats) setStats(data.stats);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setStatsLoading(false));
   }, []);
 
   const statCards = [
     {
       title: "Active Jobs",
-      value: String(stats.activeJobs),
+      value: statsLoading ? "..." : String(stats.activeJobs),
       subtitle: "In progress",
       icon: Briefcase,
       iconBg: "bg-blue-100",
@@ -71,7 +73,7 @@ export default function Dashboard() {
     },
     {
       title: "Quotes Received",
-      value: String(stats.quotesReceived),
+      value: statsLoading ? "..." : String(stats.quotesReceived),
       subtitle: "New quotes available",
       icon: MessageCircle,
       iconBg: "bg-green-100",
@@ -79,7 +81,7 @@ export default function Dashboard() {
     },
     {
       title: "Upcoming Bookings",
-      value: String(stats.upcomingBookings),
+      value: statsLoading ? "..." : String(stats.upcomingBookings),
       subtitle: "This week",
       icon: Calendar,
       iconBg: "bg-orange-100",
@@ -87,7 +89,7 @@ export default function Dashboard() {
     },
     {
       title: "Jobs Completed",
-      value: String(stats.completedJobs),
+      value: statsLoading ? "..." : String(stats.completedJobs),
       subtitle: "Total",
       icon: CheckCircle,
       iconBg: "bg-purple-100",
