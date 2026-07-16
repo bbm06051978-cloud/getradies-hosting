@@ -8,12 +8,14 @@ import { Footer } from "@/app/components/Footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       <Navbar />
       <Hero />
       <WhyGeTradie />
       <HowItWorks />
+<div className="py-8" />
       <TradeCategories />
+<div className="py-8" />
       <CTABanner />
       <Footer />
     </div>

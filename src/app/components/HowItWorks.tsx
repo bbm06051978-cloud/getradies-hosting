@@ -48,12 +48,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section
-      className="relative overflow-hidden py-16 lg:py-20 bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: "url('/imports/HowItWork.png')",
-      }}
-    >
+    <section>
       {/* Premium Overlay */}
       {/* <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-blue-900/75 to-slate-900/85" /> */}
 

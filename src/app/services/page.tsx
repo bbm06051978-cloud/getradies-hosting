@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "@/app/components/Footer";
 import { ArrowRight, CheckCircle, ChevronRight, Zap } from "lucide-react";
+import RotatingGlobe from "@/app/components/RotatingGlobe";
 
 export const metadata: Metadata = {
   title: "Services — GeTradie | Find Local Plumbers, Electricians & More",
@@ -80,20 +81,7 @@ const trades = [
     button: "bg-amber-500 hover:bg-amber-600",
     jobs: ["Furniture assembly", "TV & picture mounting", "Door repairs", "Gutter cleaning", "Shelf installation", "Lock replacement"],
   },
-  {
-    slug: "carpentry",
-    emoji: "🪚",
-    name: "Carpentry",
-    tagline: "Custom joinery, decking and timber work",
-    description: "Skilled carpenters for decks, custom shelving, wardrobes, timber flooring, fences, pergolas and cabinet making.",
-    avgCost: "$200 – $1,000",
-    hourly: "$70 – $150/hr",
-    color: "text-orange-600",
-    bg: "bg-orange-50",
-    border: "border-orange-100",
-    button: "bg-orange-500 hover:bg-orange-600",
-    jobs: ["Deck construction", "Custom shelving", "Wardrobe installation", "Timber flooring", "Fence installation", "Pergola construction"],
-  },
+
   {
     slug: "removalists",
     emoji: "🚚",
@@ -122,37 +110,40 @@ export default function ServicesPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Hero */}
-      <section
-        className="relative py-22 lg:py-28 overflow-hidden"
-        style={{
-          backgroundImage: "url(/imports/hero_baground2.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-blue-900/10" />
-        <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
-            7 Trade Categories
+{/* Hero */}
+<section className="relative w-full max-w-full py-20 lg:py-[18rem] overflow-hidden bg-[url('/imports/services.png')] bg-contain lg:bg-cover bg-top bg-no-repeat">
+
+  {/* Blue Overlay */}
+  <div className="absolute inset-0 bg-blue-950/40" />
+
+  {/* Hero Content */}
+  <div className="relative max-w-4xl mx-auto px-4 text-left">
+    <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
+      7 Trade Categories
+    </span>
+
+    <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
+      Find the Right <span className="text-orange-400">Tradie</span> for Any Job
+    </h1>
+
+    <p className="text-blue-100 text-lg max-w-2xl mb-8">
+      GeTradie connects you with verified local tradies across 6 major trade
+      categories. Get AI-powered estimates and fixed-price quotes — all in one
+      place.
+    </p>
+
+    <div className="flex flex-wrap gap-3 justify-start">
+      {trades.map((t) => (
+        <Link key={t.slug} href={`#${t.slug}`}>
+          <span className="bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors cursor-pointer">
+            {t.emoji} {t.name}
           </span>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
-            Find the Right <span className="text-orange-400">Tradie</span> for Any Job
-          </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto mb-8">
-            GeTradie connects you with verified local tradies across 7 major trade categories. Get AI-powered estimates and fixed-price quotes — all in one place.
-          </p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {trades.map(t => (
-              <Link key={t.slug} href={`#${t.slug}`}>
-                <span className="bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors cursor-pointer">
-                  {t.emoji} {t.name}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+        </Link>
+      ))}
+    </div>
+  </div>
+
+</section>
 
       {/* Stats */}
       <section className="bg-[#1a2744] py-10 px-4">

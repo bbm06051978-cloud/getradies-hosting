@@ -94,28 +94,32 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Hero */}
-      <section
-        className="relative py-20 lg:py-30 overflow-hidden"
-        style={{
-          backgroundImage: "url(/imports/hero_baground2.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-blue-900/10" />
-        <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
+
+
+             {/* Hero Section */}
+            <section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center_top]">
+        {/* Transparent layout to let the original background shine perfectly */}
+            <div className="absolute inset-0 bg-blue-950/40" />
+        
+        {/* Added negative margin to pull the content upward over the background */}
+        <div className="relative max-w-5xl mx-auto px-6 lg:px-12 text-left w-full z-10 -mt-12 lg:-mt-24">
+          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest shadow-sm">
             Get in Touch
           </span>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
+          
+          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight drop-shadow-md">
             We are Here to <span className="text-orange-400">Help</span>
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto">
+          
+          <p className="text-blue-100 font-medium text-base lg:text-lg max-w-xl leading-relaxed drop-shadow-sm">
             Have a question, need support or want to partner with us? Our team is ready to help. We respond to all enquiries within 24 hours.
           </p>
         </div>
       </section>
+
+
+
+
 
       {/* Contact info cards */}
       <section className="bg-[#1a2744] py-10 px-4">

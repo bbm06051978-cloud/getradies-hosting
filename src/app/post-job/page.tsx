@@ -1,5 +1,5 @@
 "use client";
-
+import Image from 'next/image';
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -199,7 +199,13 @@ export default function PostJobPage() {
           </div>
 
           {/* Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+         {/* <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"> */}
+
+{/* Card */}
+<div className="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+  
+
+
 
             {/* Error */}
             {error && (

@@ -169,7 +169,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative overflow-hidden"
+      className="relative overflow-hidden pt-18"
       style={{ minHeight:"600px", background:"linear-gradient(135deg,#060d4a 0%,#0d1a8a 30%,#1A3ADB 60%,#1e6fd4 100%)" }}
       onMouseMove={handleMouseMove}
     >

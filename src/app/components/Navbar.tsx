@@ -18,77 +18,119 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <nav
-      className={`sticky top-0 z-50 bg-white transition-shadow duration-300 ${
-        scrolled ? "shadow-lg border-b border-gray-100" : "border-b border-gray-100"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out h-20 flex items-center ${
+        scrolled 
+          ? "bg-[#060d4a]/40 backdrop-blur-md shadow-lg border-b border-white/10" 
+          : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-8 sm:px-6 lg:px-8 flex items-center justify-between h-16 relative">
+      <div className="max-w-7xl w-full mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between relative">
+        
+        <div className="relative">
 
-                {/* Logo */}
-        <a href="/" className="relative h-16 w-40 flex-shrink-0 block">
-          <Image
-            src="/imports/GeTradie_Logo.png"
-            alt="GeTradie"
-            fill
-            className="object-contain"
-            priority
-          />
-        </a>
+    {/* Globe */}
+    <div className="absolute left-9 top-15 z-20">
 
-        {/* Nav links — centered */}
-        <div className="hidden sm:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className={`text-sm font-medium transition-colors whitespace-nowrap ${
-                (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href))
-                  ? "text-red-600 border-b-2 border-red-600 pb-0.5"
-                  : "text-gray-900 hover:text-red-600"
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
+        
 
-        {/* Mobile hamburger */}
-        <button
-          className="sm:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
+        <img
+            src="/imports/globe.gif"
+            alt=""
+            className="relative w-13 h-13 rounded-full"
+        />
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="sm:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-3"
-          >
-            {navLinks.map((link) => (
+    </div>
+
+    {/* Logo */}
+    <a
+      href="/"
+      className="relative h-48 w-48 sm:w-56 md:w-60 flex-shrink-0 block"
+    >
+      <Image
+        src="/imports/GeTradie_Logo.png"
+        alt="GeTradie Logo"
+        fill
+        className="object-contain object-left mix-blend-screen"
+        priority
+      />
+    </a>
+
+</div>
+
+        {/* Nav Links — Centered One-Line Container with Small Caps Styling */}
+        <div className="hidden md:flex items-center gap-4 lg:gap-8 absolute left-[55%] -translate-x-1/2 whitespace-nowrap flex-nowrap">
+          {navLinks.map((link, idx) => {
+            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+            
+            return (
               <a
                 key={link.label}
                 href={link.href}
-                className="block text-sm text-gray-700 hover:text-red-600 font-medium py-1"
+                onMouseEnter={() => setHoveredIndex(idx)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                style={{ fontVariant: "small-caps" }}
+className={`relative py-2 text-xl lg:text-base tracking-[0.05em] font-bold normal-case transition-colors duration-300 whitespace-nowrap block ${
+                  isActive ? "text-yellow-400" : "text-white/80 hover:text-yellow-300"
+                }`}
+                style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "20px", fontWeight: "600" }}
               >
                 {link.label}
+
+                {/* Underline expansion */}
+                <span 
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)] transition-all duration-300 ease-out ${
+                    isActive || hoveredIndex === idx ? "w-full opacity-100" : "w-0 opacity-0"
+                  }`}
+                />
               </a>
-            ))}
+            );
+          })}
+        </div>
+
+        {/* Mobile menu toggle button */}
+        <button
+          className="md:hidden p-2 text-white transition-colors hover:bg-white/10 rounded"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X size={20} strokeWidth={2} /> : <Menu size={20} strokeWidth={2} />}
+        </button>
+      </div>
+
+      {/* Mobile drawer layout */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+            className="md:hidden fixed top-20 left-0 right-0 bottom-0 bg-[#060d4a]/95 backdrop-blur-lg px-8 py-12 flex flex-col z-40 border-t border-white/10"
+          >
+            <div className="space-y-6">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  style={{ fontVariant: "small-caps" }}
+                  className="block text-xl tracking-[0.12em] text-white font-semibold hover:text-yellow-400 transition-colors py-2"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
