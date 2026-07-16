@@ -35,12 +35,15 @@ const myAccount = [
 export function Sidebar() {
   return (
     <aside className="w-64 min-h-screen bg-white border-r border-gray-100 flex flex-col">
-      {/* Logo */}
+ 
+
+
+     {/* Logo */}
       <div className="p-5 border-b border-gray-100">
         <Link href="/">
           <div className="relative h-14 w-40">
             <Image
-              src="/imports/GeTradie_Logo.png"
+              src="/imports/GeTradie_Logo1111.png"
               alt="GeTradie"
               fill
               className="object-contain"

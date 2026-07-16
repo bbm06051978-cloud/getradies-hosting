@@ -70,7 +70,7 @@ export default function LoginPage() {
           <Link href="/">
             <div className="relative h-16 w-40">
               <Image
-                src="/imports/GeTradie_Logo.png"
+                src="/imports/GeTradie_Logo1111.png"
                 alt="GeTradie"
                 fill
                 className="object-contain"

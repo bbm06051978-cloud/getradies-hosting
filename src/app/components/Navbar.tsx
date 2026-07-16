@@ -82,10 +82,10 @@ export function Navbar() {
                 onMouseEnter={() => setHoveredIndex(idx)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{ fontVariant: "small-caps" }}
-className={`relative py-2 text-xl lg:text-base tracking-[0.05em] font-bold normal-case transition-colors duration-300 whitespace-nowrap block ${
+className={`relative py-2 text-xl lg:text-base tracking-[0.05em] normal-case transition-colors duration-300 whitespace-nowrap block ${
                   isActive ? "text-yellow-400" : "text-white/80 hover:text-yellow-300"
                 }`}
-                style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "20px", fontWeight: "600" }}
+                style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "20px", fontWeight: "100" }}
               >
                 {link.label}
 
