@@ -44,7 +44,7 @@ const [user, setUser] = useState<{ name: string } | null>(null);
         <Link href="/">
           <div className="relative h-14 w-40">
             <Image
-              src="/imports/GeTradie_Logo.png"
+              src="/imports/GeTradie_Logo1111.png"
               alt="GeTradie"
               fill
               className="object-contain"
