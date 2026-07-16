@@ -20,23 +20,27 @@ export default function CostGuidesPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 to-blue-700 py-16 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <span className="inline-block bg-blue-800 text-blue-200 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
+      {/* Hero Section */}
+      <section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/costguide.png')] bg-cover bg-[center_top]">
+        {/* Overlay to ensure text readability over the image */}
+        <div className="absolute inset-0 bg-blue-950/40" />
+        
+        {/* Container: Left-aligned and pulled up by negative margin */}
+        <div className="relative max-w-4xl mx-auto px-6 text-left -mt-16 lg:-mt-28">
+          <span className="inline-block bg-blue-800/80 backdrop-blur-sm text-blue-200 text-xs font-semibold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             2024 Australian Pricing Guide
           </span>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-            How Much Do {" "}
-          <span className="text-orange-400">Before</span>{" "}
-            Tradies Cost in Australia?
+          
+          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
+            How Much Do <span className="text-orange-400">Tradies</span> Cost in Australia?
           </h1>
-          <p className="text-blue-200 text-lg mb-8 max-w-2xl mx-auto">
+          
+          <p className="text-blue-100 text-lg mb-8 max-w-2xl">
             Real price ranges based on thousands of Australian jobs. Know what to expect before hiring any tradie.
           </p>
 
-          {/* Search */}
-          <div className="max-w-xl mx-auto flex items-center bg-white rounded-2xl px-4 py-3 gap-3 shadow-xl">
+          {/* Search Bar - Left Aligned */}
+          <div className="max-w-xl flex items-center bg-white rounded-2xl px-4 py-3 gap-3 shadow-xl">
             <Search size={20} className="text-gray-400 flex-shrink-0" />
             <input
               type="text"
@@ -52,8 +56,8 @@ export default function CostGuidesPage() {
             )}
           </div>
 
-          {/* Trust badges */}
-          <div className="flex items-center justify-center gap-6 mt-6 flex-wrap">
+          {/* Trust Badges - Left Aligned */}
+          <div className="flex items-center justify-start gap-6 mt-6 flex-wrap">
             {["✓ 80% accuracy", "✓ Updated 2024", "✓ All Australian states", "✓ Free AI estimates"].map(b => (
               <span key={b} className="text-blue-200 text-sm font-medium">{b}</span>
             ))}

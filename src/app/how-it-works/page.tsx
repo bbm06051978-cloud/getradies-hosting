@@ -129,26 +129,21 @@ export default function HowItWorksPage() {
       <Navbar />
 
       {/* Hero */}
-      <section
-        className="relative py-22 lg:py-32 overflow-hidden"
-        style={{
-          backgroundImage: "url(/imports/hero_baground2.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-blue-900/10" />
-        <div className="relative max-w-4xl mx-auto px-4 text-center">
+      <section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/HowItWork.png')] bg-cover bg-[center_top]">
+        <div className="absolute inset-0 bg-blue-900/30" />
+        
+        {/* Added negative margin to pull the content upward over the background */}
+        <div className="relative max-w-4xl mx-auto px-4 text-left -mt-12 lg:-mt-24">
           <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             Simple 5-Step Process
           </span>
           <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
             How <span className="text-orange-400">GeTradie</span> Works
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-blue-100 text-lg max-w-2xl mb-8">
             From AI-powered estimates to job completion — GeTradie makes hiring a tradie simple, transparent and stress-free.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-left">
             <Link href="/signup">
               <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3.5 rounded-xl font-bold text-sm transition-colors shadow-lg flex items-center gap-2">
                 Post a Job Free <ArrowRight size={16} />

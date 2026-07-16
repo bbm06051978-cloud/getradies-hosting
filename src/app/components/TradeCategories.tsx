@@ -43,12 +43,7 @@ const categories = [
 
 export function TradeCategories() {
   return (
-    <section
-      className="relative overflow-hidden py-20 lg:py-10 bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: "url('/imports/HowItWork.png')",
-      }}
-    >
+    <section>
       {/* Premium Overlay */}
       {/*<div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-blue-900/75 to-slate-900/85" />*/}
 

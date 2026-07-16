@@ -14,27 +14,42 @@ export default function TradeGuideContent({ guide }: { guide: TradeGuide }) {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Breadcrumb */}
-      <div className="bg-gray-50 border-b border-gray-100 py-3 px-4">
-        <div className="max-w-6xl mx-auto flex items-center gap-2 text-sm text-gray-500">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <ChevronRight size={14} />
-          <Link href="/cost-guides" className="hover:text-blue-600">Cost Guides</Link>
-          <ChevronRight size={14} />
-          <span className="text-gray-900 font-medium">{guide.name}</span>
+     
+      {/* Hero */}
+      <section className="relative py-20 px-4 overflow-hidden"
+        style={{
+          backgroundImage: "url(/imports/trade_background.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}>
+        <div className="absolute inset-0 bg-blue-950/60"/>
+
+{/* Breadcrumb + Back button */}
+      <div className="py-3 px-4 mt-20 relative z-10">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm text-white/70">
+            <Link href="/" className="hover:text-white">Home</Link>
+            <ChevronRight size={14} />
+            <Link href="/cost-guides" className="hover:text-white">Cost Guides</Link>
+            <ChevronRight size={14} />
+            <span className="text-white font-medium">{guide.name}</span>
+          </div>
+          <a href="/cost-guides"
+            className="flex items-center gap-1.5 bg-white/50 hover:bg-white/70 text-yellow px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">
+            ← Back to Cost Guides
+          </a>
         </div>
       </div>
 
-      {/* Hero */}
-      <section className={`${guide.bgColor} py-14 px-4`}>
-        <div className="max-w-6xl mx-auto">
+        <div className="relative max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
               <span className="text-5xl mb-4 block">{guide.emoji}</span>
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-3xl lg:text-4xl font-bold text-white mb-4">
                 {guide.tagline}
               </h1>
-              <p className="text-gray-600 text-lg leading-relaxed mb-6">{guide.description}</p>
+              <p className="text-blue-100 text-lg leading-relaxed mb-6">{guide.description}</p>
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-gray-100">
                   <p className="text-xs text-gray-400 font-medium mb-0.5">Typical Job Cost</p>

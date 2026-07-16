@@ -90,16 +90,11 @@ export default function AboutPage() {
       <Navbar />
 
       {/* Hero */}
-      <section
-        className="relative py-22 lg:py-24  overflow-hidden"
-        style={{
-          backgroundImage: "url(/imports/hero_baground2.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-blue-900/10" />
-        <div className="relative max-w-4xl mx-auto px-4 text-center">
+      <section className="w-full max-w-full py-20 lg:py-[18rem] overflow-hidden bg-[url('/imports/aboutus.png')] bg-contain lg:bg-cover bg-top bg-no-repeat">
+        {/* Transparent layout to let the original background shine perfectly */}
+            <div className="absolute inset-0 bg-blue-950/40" />
+        
+        <div className="relative max-w-4xl mx-auto px-4 text-left">
           <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             Our Story
           </span>
@@ -107,7 +102,7 @@ export default function AboutPage() {
             Australia's Smarter Way to <br />
 	    <span className="text-orange-400">Hire a Tradie</span>
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+          <p className="text-blue-100 text-lg max-w-2xl mb-8">
             GeTradie was built out of frustration. Finding a reliable tradie in Australia meant endless phone calls, vague quotes and no way to know if you were being overcharged. We built a better way.
           </p>
           <Link href="/signup">
