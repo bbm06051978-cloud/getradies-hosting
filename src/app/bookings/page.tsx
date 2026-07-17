@@ -2,6 +2,7 @@
 import { LeaveReview } from "@/app/components/LeaveReview";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowLeft, Briefcase, Calendar, Clock, MapPin,
@@ -29,7 +30,9 @@ export default function BookingsPage() {
   const [rescheduling, setRescheduling] = useState<string | null>(null);
   const [newDate, setNewDate] = useState("");
   const [filter, setFilter] = useState("ALL");
-const [reviewBooking, setReviewBooking] = useState<{ id: string; tradieName: string; jobTitle: string } | null>(null);
+  const searchParams = useSearchParams();
+  const bookingIdParam = searchParams.get("bookingId");
+  const [reviewBooking, setReviewBooking] = useState<{ id: string; tradieName: string; jobTitle: string } | null>(null);
   useEffect(() => {
     fetch("/api/bookings").then(r => r.json()).then(d => { if (d.bookings) setBookings(d.bookings); }).catch(() => {}).finally(() => setLoading(false));
   }, []);
@@ -92,7 +95,9 @@ const refetchBookings = async () => {
     }
   };
 
-  const filtered = filter === "ALL" ? bookings : bookings.filter(b => b.status === filter);
+  const filtered = bookingIdParam
+    ? bookings.filter(b => b.id === bookingIdParam)
+    : filter === "ALL" ? bookings : bookings.filter(b => b.status === filter);
   const upcoming = bookings.filter(b => b.status === "CONFIRMED" && new Date(b.scheduledAt) >= new Date()).length;
   const completed = bookings.filter(b => b.status === "COMPLETED").length;
   const cancelled = bookings.filter(b => b.status === "CANCELLED").length;

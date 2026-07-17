@@ -20,6 +20,11 @@ export async function POST(
     if (!decoded) return NextResponse.json({ error: "Invalid token." }, { status: 401 });
 
     const { id } = await params;
+    let lockAmount = 100;
+    try {
+      const body = await req.json();
+      if (body.lockAmount) lockAmount = body.lockAmount;
+    } catch {}
 
     const quote = await prisma.quote.findUnique({
       where: { id },
@@ -42,7 +47,7 @@ export async function POST(
     if (quote.status === "ACCEPTED") return NextResponse.json({ error: "Already accepted." }, { status: 400 });
 
     // Create Stripe payment intent only
-    const amount = Math.round(quote.amount * 100);
+    const amount = Math.round(lockAmount * 100);
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: "aud",

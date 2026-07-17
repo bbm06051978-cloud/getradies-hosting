@@ -92,6 +92,37 @@ export async function POST(req: NextRequest) {
       return newBooking;
     });
 
+// Award GeTradie points to tradie based on lock amount
+    try {
+      const lockAmount = paymentIntent.amount / 100;
+      const pointsToAdd = lockAmount >= 500 ? 10 :
+                          lockAmount >= 250 ? 5  :
+                          lockAmount >= 100 ? 2  : 1;
+
+      const updatedProfile = await prisma.tradieProfile.update({
+        where: { id: tradieProfileId },
+        data: {
+          getradiePoints: { increment: pointsToAdd },
+        },
+        select: { getradiePoints: true },
+      });
+
+      // Update badge based on new points total
+      const totalPoints = updatedProfile.getradiePoints;
+      const newBadge = totalPoints >= 51 ? "Platinum" :
+                       totalPoints >= 26 ? "Gold"     :
+                       totalPoints >= 11 ? "Silver"   : "Bronze";
+
+      await prisma.tradieProfile.update({
+        where: { id: tradieProfileId },
+        data: { pointsBadge: newBadge },
+      });
+
+      console.log(`Awarded ${pointsToAdd} GeTradie points to tradie. Total: ${totalPoints} (${newBadge})`);
+    } catch (err) {
+      console.error("Failed to award GeTradie points:", err);
+    }
+
     // Notify accepted tradie
     try {
       await prisma.notification.create({

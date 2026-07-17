@@ -34,6 +34,8 @@ export async function GET(req: NextRequest) {
           suburb: true,
           state: true,
           profilePhoto: true,
+          getradiePoints: true,
+          pointsBadge: true,
           _count: {
             select: {
               quotes: true,

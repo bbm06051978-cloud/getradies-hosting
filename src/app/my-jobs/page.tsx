@@ -40,6 +40,13 @@ export default function MyJobsPage() {
   useEffect(() => {
     const f = searchParams.get("filter");
     if (f) setFilter(f);
+    const jobId = searchParams.get("jobId");
+    if (jobId) {
+      setTimeout(() => {
+        const el = document.getElementById(`job-${jobId}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 500);
+    }
   }, [searchParams]);
 
   useEffect(() => {
@@ -77,7 +84,10 @@ export default function MyJobsPage() {
     }
   };
 
-  const filtered = filter === "ALL" ? jobs : jobs.filter(j => j.status === filter);
+  const jobIdParam = searchParams.get("jobId");
+  const filtered = jobIdParam
+    ? jobs.filter(j => j.id === jobIdParam)
+    : filter === "ALL" ? jobs : jobs.filter(j => j.status === filter);
   const stats = {
     total:     jobs.length,
     active:    jobs.filter(j => ["OPEN","QUOTED","IN_PROGRESS"].includes(j.status)).length,
@@ -168,9 +178,15 @@ export default function MyJobsPage() {
                 const tradie        = booking?.tradieProfile;
 
                 return (
-                  <motion.div key={job.id}
+                  <motion.div key={job.id} id={`job-${job.id}`}
+                    animate={jobIdParam === job.id ? { scale: [1, 1.02, 1] } : {}}
+                    transition={{ duration: 0.5, repeat: 2 }}
                     initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-blue-200 transition-all overflow-hidden">
+                    className={`bg-white rounded-2xl shadow-sm border transition-all overflow-hidden ${
+                      jobIdParam === job.id 
+                        ? "border-orange-400 shadow-orange-100 shadow-lg" 
+                        : "border-gray-100 hover:border-blue-200"
+                    }`}>
                     <div className="p-5">
                       <div className="flex items-start justify-between gap-4">
                         {/* Left */}
@@ -252,11 +268,11 @@ export default function MyJobsPage() {
                           </>
                         ) : job.status === "BOOKED" || job.status === "IN_PROGRESS" ? (
                           <>
-                            <Link href="/bookings">
-                              <button className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">
-                                <Calendar size={13}/> View Booking <ChevronRight size={12}/>
-                              </button>
-                            </Link>
+                            <Link href={`/bookings?bookingId=${booking?.id}`}>
+                                <button className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">
+                                  <Calendar size={13}/> View Booking <ChevronRight size={12}/>
+                                </button>
+                              </Link>
                             <Link href={`/chats?jobId=${job.id}`}>
                               <button className="flex items-center gap-1.5 border border-gray-200 text-gray-600 hover:border-blue-300 px-4 py-2 rounded-xl text-xs font-semibold transition-colors">
                                 <MessageCircle size={13}/> Message Tradie
@@ -264,11 +280,11 @@ export default function MyJobsPage() {
                             </Link>
                           </>
                         ) : job.status === "COMPLETED" ? (
-                          <Link href="/bookings">
-                            <button className="flex items-center gap-1.5 border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-xs font-semibold">
-                              <CheckCircle size={13}/> View Details
-                            </button>
-                          </Link>
+                          <Link href={`/bookings?bookingId=${booking?.id}`}>
+                              <button className="flex items-center gap-1.5 border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-xs font-semibold">
+                                <CheckCircle size={13}/> View Details
+                              </button>
+                            </Link>
                         ) : null}
                       </div>
                     </div>
