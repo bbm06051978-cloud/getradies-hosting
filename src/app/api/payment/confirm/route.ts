@@ -78,14 +78,23 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      // Calculate GeTradie fee based on lock amount
+      const lockAmount = paymentIntent.amount / 100;
+      const getradieFee = lockAmount >= 500 ? 20 :
+                          lockAmount >= 250 ? 15 :
+                          lockAmount >= 100 ? 10 : 5;
+      const tradieEarning = lockAmount - getradieFee;
+
       // Create payment record
       await tx.payment.create({
         data: {
-          bookingId: newBooking.id,
-          amount:    paymentIntent.amount / 100,
-          status:    "paid",
-          method:    "card",
-          paidAt:    new Date(),
+          bookingId:     newBooking.id,
+          amount:        lockAmount,
+          status:        "paid",
+          method:        "card",
+          paidAt:        new Date(),
+          getradieFee:   getradieFee,
+          tradieEarning: tradieEarning,
         },
       });
 

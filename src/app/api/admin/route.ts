@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const [
     totalHomeowners, totalTradies, totalJobs, totalQuotes,
     totalBookings, completedJobs, disputedJobs, openJobs,
-    users, jobs, disputes,
+    payments, users, jobs, disputes,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "HOMEOWNER" } }),
     prisma.user.count({ where: { role: "TRADIE" } }),
@@ -27,6 +27,11 @@ export async function GET(req: NextRequest) {
     prisma.job.count({ where: { status: "COMPLETED" } }),
     prisma.booking.count({ where: { status: "DISPUTED" } }),
     prisma.job.count({ where: { status: "OPEN" } }),
+    prisma.payment.aggregate({
+      where: { status: "paid" },
+      _sum: { amount: true, getradieFee: true, tradieEarning: true },
+      _count: true,
+    }),
     prisma.user.findMany({
       where: { role: { in: ["HOMEOWNER", "TRADIE"] } },
       select: {
@@ -63,6 +68,10 @@ export async function GET(req: NextRequest) {
     stats: {
       totalHomeowners, totalTradies, totalJobs, totalQuotes,
       totalBookings, completedJobs, disputedJobs, openJobs,
+      totalRevenue:       payments._sum.amount ?? 0,
+      getradieRevenue:    payments._sum.getradieFee ?? 0,
+      tradieEarnings:     payments._sum.tradieEarning ?? 0,
+      totalTransactions:  payments._count ?? 0,
     },
     users, jobs, disputes,
   });

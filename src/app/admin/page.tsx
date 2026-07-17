@@ -17,6 +17,10 @@ type Stats = {
   completedJobs: number;
   disputedJobs: number;
   openJobs: number;
+  totalRevenue: number;
+  getradieRevenue: number;
+  tradieEarnings: number;
+  totalTransactions: number;
 };
 
 type User = {
@@ -214,6 +218,33 @@ export default function AdminPage() {
                             </div>
                             <p className={`text-4xl font-bold ${s.color} mb-1`}>{s.value}</p>
                             <p className={`text-xs ${s.label === "Disputes" && stats.disputedJobs > 0 ? "text-red-400 font-semibold" : "text-gray-500"}`}>{s.desc}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+{/* Revenue */}
+                  <div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Revenue</p>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      {[
+                        { label:"Total Collected",    value:`$${stats.totalRevenue.toFixed(2)}`,    icon:DollarSign, color:"text-green-400",  bg:"bg-green-500/10",  border:"border-green-500/20",  desc:"All lock amounts" },
+                        { label:"GeTradie Revenue",   value:`$${stats.getradieRevenue.toFixed(2)}`, icon:DollarSign, color:"text-orange-400", bg:"bg-orange-500/10", border:"border-orange-500/20", desc:"Platform fees earned" },
+                        { label:"Tradie Earnings",    value:`$${stats.tradieEarnings.toFixed(2)}`,  icon:DollarSign, color:"text-blue-400",   bg:"bg-blue-500/10",   border:"border-blue-500/20",   desc:"Released to tradies" },
+                        { label:"Transactions",       value:stats.totalTransactions,                icon:CheckCircle,color:"text-purple-400", bg:"bg-purple-500/10", border:"border-purple-500/20", desc:"Completed payments" },
+                      ].map(s => {
+                        const Icon = s.icon;
+                        return (
+                          <div key={s.label} className={`${s.bg} border ${s.border} rounded-2xl p-5`}>
+                            <div className="flex items-center justify-between mb-4">
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{s.label}</p>
+                              <div className={`w-8 h-8 rounded-lg ${s.bg} border ${s.border} flex items-center justify-center`}>
+                                <Icon size={15} className={s.color}/>
+                              </div>
+                            </div>
+                            <p className={`text-3xl font-bold ${s.color} mb-1`}>{s.value}</p>
+                            <p className="text-xs text-gray-500">{s.desc}</p>
                           </div>
                         );
                       })}
