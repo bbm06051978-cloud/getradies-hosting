@@ -21,7 +21,7 @@ type Profile = {
   bio: string | null; suburb: string | null; state: string | null;
   rating: number; totalReviews: number; isVerified: boolean;
   profilePhoto: string | null; memberSince: string;
-  completedJobs: number;
+  completedJobs: number; getradiePoints: number; pointsBadge: string;
   photos: { id: string; url: string; caption: string | null }[];
   reviews: Review[];
 };
@@ -117,6 +117,19 @@ export default function TradiePublicProfilePage() {
                           <ShieldCheck size={11}/> Verified
                         </div>
                       )}
+
+{profile.getradiePoints > 0 && (
+                        <div className={`flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${
+                          profile.pointsBadge === "Platinum" ? "bg-purple-100 text-purple-700" :
+                          profile.pointsBadge === "Gold"     ? "bg-yellow-100 text-yellow-700" :
+                          profile.pointsBadge === "Silver"   ? "bg-gray-100 text-gray-700" :
+                          "bg-orange-100 text-orange-700"
+                        }`}>
+                          {profile.pointsBadge === "Platinum" ? "🏆" : profile.pointsBadge === "Gold" ? "🥇" : profile.pointsBadge === "Silver" ? "🥈" : "🥉"}
+                          {profile.pointsBadge} · {profile.getradiePoints} pts
+                        </div>
+                      )}
+
                     </div>
                     <p className="text-orange-500 font-semibold mb-2">{profile.specialty}</p>
                     <div className="flex items-center gap-3 flex-wrap text-sm text-gray-500">
@@ -158,9 +171,9 @@ export default function TradiePublicProfilePage() {
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
               {[
-                { icon: CheckCircle, label: "Jobs Completed", value: profile.completedJobs, color: "text-green-600" },
-                { icon: Star,        label: "Average Rating",  value: profile.rating.toFixed(1), color: "text-yellow-500" },
-                { icon: Award,       label: "Total Reviews",   value: profile.totalReviews, color: "text-blue-600" },
+                { icon: CheckCircle, label: "Jobs Completed",    value: profile.completedJobs,       color: "text-green-600"  },
+                { icon: Star,        label: "Average Rating",    value: profile.rating.toFixed(1),   color: "text-yellow-500" },
+                { icon: Award,       label: "Total Reviews",     value: profile.totalReviews,        color: "text-blue-600"   },
               ].map(s => (
                 <div key={s.label} className="text-center">
                   <s.icon size={20} className={`${s.color} mx-auto mb-1`}/>

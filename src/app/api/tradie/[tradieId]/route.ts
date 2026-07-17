@@ -69,6 +69,8 @@ export async function GET(
         profilePhoto: profile.profilePhoto,
         memberSince: profile.user.createdAt,
         completedJobs,
+        getradiePoints: profile.getradiePoints ?? 0,
+        pointsBadge: profile.pointsBadge ?? "Bronze",
         photos: profile.photos,
         reviews,
       },
