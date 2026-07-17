@@ -29,27 +29,30 @@ model User {
 }
 
 model TradieProfile {
-  id             String           @id @default(cuid())
-  userId         String           @unique
-  businessName   String
-  specialty      String
-  licenseNumber  String?
-  isVerified     Boolean          @default(false)
-  rating         Float            @default(0)
-  totalReviews   Int              @default(0)
-  bio            String?
-  suburb         String?
-  state          String?
-  profilePhoto   String?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  getradiePoints Int?             @default(0)
-  pointsBadge    String?          @default("Bronze")
-  bookings       Booking[]
-  quotes         Quote[]
-  documents      TradieDocument[]
-  photos         TradiePhoto[]
-  user           User             @relation(fields: [userId], references: [id])
+  id                 String           @id @default(cuid())
+  userId             String           @unique
+  businessName       String
+  specialty          String
+  licenseNumber      String?
+  isVerified         Boolean          @default(false)
+  rating             Float            @default(0)
+  totalReviews       Int              @default(0)
+  bio                String?
+  suburb             String?
+  state              String?
+  profilePhoto       String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  getradiePoints     Int?             @default(0)
+  pointsBadge        String?          @default("Bronze")
+  subscriptionPlan   String?          @default("Free")
+  subscriptionExpiry DateTime?        @db.Timestamp(6)
+  freeQuotesUsed     Int?             @default(0)
+  bookings           Booking[]
+  quotes             Quote[]
+  documents          TradieDocument[]
+  photos             TradiePhoto[]
+  user               User             @relation(fields: [userId], references: [id])
 }
 
 model Job {

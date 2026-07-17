@@ -118,5 +118,10 @@ export async function GET(req: NextRequest) {
       photosGallery: (await prisma.tradiePhoto.count({ where: { tradieProfileId } })) > 0,
       licenseInsurance: !!tradieProfile.licenseNumber,
     },
+    subscription: {
+      plan:           tradieProfile.subscriptionPlan ?? "Free",
+      expiry:         tradieProfile.subscriptionExpiry ?? null,
+      freeQuotesUsed: tradieProfile.freeQuotesUsed ?? 0,
+    },
   });
 }

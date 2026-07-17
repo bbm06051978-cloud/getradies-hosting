@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Briefcase,
   MessageSquare,
@@ -64,6 +65,7 @@ const quickActions = [
 ];
 
 export default function TradieDashboard() {
+  const router = useRouter();
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [jobLeads, setJobLeads] = useState<JobLead[]>([]);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
@@ -75,6 +77,7 @@ export default function TradieDashboard() {
   });
 
 const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0, badge: "Bronze" });
+const [subscription, setSubscription] = useState({ plan: "Free", expiry: null as string | null, freeQuotesUsed: 0 });
   const [profile, setProfile] = useState<ProfileCompletion>({
     businessDetails: false,
     servicesPricing: false,
@@ -83,10 +86,13 @@ const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0
   });
 
   useEffect(() => {
-    fetch("/api/auth/me")
+   fetch("/api/auth/me")
       .then((res) => res.json())
-      .then((data) => { if (data.user) setUser(data.user); })
-      .catch(() => {});
+      .then((data) => {
+        if (data.user) setUser(data.user);
+        else router.replace("/login");
+      })
+      .catch(() => router.replace("/login"));
 
     fetch("/api/dashboard/tradie")
       .then((res) => res.json())
@@ -96,6 +102,7 @@ const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0
         if (data.stats) setStats(data.stats);
         if (data.profile) setProfile(data.profile);
         if (data.getradiePoints) setGetradiePoints(data.getradiePoints);
+if (data.subscription) setSubscription(data.subscription);
       })
       .catch(() => {});
   }, []);
@@ -159,16 +166,42 @@ const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0
         <div className="p-6 flex-1">
 
           {/* Welcome */}
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-8">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
                 Welcome back, {user?.name?.split(" ")[0] || "there"}! 👋
               </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Here&apos;s what&apos;s happening with your business today.
+              <p className="text-gray-500 mt-1 text-sm">
+                Here's what's happening with your business today.
               </p>
             </div>
+            <div className="flex items-center gap-3">
+              {subscription.plan === "Free" ? (
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold ${
+                  subscription.freeQuotesUsed >= 3
+                    ? "bg-red-50 border border-red-300 text-red-700"
+                    : "bg-yellow-50 border border-yellow-200 text-yellow-700"
+                }`}>
+                  {subscription.freeQuotesUsed >= 3
+                    ? "⚠️ No free quotes left"
+                    : `🎉 ${3 - subscription.freeQuotesUsed} free quote${3 - subscription.freeQuotesUsed !== 1 ? "s" : ""} left`}
+                  <Link href="/tradie-subscription">
+                    <button className="bg-orange-500 text-white px-2 py-1 rounded-lg text-xs font-bold ml-1">
+                      Subscribe
+                    </button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 bg-green-50 border border-green-200 px-3 py-2 rounded-xl text-xs font-semibold text-green-700">
+                  ✅ {subscription.plan} Plan
+                  <span className="text-gray-400 font-normal">
+                    · {subscription.expiry ? new Date(subscription.expiry).toLocaleDateString("en-AU", { day: "numeric", month: "short" }) : "—"}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
+
 
 {/* GeTradie Points Banner */}
           <div className="bg-gradient-to-r from-blue-500 to-blue-500 rounded-2xl p-4 mb-6 flex items-center gap-6 shadow-lg">
@@ -214,7 +247,7 @@ const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0
                   <>
                     <p className="text-orange-100 text-xs mb-1">Next: <span className="text-white font-bold">{nextBadge.name} Badge</span></p>
                     <div className="bg-orange-200 rounded-full h-1 mb-2 w-full">
-                      <div className="bg-white rounded-full h-2 transition-all" style={{ width: `${progress}%` }}/>
+                      <div className="bg-white rounded-full h-1 transition-all" style={{ width: `${progress}%` }}/>
                     </div>
                     <p className="text-orange-100 text-xs mb-2">{getradiePoints.points}/{nextBadge.needed} points</p>
                     <Link href="/tradie-chats">

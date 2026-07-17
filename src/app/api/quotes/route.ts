@@ -31,6 +31,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Tradie profile not found." }, { status: 404 });
   }
 
+// Check subscription
+  const now = new Date();
+  const hasActiveSubscription = tradieProfile.subscriptionPlan !== "Free" && 
+    tradieProfile.subscriptionExpiry && 
+    new Date(tradieProfile.subscriptionExpiry) > now;
+
+  const freeQuotesUsed = tradieProfile.freeQuotesUsed ?? 0;
+
+  if (!hasActiveSubscription && freeQuotesUsed >= 3) {
+    return NextResponse.json({ 
+      error: "subscription_required",
+      message: "You have used all 3 free quotes. Please subscribe to continue quoting.",
+    }, { status: 403 });
+  }
+
   const existing = await prisma.quote.findFirst({
     where: { jobId, tradieProfileId: tradieProfile.id },
   });
@@ -69,6 +84,14 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     console.error("Failed to send quote notification:", err);
+  }
+
+// Increment free quotes used if on free plan
+  if (!hasActiveSubscription) {
+    await prisma.tradieProfile.update({
+      where: { id: tradieProfile.id },
+      data: { freeQuotesUsed: { increment: 1 } },
+    });
   }
 
   return NextResponse.json({ success: true, quote });
