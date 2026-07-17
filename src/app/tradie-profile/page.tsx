@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Lock,
@@ -49,6 +50,7 @@ export default function TradieProfilePage() {
     businessName: "", specialty: "", licenseNumber: "", bio: "",
   });
 
+  const router = useRouter();
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "", newPassword: "", confirmPassword: "",
   });
@@ -57,6 +59,7 @@ export default function TradieProfilePage() {
     fetch("/api/tradie/profile")
       .then(r => r.json())
       .then(d => {
+        if (!d.user) { router.replace("/login-tradie"); return; }
         if (d.user) {
           setUser(d.user);
           setForm({

@@ -10,6 +10,7 @@ import {
   Settings,
   Rocket,
   Home,
+  CreditCard,
 } from "lucide-react";
 
 const navItems = [
@@ -18,6 +19,7 @@ const navItems = [
   { label: "Messages",    icon: MessageSquare, href: "/tradie-chats"   },
   { label: "My Schedule", icon: Clock,         href: "/tradie-schedule"},
   { label: "Profile",     icon: User,          href: "/tradie-profile" },
+  { label: "Subscription", icon: CreditCard,   href: "/tradie-subscription" },
   { label: "Settings",    icon: Settings,      href: "#"               },
 ];
 
@@ -41,7 +43,7 @@ const [user, setUser] = useState<{ name: string } | null>(null);
     <aside className="w-60 min-h-screen bg-white border-r border-gray-100 flex flex-col flex-shrink-0">
       {/* Logo */}
       <div className="p-4 border-b border-gray-100">
-        <Link href="/">
+        <Link href="/dashboard-tradie">
           <div className="relative h-14 w-40">
             <Image
               src="/imports/GeTradie_Logo1111.png"
@@ -54,27 +56,7 @@ const [user, setUser] = useState<{ name: string } | null>(null);
         </Link>
       </div>
 
-      {/* Tradie profile card */}
-      <div className="m-3 bg-blue-900 rounded-2xl p-4 text-white">
-        <div className="flex items-center gap-3">
-          
-<div className="min-w-0">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <p className="font-bold text-sm">{user?.name || "Tradie"}</p>
-                {profile?.isVerified && (
-                  <span className="bg-green-400 text-green-900 text-xs font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                    ✓ Verified
-                  </span>
-                )}
-              </div>
-              <p className="text-blue-300 text-xs">{profile?.specialty || "Tradie"}</p>
-              <p className="text-yellow-400 text-xs font-medium mt-0.5">
-                ⭐ {profile?.rating?.toFixed(1) || "0.0"} ({profile?.totalReviews || 0} reviews)
-              </p>
-            </div>
-        </div>
-      </div>
-
+      
       {/* Nav */}
       <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {

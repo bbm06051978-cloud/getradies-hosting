@@ -23,11 +23,12 @@ type Notification = {
 };
 
 export function TradieTopbar() {
-  const [user, setUser] = useState<TradieUser | null>(null);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [user, setUser]                       = useState<TradieUser | null>(null);
+  const [notifications, setNotifications]     = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount]         = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showProfile, setShowProfile]         = useState(false);
+  const dropdownRef                           = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/tradie/profile")
@@ -44,6 +45,7 @@ export function TradieTopbar() {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setShowNotifications(false);
+        setShowProfile(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -108,7 +110,7 @@ export function TradieTopbar() {
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4" ref={dropdownRef}>
         {/* Online status */}
         <button className="flex items-center gap-2 border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-300 transition-colors">
           <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
@@ -116,9 +118,9 @@ export function TradieTopbar() {
         </button>
 
         {/* Notifications bell */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative">
           <button
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={() => { setShowNotifications(!showNotifications); setShowProfile(false); }}
             className="relative p-2 rounded-full hover:bg-gray-50 transition-colors">
             <Bell size={20} className="text-gray-600" />
             {unreadCount > 0 && (
@@ -128,10 +130,9 @@ export function TradieTopbar() {
             )}
           </button>
 
-          {/* Dropdown */}
+          {/* Notifications Dropdown */}
           {showNotifications && (
             <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
-              {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                 <h3 className="font-bold text-gray-900 text-sm">Notifications</h3>
                 <div className="flex items-center gap-2">
@@ -141,14 +142,11 @@ export function TradieTopbar() {
                       <CheckCheck size={12} /> Mark all read
                     </button>
                   )}
-                  <button onClick={() => setShowNotifications(false)}
-                    className="text-gray-400 hover:text-gray-600">
+                  <button onClick={() => setShowNotifications(false)} className="text-gray-400 hover:text-gray-600">
                     <X size={14} />
                   </button>
                 </div>
               </div>
-
-              {/* Notification list */}
               <div className="max-h-80 overflow-y-auto">
                 {notifications.length === 0 ? (
                   <div className="py-8 text-center">
@@ -161,9 +159,7 @@ export function TradieTopbar() {
                       onClick={() => !n.isRead && markRead(n.id)}
                       className={`px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors ${!n.isRead ? "bg-blue-50" : ""}`}>
                       <div className="flex items-start gap-2">
-                        {!n.isRead && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />
-                        )}
+                        {!n.isRead && <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />}
                         <div className={!n.isRead ? "" : "pl-4"}>
                           <p className="text-xs font-bold text-gray-900">{n.title}</p>
                           <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{n.message}</p>
@@ -179,31 +175,58 @@ export function TradieTopbar() {
         </div>
 
         {/* User profile */}
-        <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-3 py-2 hover:border-orange-300 transition-colors cursor-pointer">
-          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border-2 border-orange-200">
-            {profilePhoto ? (
-              <img src={profilePhoto} alt={user?.name} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-orange-500 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">{initial}</span>
-              </div>
-            )}
-          </div>
-          <div className="hidden sm:block">
-            <p className="text-sm font-bold text-gray-900 leading-tight">
-              {user?.tradieProfile?.businessName || user?.name || "Tradie"}
-            </p>
-            <p className="text-xs text-gray-400 leading-tight">
-              {user?.tradieProfile?.specialty || "Tradie"}
-            </p>
-            <div className="flex items-center gap-1 mt-0.5">
-              <Star size={10} className="text-yellow-400 fill-yellow-400" />
-              <span className="text-xs text-gray-500">
-                {user?.tradieProfile?.rating?.toFixed(1) || "0.0"} ({user?.tradieProfile?.totalReviews || 0} reviews)
-              </span>
+        <div className="relative">
+          <div onClick={() => { setShowProfile(!showProfile); setShowNotifications(false); }}
+            className="flex items-center gap-3 border border-gray-200 rounded-xl px-3 py-2 hover:border-orange-300 transition-colors cursor-pointer">
+            <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border-2 border-orange-200">
+              {profilePhoto ? (
+                <img src={profilePhoto} alt={user?.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-orange-500 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">{initial}</span>
+                </div>
+              )}
             </div>
+            <div className="hidden sm:block">
+              <p className="text-sm font-bold text-gray-900 leading-tight">
+                {user?.tradieProfile?.businessName || user?.name || "Tradie"}
+              </p>
+              <p className="text-xs text-gray-400 leading-tight">
+                {user?.tradieProfile?.specialty || "Tradie"}
+              </p>
+              <div className="flex items-center gap-1 mt-0.5">
+                <Star size={10} className="text-yellow-400 fill-yellow-400" />
+                <span className="text-xs text-gray-500">
+                  {user?.tradieProfile?.rating?.toFixed(1) || "0.0"} ({user?.tradieProfile?.totalReviews || 0} reviews)
+                </span>
+              </div>
+            </div>
+            <ChevronDown size={14} className="text-gray-400" />
           </div>
-          <ChevronDown size={14} className="text-gray-400" />
+
+          {/* Profile dropdown */}
+          {showProfile && (
+            <div className="absolute right-0 top-14 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-100">
+                <p className="text-xs font-bold text-gray-900">{user?.tradieProfile?.businessName || user?.name}</p>
+                <p className="text-xs text-gray-400">{user?.email}</p>
+              </div>
+              <div className="py-1">
+                <a href="/tradie-profile" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                  👤 My Profile
+                </a>
+                <a href="/tradie-subscription" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                  💳 Subscription
+                </a>
+                <a href="/" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                  🏠 Visit Homepage
+                </a>
+<a href="/api/auth/logout?redirect=/login-tradie" className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 border-t border-gray-100">
+                  🚪 Logout
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
