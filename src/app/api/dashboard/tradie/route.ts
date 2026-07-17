@@ -108,6 +108,10 @@ export async function GET(req: NextRequest) {
       bookingsConfirmed: bookingsConfirmed ?? 0,
       earnings: earnings._sum.totalAmount ?? 0,
     },
+    getradiePoints: {
+      points: tradieProfile.getradiePoints ?? 0,
+      badge: tradieProfile.pointsBadge ?? "Bronze",
+    },
     profile: {
       businessDetails: !!tradieProfile.businessName && !!tradieProfile.specialty,
       servicesPricing: !!tradieProfile.bio,

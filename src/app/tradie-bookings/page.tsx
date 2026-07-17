@@ -257,23 +257,23 @@ const refetchBookings = async () => {
                               </div>
                             </div>
                             <div>
-                              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Job Description</p>
-                              <p className="text-sm text-gray-600 leading-relaxed">{booking.job?.description || "No description provided."}</p>
                               {booking.job?.aiEstimate && (
                                 <div className="mt-3 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                                  <div className="flex items-center gap-1.5 mb-1">
-                                    <Zap size={12} className="text-blue-600 fill-blue-600" />
-                                    <span className="text-xs font-bold text-blue-800">AI Estimate</span>
-                                  </div>
                                   <p className="text-xs text-gray-600 whitespace-pre-line leading-relaxed">
                                     {booking.job.aiEstimate.split("\n").filter(l => !l.startsWith("🔧")).join("\n")}
                                   </p>
                                 </div>
                               )}
+                              <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
+                                <p className="text-xs text-blue-700 font-semibold">💰 Payment Info</p>
+                                <p className="text-xs text-blue-600 mt-0.5">
+                                  {"📌 The lock amount of $"}{booking.totalAmount}{" AUD is held securely by GeTradie. Please collect the remaining job amount directly from the homeowner after job completion."}
+                                </p>
+                              </div>
                             </div>
                           </div>
 
-{booking.status === "PENDING" && (
+                          {booking.status === "PENDING" && (
                             <div className="mt-5 pt-4 border-t border-gray-200">
                               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Job Actions</p>
                               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}

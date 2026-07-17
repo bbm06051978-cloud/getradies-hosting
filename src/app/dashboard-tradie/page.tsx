@@ -44,6 +44,11 @@ type Stats = {
   earnings: number;
 };
 
+type GetradiePoints = {
+  points: number;
+  badge: string;
+};
+
 type ProfileCompletion = {
   businessDetails: boolean;
   servicesPricing: boolean;
@@ -68,6 +73,8 @@ export default function TradieDashboard() {
     bookingsConfirmed: 0,
     earnings: 0,
   });
+
+const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0, badge: "Bronze" });
   const [profile, setProfile] = useState<ProfileCompletion>({
     businessDetails: false,
     servicesPricing: false,
@@ -88,6 +95,7 @@ export default function TradieDashboard() {
         if (data.schedule) setSchedule(data.schedule);
         if (data.stats) setStats(data.stats);
         if (data.profile) setProfile(data.profile);
+        if (data.getradiePoints) setGetradiePoints(data.getradiePoints);
       })
       .catch(() => {});
   }, []);
@@ -161,6 +169,65 @@ export default function TradieDashboard() {
               </p>
             </div>
           </div>
+
+{/* GeTradie Points Banner */}
+          <div className="bg-gradient-to-r from-blue-500 to-blue-500 rounded-2xl p-4 mb-6 flex items-center gap-6 shadow-lg">
+            {/* Points + Badge */}
+            <div>
+              <p className="text-orange-100 text-xs font-semibold uppercase tracking-widest mb-1">Your GeTradie Points</p>
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-black text-white">{getradiePoints.points}</span>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                  getradiePoints.badge === "Platinum" ? "bg-purple-200 text-purple-900" :
+                  getradiePoints.badge === "Gold"     ? "bg-yellow-200 text-yellow-900" :
+                  getradiePoints.badge === "Silver"   ? "bg-gray-200 text-gray-900" :
+                  "bg-orange-200 text-orange-900"
+                }`}>
+                  {getradiePoints.badge === "Platinum" ? "🏆" : getradiePoints.badge === "Gold" ? "🥇" : getradiePoints.badge === "Silver" ? "🥈" : "🥉"} {getradiePoints.badge}
+                </span>
+              </div>
+            </div>
+            {/* Divider */}
+            <div className="w-px h-10 bg-orange-400"/>
+            {/* Earn more info */}
+            <div className="flex-1">
+              <div className="overflow-hidden">
+                <p className="text-orange font-bold text-lg mb-0.5 animate-pulse">
+                  🔥 Earn MORE POINTS to RANK HIGHER! 🔥 Ask homeowner for more Lock amount🔥 
+                </p>
+              </div>
+              <p className="text-orange-100 text-xs">$50 lock = 1 pt &nbsp;·&nbsp; $100 = 2 pts &nbsp;·&nbsp; $250 = 5 pts &nbsp;·&nbsp; $500 = 10 pts</p>
+            </div>
+            {/* Divider */}
+            <div className="w-px h-10 bg-orange-600"/>
+            {/* Progress + CTA */}
+            <div className="text-right min-w-[180px]">
+              {(() => {
+                const nextBadge = getradiePoints.badge === "Bronze" ? { name: "Silver", needed: 11 } :
+                                  getradiePoints.badge === "Silver" ? { name: "Gold", needed: 26 } :
+                                  getradiePoints.badge === "Gold"   ? { name: "Platinum", needed: 51 } : null;
+                if (!nextBadge) return (
+                  <p className="text-white font-bold text-sm">🏆 Maximum Rank Achieved!</p>
+                );
+                const progress = Math.min((getradiePoints.points / nextBadge.needed) * 100, 100);
+                return (
+                  <>
+                    <p className="text-orange-100 text-xs mb-1">Next: <span className="text-white font-bold">{nextBadge.name} Badge</span></p>
+                    <div className="bg-orange-200 rounded-full h-1 mb-2 w-full">
+                      <div className="bg-white rounded-full h-2 transition-all" style={{ width: `${progress}%` }}/>
+                    </div>
+                    <p className="text-orange-100 text-xs mb-2">{getradiePoints.points}/{nextBadge.needed} points</p>
+                    <Link href="/tradie-chats">
+                      <button className="flex items-center gap-1.5 bg-white text-orange-600 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-orange-50 transition-colors">
+                        <MessageSquare size={12}/> Request Higher Lock
+                      </button>
+                    </Link>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+
 
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

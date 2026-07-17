@@ -134,7 +134,7 @@ const [statsLoading, setStatsLoading] = useState(true);
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-lg text-gray-900">Recent Jobs</h3>
-              <Link href="#" className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800">
+<Link href="/my-jobs" className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800">
                 View All Jobs <ArrowRight size={14} />
               </Link>
             </div>
@@ -150,8 +150,8 @@ const [statsLoading, setStatsLoading] = useState(true);
             ) : (
               <div className="space-y-1">
                 {jobs.map((job) => (
+                  <Link key={job.id} href={`/my-jobs?jobId=${job.id}`}>
                   <div
-                    key={job.id}
                     className="flex items-center justify-between py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-xl px-2 -mx-2 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
@@ -184,6 +184,7 @@ const [statsLoading, setStatsLoading] = useState(true);
                       </span>
                     </div>
                   </div>
+                  </Link>
                 ))}
               </div>
             )}
