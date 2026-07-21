@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef , Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "motion/react";
@@ -33,7 +33,7 @@ type Message = {
 
 type CurrentUser = { id: string; name: string; role: string };
 
-export default function TradieChatsPage() {
+function TradieChatsPageInner() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -312,5 +312,13 @@ useEffect(() => {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function TradieChatsPage() {
+  return (
+    <Suspense>
+      <TradieChatsPageInner />
+    </Suspense>
   );
 }

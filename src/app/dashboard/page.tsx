@@ -13,7 +13,6 @@ import {
 
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
-import { StatCard } from "@/app/components/dashboard/StatsCard";
 
 type Job = {
   id: string;
@@ -127,10 +126,21 @@ const [statsLoading, setStatsLoading] = useState(true);
           <LockAmountBanner />
 
           {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {statCards.map((s) => (
-              <StatCard key={s.title} {...s} />
-            ))}
+          {/* Stats tabs */}
+          <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
+            {statCards.map((s) => {
+              const Icon = s.icon;
+              return (
+                <div key={s.title} className="flex-1 min-w-[140px] flex flex-col items-center gap-1 px-4 py-4 border-b-2 border-blue-900 cursor-default">
+                  <div className={`w-8 h-8 rounded-lg ${s.iconBg} flex items-center justify-center mb-1`}>
+                    <Icon size={16} className={s.iconColor}/>
+                  </div>
+                  <span className="text-2xl font-black text-gray-900">{s.value}</span>
+                  <span className="text-xs font-semibold text-gray-700 text-center whitespace-nowrap">{s.title}</span>
+                  <span className="text-xs text-gray-400 text-center">{s.subtitle}</span>
+                </div>
+              );
+            })}
           </div>
 
           {/* Recent Jobs */}

@@ -25,7 +25,7 @@ export function HeroSearchBox({ onEstimate, loading }: Props) {
   const [isHovered, setIsHovered]       = useState(false);
   const inputRef                        = useRef<HTMLInputElement>(null);
   const charRef                         = useRef(0);
-  const timerRef                        = useRef<NodeJS.Timeout>();
+  const timerRef                        = useRef<NodeJS.Timeout | null>(null);
 
   // Typing animation
   useEffect(() => {
@@ -52,7 +52,7 @@ export function HeroSearchBox({ onEstimate, loading }: Props) {
       }
     }
 
-    return () => clearTimeout(timerRef.current);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [placeholder, isTyping, placeholderIdx]);
 
   const handleSubmit = () => {

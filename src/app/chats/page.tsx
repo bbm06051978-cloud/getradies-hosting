@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useSearchParams } from "next/navigation";
@@ -26,7 +26,7 @@ type Message = {
 
 type CurrentUser = { id: string; name: string; role: string };
 
-export default function ChatsPage() {
+function ChatsPageInner() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -381,5 +381,13 @@ export default function ChatsPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ChatsPage() {
+  return (
+    <Suspense>
+      <ChatsPageInner />
+    </Suspense>
   );
 }
