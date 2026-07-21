@@ -20,7 +20,7 @@ function AppScreen() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-10"/>
         <div className="absolute inset-0 bg-gradient-to-br from-[#060d4a] to-[#1a2066] flex flex-col">
           <div className="flex justify-between px-5 pt-8 pb-2">
-            <span className="text-white/50 text-xs font-medium">9:41</span>
+            <span className="text-white/50 text-sm font-medium">9:41</span>
             <span className="text-white/50 text-xs">●●● WiFi</span>
           </div>
           <div className="px-5 pb-3">
@@ -98,12 +98,16 @@ export function WhyGeTradie() {
         {/* Centered header */}
         <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
           viewport={{ once:true }} transition={{ duration:0.6 }} className="text-center mb-16">
-          <span className="inline-block bg-orange-100 text-orange-600 text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
-            Why Choose Us
-          </span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Why <span className="text-orange-500">GeTradie</span>?
-          </h2>
+          <div className="block mb-4">
+            <span className="inline-block bg-orange-100 text-orange-600 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
+              Why Choose Us
+            </span>
+          </div>
+          <div className="block mb-4">
+            <h2 className="inline-block text-4xl lg:text-5xl font-bold text-gray-900 bg-blue-100/50 backdrop-blur-md border border-blue-200 px-6 py-3 rounded-2xl">
+              Why <span className="text-orange-500">GeTradie</span>?
+            </h2>
+          </div>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
             Australia's only tradie marketplace with AI-powered estimates, verified tradies and built-in dispute protection.
           </p>
@@ -124,7 +128,7 @@ export function WhyGeTradie() {
                     style={{ background: `${f.color}15` }}>
                     <Icon size={18} style={{ color: f.color }}/>
                   </div>
-                  <p className="font-bold text-gray-900 text-sm mb-1">{f.title}</p>
+                  <p className="font-bold text-gray-900 text-md mb-1">{f.title}</p>
                   <p className="text-gray-700 text-xs leading-relaxed">{f.desc}</p>
                 </motion.div>
               );

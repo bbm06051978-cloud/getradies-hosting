@@ -39,15 +39,34 @@ export default function CostGuidesPage() {
             Real price ranges based on thousands of Australian jobs. Know what to expect before hiring any tradie.
           </p>
 
-          {/* Search Bar - Left Aligned */}
-          <div className="max-w-xl flex items-center bg-white rounded-2xl px-4 py-3 gap-3 shadow-xl">
-            <Search size={20} className="text-gray-400 flex-shrink-0" />
+          {/* Search Bar - Glassmorphism */}
+          <div className="max-w-xl" style={{
+            background: "rgba(255,255,255,0.12)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            border: "1.5px solid rgba(255,255,255,0.25)",
+            borderRadius: "16px",
+            padding: "6px 6px 6px 18px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)",
+          }}>
+            <Search size={18} color="rgba(255,255,255,0.6)" style={{ flexShrink: 0 }}/>
             <input
               type="text"
               placeholder="Search e.g. blocked drain, house clean, paint room..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="flex-1 text-sm text-gray-700 outline-none"
+              style={{
+                flex: 1,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: "#FFFFFF",
+                fontSize: "14px",
+              }}
+              className="placeholder-white/70"
             />
             {search && (
               <button onClick={() => setSearch("")} className="text-gray-400 hover:text-gray-600">

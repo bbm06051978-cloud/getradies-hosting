@@ -43,17 +43,16 @@ const categories = [
 
 export function TradeCategories() {
   return (
-    <section>
+    <section className="relative overflow-hidden py-16 lg:py-20 bg-white">
       {/* Premium Overlay */}
       {/*<div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-blue-900/75 to-slate-900/85" />*/}
 
       {/* Decorative Blobs */}
       <div className="absolute inset-0 pointer-events-none">
-        
         <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-orange-500/10 blur-3xl" />
       </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -62,11 +61,12 @@ export function TradeCategories() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
-          <span className="inline-block bg-green-100 text-green-700 text-xs font-semibold px-4 py-1.5 rounded-full mb-3 uppercase tracking-widest">
-            All Trades Covered
-          </span>
 
-          <h2 className="text-3xl lg:text-5xl font-bold text-orange-600">
+<span className=" bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-3 uppercase tracking-widest">
+            All Trades Covered
+          </span> <br /><br />
+
+          <h2 className="inline-block text-3xl lg:text-5xl font-bold text-orange-600 bg-blue-100/50 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl">
             Tradies <span className="text-black">You Can Hire</span>
           </h2>
 
@@ -108,7 +108,7 @@ export function TradeCategories() {
               </div>
 
               {/* Label */}
-              <span className="text-sm md:text-base font-semibold text-black group-hover:text-orange-400 transition-colors duration-200">
+              <span className="text-lg font-semibold text-black bg-orange/200 backdrop-blur-sm border border-orange/20 px-3 py-1 rounded-full group-hover:bg-orange-500/200 group-hover:border-orange-400 transition-all duration-200">
                 {cat.label}
               </span>
             </motion.button>

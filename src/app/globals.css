@@ -185,3 +185,8 @@
     line-height: 1.5;
   }
 }
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.85) !important;
+  opacity: 1 !important;
+}

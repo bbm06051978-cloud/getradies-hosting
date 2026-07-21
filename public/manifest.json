@@ -1,0 +1,22 @@
+{
+  "name": "GeTradie — Australia's Tradie Marketplace",
+  "short_name": "GeTradie",
+  "description": "Find, compare and hire verified local tradies across Australia.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060d4a",
+  "theme_color": "#F97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/imports/GeTradie_Logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/imports/GeTradie_Logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

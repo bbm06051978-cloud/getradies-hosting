@@ -13,9 +13,7 @@ export default function Home() {
       <Hero />
       <WhyGeTradie />
       <HowItWorks />
-<div className="py-8" />
       <TradeCategories />
-<div className="py-8" />
       <CTABanner />
       <Footer />
     </div>

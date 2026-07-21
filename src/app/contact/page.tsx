@@ -96,13 +96,11 @@ export default function ContactPage() {
 
 
 
-             {/* Hero Section */}
-            <section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center_top]">
-        {/* Transparent layout to let the original background shine perfectly */}
-            <div className="absolute inset-0 bg-blue-950/40" />
-        
-        {/* Added negative margin to pull the content upward over the background */}
-        <div className="relative max-w-5xl mx-auto px-6 lg:px-12 text-left w-full z-10 -mt-12 lg:-mt-24">
+      {/* Hero Section */}
+	<section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center]">
+
+        <div className="absolute inset-0 bg-blue-950/40" />
+        <div className="relative max-w-5xl mx-auto px-6 lg:px-12 text-left w-full z-10">
           <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest shadow-sm">
             Get in Touch
           </span>
