@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect , Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { loadStripe } from "@stripe/stripe-js";
@@ -111,7 +111,7 @@ function PaymentForm({
   );
 }
 
-export default function PaymentPage() {
+function PaymentPageInner() {
   const searchParams = useSearchParams();
   const router       = useRouter();
   const quoteId      = searchParams.get("quoteId") || "";
@@ -347,5 +347,14 @@ export default function PaymentPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+
+export default function PaymentPage() {
+  return (
+    <Suspense>
+      <PaymentPageInner />
+    </Suspense>
   );
 }

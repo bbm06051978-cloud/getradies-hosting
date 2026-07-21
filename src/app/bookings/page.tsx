@@ -1,6 +1,6 @@
 "use client";
 import { LeaveReview } from "@/app/components/LeaveReview";
-import { useState, useEffect } from "react";
+import { useState, useEffect , Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
@@ -22,7 +22,7 @@ type StatusStyle = {
   bg: string; border: string; card: string; icon: typeof CheckCircle; label: string;
 };
 
-export default function BookingsPage() {
+function BookingsPageInner() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -328,5 +328,13 @@ const refetchBookings = async () => {
         />
       )}
     </div>
+  );
+}
+
+export default function BookingsPage() {
+  return (
+    <Suspense>
+      <BookingsPageInner />
+    </Suspense>
   );
 }

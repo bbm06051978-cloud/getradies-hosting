@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect , Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "motion/react";
@@ -30,7 +30,7 @@ type Job = {
 
 const STATUS_FILTERS = ["ALL", "OPEN", "BOOKED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
 
-export default function MyJobsPage() {
+function MyJobsPageInner() {
   const [jobs, setJobs]           = useState<Job[]>([]);
   const [loading, setLoading]     = useState(true);
   const [filter, setFilter]       = useState("ALL");
@@ -179,9 +179,9 @@ export default function MyJobsPage() {
 
                 return (
                   <motion.div key={job.id} id={`job-${job.id}`}
-                    animate={jobIdParam === job.id ? { scale: [1, 1.02, 1] } : {}}
-                    transition={{ duration: 0.5, repeat: 2 }}
-                    initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }}
+                    animate={jobIdParam === job.id ? { scale: [1, 1.02, 1], opacity:1, y:0 } : { opacity:1, y:0 }}
+                  transition={{ duration: 0.5, repeat: 2 }}
+                  initial={{ opacity:0, y:12 }}
                     className={`bg-white rounded-2xl shadow-sm border transition-all overflow-hidden ${
                       jobIdParam === job.id 
                         ? "border-orange-400 shadow-orange-100 shadow-lg" 
@@ -296,5 +296,14 @@ export default function MyJobsPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+
+export default function MyJobsPage() {
+  return (
+    <Suspense>
+      <MyJobsPageInner />
+    </Suspense>
   );
 }

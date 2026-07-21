@@ -118,13 +118,16 @@ if (action === "confirm") {
       console.error("Failed to send job complete notification:", err);
     }
 
-    await prisma.job.update({
-      where: {
-        bookings: { some: { id: bookingId } },
-      },
-      data: { status: "IN_PROGRESS" },
+    const bookingForJob = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      select: { jobId: true },
     });
-
+    if (bookingForJob) {
+      await prisma.job.update({
+        where: { id: bookingForJob.jobId },
+        data: { status: "IN_PROGRESS" },
+      });
+    }
     return NextResponse.json({ success: true });
   }
 

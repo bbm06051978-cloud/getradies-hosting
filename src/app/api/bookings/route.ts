@@ -104,13 +104,16 @@ export async function PATCH(req: NextRequest) {
       data: { status: "CANCELLED" },
     });
 
-    await prisma.job.update({
-      where: {
-        bookings: { some: { id: bookingId } },
-      },
-      data: { status: "CANCELLED" },
+   const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      select: { jobId: true },
     });
-
+    if (booking) {
+      await prisma.job.update({
+        where: { id: booking.jobId },
+        data: { status: "CANCELLED" },
+      });
+    }
     return NextResponse.json({ success: true });
   }
 

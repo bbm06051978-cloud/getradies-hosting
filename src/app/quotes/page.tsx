@@ -1,7 +1,7 @@
 "use client";
 
 import { SmartQuoteBuilder } from "@/app/components/tradie/SmartQuoteBuilder";
-import { useState, useEffect } from "react";
+import { useState, useEffect , Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "motion/react";
@@ -29,7 +29,7 @@ type Job = {
   user: { name: string };
 };
 
-export default function SendQuotePage() {
+function SendQuotePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const jobId = searchParams.get("jobId");
@@ -364,5 +364,14 @@ export default function SendQuotePage() {
         </div>
       </main>
     </div>
+  );
+}
+
+
+export default function SendQuotePage() {
+  return (
+    <Suspense>
+      <SendQuotePageInner />
+    </Suspense>
   );
 }

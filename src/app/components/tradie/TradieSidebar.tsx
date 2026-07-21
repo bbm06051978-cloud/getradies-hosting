@@ -65,24 +65,16 @@ const [user, setUser] = useState<{ name: string } | null>(null);
             <Link
               key={item.label}
               href={item.href}
-              className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group ${
-                item.active
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-600 hover:bg-slate-50 hover:text-gray-900"
-              }`}
+              className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group text-gray-600 hover:bg-slate-50 hover:text-gray-900`}
             >
               <div className="flex items-center gap-3">
                 <Icon
                   size={17}
-                  className={item.active ? "text-white" : "text-gray-400 group-hover:text-blue-900"}
+                  className="text-gray-400 group-hover:text-blue-900"
                 />
                 {item.label}
               </div>
-              {item.badge && (
-                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                  {item.badge}
-                </span>
-              )}
+              
             </Link>
           );
         })}

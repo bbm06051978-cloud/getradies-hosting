@@ -1,6 +1,6 @@
 "use client";
 import Image from 'next/image';
-import { useState } from "react";
+import { useState , Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
@@ -56,7 +56,7 @@ const steps = [
   { number: 4, title: "Review & Post" },
 ];
 
-export default function PostJobPage() {
+function PostJobPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
@@ -613,5 +613,14 @@ export default function PostJobPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+
+export default function PostJobPage() {
+  return (
+    <Suspense>
+      <PostJobPageInner />
+    </Suspense>
   );
 }
