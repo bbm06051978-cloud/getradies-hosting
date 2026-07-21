@@ -43,7 +43,14 @@ const categories = [
 
 export function TradeCategories() {
   return (
-    <section className="relative overflow-hidden py-16 lg:py-20 bg-white">
+    <section className="relative overflow-hidden" style={{
+      backgroundImage: "url('/imports/handyman123 (2).png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      minHeight: "500px",
+    }}>
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"/>
       {/* Premium Overlay */}
       {/*<div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-blue-900/75 to-slate-900/85" />*/}
 
@@ -64,10 +71,10 @@ export function TradeCategories() {
 
 <span className=" bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-3 uppercase tracking-widest">
             All Trades Covered
-          </span> <br /><br />
+          </span> <br />
 
-          <h2 className="inline-block text-3xl lg:text-5xl font-bold text-orange-600 bg-blue-100/50 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl">
-            Tradies <span className="text-black">You Can Hire</span>
+          <h2 className="inline-block text-3xl lg:text-5xl font-bold text-orange-600 bg-white/10 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-2xl">
+            Tradies <span className="text-white">You Can Hire</span>
           </h2>
 
           <p className="text-black mt-3 max-w-xl mx-auto text-sm md:text-base">
@@ -108,7 +115,7 @@ export function TradeCategories() {
               </div>
 
               {/* Label */}
-              <span className="text-lg font-semibold text-black bg-orange/200 backdrop-blur-sm border border-orange/20 px-3 py-1 rounded-full group-hover:bg-orange-500/200 group-hover:border-orange-400 transition-all duration-200">
+              <span className="text-lg font-semibold text-white bg-orange/200 backdrop-blur-sm border border-orange/20 px-3 py-1 rounded-full group-hover:bg-orange-500/200 group-hover:border-orange-400 transition-all duration-200">
                 {cat.label}
               </span>
             </motion.button>

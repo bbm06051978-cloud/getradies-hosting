@@ -41,11 +41,10 @@ export function Navbar() {
             <a href="/" className="relative h-50 w-80 flex-shrink-0 block">
               <Image
                 src="/imports/GeTradie_Logo.png"
-              alt="GeTradie"
-              fill
-              loading="eager"
-              style={{ objectFit: "contain", objectPosition: "left" }}
-              priority
+                alt="GeTradie Logo"
+                fill
+                className="object-contain object-left"
+                priority
               />
             </a>
             <img

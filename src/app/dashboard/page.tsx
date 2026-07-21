@@ -1,5 +1,5 @@
 "use client";
-
+import { LockAmountBanner } from "@/app/components/dashboard/LockAmountBanner";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
@@ -122,6 +122,9 @@ const [statsLoading, setStatsLoading] = useState(true);
               </button>
             </Link>
           </div>
+
+{/* Lock Amount Awareness Banner */}
+          <LockAmountBanner />
 
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
