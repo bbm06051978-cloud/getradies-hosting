@@ -123,9 +123,8 @@ className="w-full max-w-md bg-blue-1000 backdrop-blur-md rounded-2xl shadow-2xl 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-gray-100 mb-1">
-                Username
-              </label>
+              <label className="block text-sm font-medium text-gray-100 mb-1">Password</label>
+
               <div className="flex items-center border-2 border-gray-200 focus-within:border-blue-400 rounded-xl px-4 py-3 gap-3 bg-white transition-colors">
                 <User size={18} className="text-gray-400" />
                 <input
@@ -164,15 +163,14 @@ className="w-full max-w-md bg-blue-1000 backdrop-blur-md rounded-2xl shadow-2xl 
               </div>
             </div>
 
-            {/* Forgot password */}
-            <div className="flex justify-end">
-              <a href="#" className="text-xs text-blue-600 hover:text-blue-800 font-medium">
-                Forgot password?
-              </a>
-            </div>
-
-            {/* Submit */}
-            <motion.button
+{/* Forgot password */}
+              <div className="flex justify-end -mt-2">
+                <a href="/forgot-password" className="text-xs text-blue-300 hover:text-blue-200 font-medium">Forgot password?</a>
+              </div>
+              {/* Submit */}
+              <motion.button
+            
+            
               type="submit"
               disabled={loading}
               whileHover={{ scale: loading ? 1 : 1.02 }}

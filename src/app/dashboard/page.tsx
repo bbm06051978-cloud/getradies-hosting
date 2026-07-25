@@ -3,14 +3,9 @@ import { LockAmountBanner } from "@/app/components/dashboard/LockAmountBanner";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
-  Briefcase,
-  MessageCircle,
-  Calendar,
-  CheckCircle,
-  ShieldCheck,
-  ArrowRight,
+  Briefcase, MessageCircle, Calendar, CheckCircle,
+  ShieldCheck, ArrowRight, Plus, Bell, Zap,
 } from "lucide-react";
-
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
 
@@ -30,222 +25,191 @@ type Stats = {
   completedJobs: number;
 };
 
+const statusStyle: Record<string, { bg: string; text: string; dot: string }> = {
+  COMPLETED:  { bg: "bg-green-50",  text: "text-green-700",  dot: "bg-green-500"  },
+  BOOKED:     { bg: "bg-blue-50",   text: "text-blue-700",   dot: "bg-blue-500"   },
+  CANCELLED:  { bg: "bg-red-50",    text: "text-red-700",    dot: "bg-red-500"    },
+  OPEN:       { bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500" },
+  IN_PROGRESS:{ bg: "bg-purple-50", text: "text-purple-700", dot: "bg-purple-500" },
+};
+
+function StatusBadge({ status }: { status: string }) {
+  const s = statusStyle[status] || statusStyle.OPEN;
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${s.bg} ${s.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`}/>
+      {status.charAt(0) + status.slice(1).toLowerCase().replace("_", " ")}
+    </span>
+  );
+}
+
 export default function Dashboard() {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [stats, setStats] = useState<Stats>({
-    activeJobs: 0,
-    quotesReceived: 0,
-    upcomingBookings: 0,
-    completedJobs: 0,
+  const [user, setUser]           = useState<{ name: string; email: string } | null>(null);
+  const [jobs, setJobs]           = useState<Job[]>([]);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [stats, setStats]         = useState<Stats>({
+    activeJobs: 0, quotesReceived: 0, upcomingBookings: 0, completedJobs: 0,
   });
-const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch user
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) setUser(data.user);
-      })
-      .catch(() => {});
-
-    // Fetch dashboard data
-    fetch("/api/dashboard/homeowner")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.jobs) setJobs(data.jobs);
-        if (data.stats) setStats(data.stats);
-      })
-      .catch(() => {})
-      .finally(() => setStatsLoading(false));
+    fetch("/api/auth/me").then(r => r.json()).then(d => { if (d.user) setUser(d.user); }).catch(() => {});
+    fetch("/api/dashboard/homeowner").then(r => r.json()).then(d => {
+      if (d.jobs)  setJobs(d.jobs);
+      if (d.stats) setStats(d.stats);
+    }).catch(() => {}).finally(() => setStatsLoading(false));
   }, []);
 
   const statCards = [
-    {
-      title: "Active Jobs",
-      value: statsLoading ? "..." : String(stats.activeJobs),
-      subtitle: "In progress",
-      icon: Briefcase,
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-600",
-    },
-    {
-      title: "Quotes Received",
-      value: statsLoading ? "..." : String(stats.quotesReceived),
-      subtitle: "New quotes available",
-      icon: MessageCircle,
-      iconBg: "bg-green-100",
-      iconColor: "text-green-600",
-    },
-    {
-      title: "Upcoming Bookings",
-      value: statsLoading ? "..." : String(stats.upcomingBookings),
-      subtitle: "This week",
-      icon: Calendar,
-      iconBg: "bg-orange-100",
-      iconColor: "text-orange-500",
-    },
-    {
-      title: "Jobs Completed",
-      value: statsLoading ? "..." : String(stats.completedJobs),
-      subtitle: "Total",
-      icon: CheckCircle,
-      iconBg: "bg-purple-100",
-      iconColor: "text-purple-600",
-    },
+    { title: "Active Jobs",        value: stats.activeJobs,        subtitle: "In progress",        icon: Briefcase,     color: "blue",   href: "/my-jobs"   },
+    { title: "Quotes Received",    value: stats.quotesReceived,     subtitle: "Awaiting review",    icon: MessageCircle, color: "green",  href: "/my-quotes" },
+    { title: "Upcoming Bookings",  value: stats.upcomingBookings,   subtitle: "This week",          icon: Calendar,      color: "orange", href: "/bookings"  },
+    { title: "Jobs Completed",     value: stats.completedJobs,      subtitle: "All time",           icon: CheckCircle,   color: "purple", href: "/my-jobs"   },
   ];
+
+  const colorMap: Record<string, { icon: string; bg: string; border: string; val: string }> = {
+    blue:   { icon: "text-blue-600",   bg: "bg-blue-50",   border: "border-blue-100",   val: "text-blue-700"   },
+    green:  { icon: "text-green-600",  bg: "bg-green-50",  border: "border-green-100",  val: "text-green-700"  },
+    orange: { icon: "text-orange-500", bg: "bg-orange-50", border: "border-orange-100", val: "text-orange-600" },
+    purple: { icon: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100", val: "text-purple-700" },
+  };
+
+  const firstName = user?.name?.split(" ")[0] || "there";
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <Sidebar />
+      <Sidebar/>
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <Topbar/>
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-4 lg:p-8 max-w-6xl mx-auto">
 
-      <main className="flex-1 flex flex-col min-w-0">
-        <Topbar />
-
-        <div className="p-8 flex-1">
-
-          {/* Welcome header */}
-          <div className="flex items-start justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Welcome back, {user?.name?.split(" ")[0] || "there"}! 👋
-              </h2>
-              <p className="text-gray-500 mt-1 text-sm">
-                Here&apos;s what&apos;s happening with your jobs today.
-              </p>
-            </div>
-            <Link href="/post-job">
-              <button className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors shadow-sm">
-                + Post New Job
-              </button>
-            </Link>
-          </div>
-
-{/* Lock Amount Awareness Banner */}
-          <LockAmountBanner />
-
-          {/* Stats */}
-          {/* Stats tabs */}
-          <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
-            {statCards.map((s) => {
-              const Icon = s.icon;
-              return (
-                <div key={s.title} className="flex-1 min-w-[140px] flex flex-col items-center gap-1 px-4 py-4 border-b-2 border-blue-900 cursor-default">
-                  <div className={`w-8 h-8 rounded-lg ${s.iconBg} flex items-center justify-center mb-1`}>
-                    <Icon size={16} className={s.iconColor}/>
-                  </div>
-                  <span className="text-2xl font-black text-gray-900">{s.value}</span>
-                  <span className="text-xs font-semibold text-gray-700 text-center whitespace-nowrap">{s.title}</span>
-                  <span className="text-xs text-gray-400 text-center">{s.subtitle}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Recent Jobs */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-lg text-gray-900">Recent Jobs</h3>
-<Link href="/my-jobs" className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800">
-                View All Jobs <ArrowRight size={14} />
+            {/* Welcome header */}
+            <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {greeting}, {firstName}! 👋
+                </h2>
+                <p className="text-gray-500 mt-1 text-sm">
+                  Here&apos;s what&apos;s happening with your jobs today.
+                </p>
+              </div>
+              <Link href="/post-job">
+                <button className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm">
+                  <Plus size={16}/> Post New Job
+                </button>
               </Link>
             </div>
 
-            {jobs.length === 0 ? (
-              <div className="text-center py-12">
-                <Briefcase size={40} className="text-gray-200 mx-auto mb-3" />
-                <p className="text-gray-400 font-medium">No jobs posted yet</p>
-                <p className="text-gray-400 text-sm mt-1">
-                  Click &quot;Post New Job&quot; to get started
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {jobs.map((job) => (
-                  <Link key={job.id} href={`/my-jobs?jobId=${job.id}`}>
-                  <div
-                    className="flex items-center justify-between py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-xl px-2 -mx-2 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <Briefcase size={16} className="text-blue-600" />
+            {/* Lock Amount Banner */}
+            <LockAmountBanner/>
+
+            {/* Stats cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+              {statCards.map((s) => {
+                const Icon = s.icon;
+                const c = colorMap[s.color];
+                return (
+                  <Link key={s.title} href={s.href}>
+                    <div className={`bg-white rounded-2xl p-4 border ${c.border} hover:shadow-md transition-all cursor-pointer group`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className={`w-9 h-9 rounded-xl ${c.bg} flex items-center justify-center`}>
+                          <Icon size={18} className={c.icon}/>
+                        </div>
+                        <ArrowRight size={14} className="text-gray-300 group-hover:text-gray-500 transition-colors"/>
                       </div>
-                      <div>
-                        <p className="font-semibold text-gray-900 text-sm">{job.title}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          {job.trade} · {new Date(job.createdAt).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
-                        </p>
-                      </div>
+                      <p className={`text-2xl font-black ${c.val}`}>
+                        {statsLoading ? "..." : s.value}
+                      </p>
+                      <p className="text-xs font-semibold text-gray-700 mt-0.5">{s.title}</p>
+                      <p className="text-xs text-gray-400">{s.subtitle}</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      {job.aiEstimate && (
-                        <span className="text-xs text-gray-500 max-w-[200px] truncate hidden sm:block">
-                          {job.aiEstimate.split("\n")[0]}
-                        </span>
-                      )}
-                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                        job.status === "COMPLETED"
-                          ? "bg-green-100 text-green-700"
-                          : job.status === "BOOKED"
-                          ? "bg-blue-100 text-blue-700"
-                          : job.status === "CANCELLED"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-orange-100 text-orange-700"
-                      }`}>
-                        {job.status.charAt(0) + job.status.slice(1).toLowerCase()}
-                      </span>
-                    </div>
-                  </div>
                   </Link>
-                ))}
-              </div>
-            )}
-
-            {/* Hire with confidence banner */}
-            <div className="mt-4 flex items-center justify-between bg-blue-50 rounded-xl px-4 py-3">
-              <div className="flex items-center gap-3">
-                <ShieldCheck size={22} className="text-blue-600 flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">Hire with confidence</p>
-                  <p className="text-xs text-gray-500">
-                    All tradies are background checked, verified and reviewed by real customers.
-                  </p>
-                </div>
-              </div>
-              <button className="ml-4 bg-white border border-gray-200 hover:border-blue-900 text-gray-700 hover:text-blue-900 text-xs font-semibold px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
-                Learn More
-              </button>
+                );
+              })}
             </div>
-          </div>
 
-          {/* How It Works */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h3 className="font-bold text-lg text-gray-900 mb-6">How GeTradie Works</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              {[
-                { step: 1, title: "Post Your Job", desc: "Tell us what you need in minutes" },
-                { step: 2, title: "Receive Estimates", desc: "Get fixed-price quotes from verified tradies" },
-                { step: 3, title: "Compare & Chat", desc: "Compare quotes and chat with tradies" },
-                { step: 4, title: "Hire & Book", desc: "Choose the best tradie and book with ease" },
-                { step: 5, title: "Job Done!", desc: "Job completed with confidence" },
-              ].map((item, i) => (
-                <div key={item.step} className="text-center">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <div className="w-8 h-8 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
-                      {item.step}
-                    </div>
-                    {i < 4 && (
-                      <ArrowRight size={14} className="text-gray-300 hidden lg:block" />
-                    )}
-                  </div>
-                  <h4 className="font-semibold text-gray-800 text-sm">{item.title}</h4>
-                  <p className="text-xs text-gray-400 mt-1 leading-relaxed">{item.desc}</p>
+            
+
+            {/* Recent Jobs */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mb-6">
+              <div className="flex items-center justify-between p-5 border-b border-gray-100">
+                <h3 className="font-bold text-gray-900">Recent Jobs</h3>
+                <Link href="/my-jobs" className="text-blue-600 text-xs font-semibold flex items-center gap-1 hover:text-blue-800">
+                  View All <ArrowRight size={12}/>
+                </Link>
+              </div>
+
+              {jobs.length === 0 ? (
+                <div className="text-center py-12 px-4">
+                  <Briefcase size={36} className="text-gray-200 mx-auto mb-3"/>
+                  <p className="text-gray-500 font-semibold text-sm">No jobs posted yet</p>
+                  <p className="text-gray-400 text-xs mt-1 mb-4">Post your first job and get quotes from verified tradies</p>
+                  <Link href="/post-job">
+                    <button className="bg-blue-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold">
+                      Post a Job
+                    </button>
+                  </Link>
                 </div>
-              ))}
+              ) : (
+                <div className="divide-y divide-gray-50">
+                  {jobs.slice(0, 6).map((job) => (
+                    <Link key={job.id} href={`/my-jobs?jobId=${job.id}`}>
+                      <div className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors cursor-pointer">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                            <Briefcase size={15} className="text-blue-600"/>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-gray-900 text-sm truncate">{job.title}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {job.trade} · {new Date(job.createdAt).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                            </p>
+                          </div>
+                        </div>
+                        <StatusBadge status={job.status}/>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
 
+            {/* Bottom cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* AI Estimate CTA */}
+              <div className="bg-gradient-to-br from-blue-900 to-blue-700 rounded-2xl p-5 text-white">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap size={18} className="text-orange-300"/>
+                  <span className="text-xs font-bold uppercase tracking-widest text-blue-200">AI Feature</span>
+                </div>
+                <h4 className="font-bold text-base mb-1">Get an AI Estimate</h4>
+                <p className="text-blue-200 text-xs mb-4 leading-relaxed">Know the price range before hiring any tradie.</p>
+                <Link href="/">
+                  <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">
+                    Try AI Estimate →
+                  </button>
+                </Link>
+              </div>
+
+              {/* Hire with confidence */}
+              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <ShieldCheck size={18} className="text-green-600"/>
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Protection</span>
+                </div>
+                <h4 className="font-bold text-gray-900 text-base mb-1">Hire with Confidence</h4>
+                <p className="text-gray-500 text-xs mb-4 leading-relaxed">All tradies are verified. Your lock amount is secured until job completion.</p>
+                <Link href="/how-it-works">
+                  <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors">
+                    How It Works →
+                  </button>
+                </Link>
+              </div>
+            </div>
+
+          </div>
         </div>
       </main>
     </div>

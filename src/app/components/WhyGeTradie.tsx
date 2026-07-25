@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "motion/react";
 import { ShieldCheck, Zap, Star, DollarSign, MessageSquare, Clock, Search, Bell, FileText } from "lucide-react";
+import { AppScreenIllustration } from "@/app/components/AppScreenIllustration";
 
 const features = [
   { icon: Zap,          title: "AI-Powered Estimates",    desc: "Know your budget before hiring anyone", color: "#F97316" },
@@ -15,7 +16,7 @@ function AppScreen() {
   return (
     <motion.div initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
       transition={{ duration:0.7 }} className="flex items-center justify-center">
-      <div className="relative w-64 h-[500px] rounded-[3rem] border-4 border-gray-800 bg-gray-900 shadow-2xl overflow-hidden"
+      <div className="relative w-48 h-[380px] rounded-[2rem] border-4 border-gray-800 bg-gray-900 shadow-2xl overflow-hidden"
         style={{ boxShadow: "0 40px 80px rgba(249,115,22,0.25), 0 0 0 1px rgba(255,255,255,0.05)" }}>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-10"/>
         <div className="absolute inset-0 bg-gradient-to-br from-[#060d4a] to-[#1a2066] flex flex-col">
@@ -27,18 +28,18 @@ function AppScreen() {
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-white/50 text-xs">Welcome back</p>
-                <p className="text-white font-bold text-base">Bidhu 👋</p>
+                <p className="text-white font-semibold text-base">Bidhu 👋</p>
               </div>
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+              <div className="w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center">
                 <Bell size={14} className="text-white"/>
               </div>
             </div>
-            <div className="bg-white/10 rounded-2xl px-3 py-2 flex items-center gap-2">
+            <div className="bg-white/10 rounded-2xl px-2 py-2 flex items-center gap-1">
               <Search size={13} className="text-white/40"/>
-              <span className="text-white/40 text-xs">Search jobs, tradies...</span>
+              <span className="text-white/30 text-xs">Search jobs, tradies...</span>
             </div>
           </div>
-          <div className="px-5 pb-3 grid grid-cols-3 gap-2">
+          <div className="px-4 pb-3 grid grid-cols-3 gap-1">
             {[
               { label: "Active Jobs", value: "2", color: "#F97316" },
               { label: "Quotes In",   value: "5", color: "#3B82F6" },
@@ -104,18 +105,18 @@ export function WhyGeTradie() {
             </span>
           </div>
           <div className="block mb-4">
-            <h2 className="inline-block text-4xl lg:text-5xl font-bold text-gray-900 bg-blue-100/50 backdrop-blur-md border border-blue-200 px-6 py-3 rounded-2xl">
+            <h2 className="inline-block text-2xl lg:text-3xl font-bold text-gray-900 bg-blue-100/50 backdrop-blur-md border border-blue-200 px-4 py-2 rounded-2xl">
               Why <span className="text-orange-500">GeTradie</span>?
             </h2>
           </div>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-black-500 text-sm max-w-2xl mx-auto leading-relaxed">
             Australia's only tradie marketplace with AI-powered estimates, verified tradies and built-in dispute protection.
           </p>
         </motion.div>
 
         {/* Phone + Features side by side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <AppScreen/>
+          <AppScreenIllustration/>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {features.map((f, i) => {
               const Icon = f.icon;

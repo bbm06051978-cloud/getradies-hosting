@@ -21,21 +21,21 @@ export default function CostGuidesPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/costguide.png')] bg-cover bg-[center_top]">
+      <section className="relative py-14 lg:py-[15rem] overflow-hidden bg-[url('/imports/costguide.png')] bg-cover bg-[center]">
         {/* Overlay to ensure text readability over the image */}
         <div className="absolute inset-0 bg-blue-950/40" />
         
         {/* Container: Left-aligned and pulled up by negative margin */}
-        <div className="relative max-w-4xl mx-auto px-6 text-left -mt-16 lg:-mt-28">
-          <span className="inline-block bg-blue-800/80 backdrop-blur-sm text-blue-200 text-xs font-semibold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
+        <div className="relative max-w-4xl mx-auto px-6 text-left">
+          <span className="inline-block bg-orange-500/80 backdrop-blur-sm text-blue-200 text-xs font-semibold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             2024 Australian Pricing Guide
           </span>
           
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
+          <h1 className="text-4xl  font-bold text-white mb-5 leading-tight">
             How Much Do <span className="text-orange-400">Tradies</span> Cost in Australia?
           </h1>
           
-          <p className="text-blue-100 text-lg mb-8 max-w-2xl">
+          <p className="text-blue-100 text-sm mb-8 max-w-2xl">
             Real price ranges based on thousands of Australian jobs. Know what to expect before hiring any tradie.
           </p>
 

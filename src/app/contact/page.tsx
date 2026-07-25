@@ -97,19 +97,19 @@ export default function ContactPage() {
 
 
       {/* Hero Section */}
-	<section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center]">
+	<section className="relative py-16 lg:py-[17rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center]">
 
         <div className="absolute inset-0 bg-blue-950/40" />
-        <div className="relative max-w-5xl mx-auto px-6 lg:px-12 text-left w-full z-10">
+        <div className="relative max-w-4xl mx-auto px-6 lg:px-12 text-left w-full z-10">
           <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest shadow-sm">
             Get in Touch
           </span>
           
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight drop-shadow-md">
+          <h1 className="sm:text-4xl font-semibold text-white mb-5 leading-tight drop-shadow-md">
             We are Here to <span className="text-orange-400">Help</span>
           </h1>
           
-          <p className="text-blue-100 font-medium text-base lg:text-lg max-w-xl leading-relaxed drop-shadow-sm">
+          <p className="text-blue-100 font-small text-base lg:text-sm max-w-xl leading-relaxed drop-shadow-sm">
             Have a question, need support or want to partner with us? Our team is ready to help. We respond to all enquiries within 24 hours.
           </p>
         </div>
@@ -257,7 +257,7 @@ export default function ContactPage() {
 
                 <p className="text-xs text-gray-400 text-center">
                   By submitting this form you agree to our{" "}
-                  <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
+                  <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
                 </p>
               </div>
             )}

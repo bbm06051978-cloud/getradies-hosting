@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "@/app/components/Footer";
 import { motion } from "motion/react";
@@ -16,30 +17,35 @@ const homeownerSteps = [
     title: "Get an Instant AI Estimate",
     description: "Describe your job and get an instant AI-powered price estimate. Know your budget before speaking to any tradie — with 80% accuracy based on real Australian job data.",
     tip: "Be as specific as possible — mention suburb, job size and urgency.",
+    image: "/imports/AI Estimate.png",
   },
   {
     number: "02", icon: FileText, color: "#F97316", gradient: "from-orange-500 to-orange-700",
     title: "Post Your Job",
     description: "Create a free job post in minutes. Your job is instantly visible to verified tradies in your area who specialise in your trade.",
     tip: "Jobs with photos receive 3x more quotes from tradies.",
+    image: "/imports/AI post a job.png",
   },
   {
     number: "03", icon: MessageSquare, color: "#8B5CF6", gradient: "from-purple-500 to-purple-700",
     title: "Receive & Compare Quotes",
     description: "Verified tradies send fixed-price quotes. Compare ratings, reviews and prices side by side. Chat directly before committing.",
     tip: "Most jobs receive 3–5 quotes within 24 hours.",
+    image: "/imports/AI quote and compare.png",
   },
   {
     number: "04", icon: ShieldCheck, color: "#10B981", gradient: "from-emerald-500 to-emerald-700",
     title: "Hire with Confidence",
     description: "Accept the best quote and lock in your booking with a secure deposit. Every tradie is background-checked and verified.",
     tip: "Check reviews and completed job count before accepting.",
+    image: "/imports/AI completed and review.png",
   },
   {
     number: "05", icon: ThumbsUp, color: "#F59E0B", gradient: "from-amber-500 to-amber-700",
     title: "Job Done — Confirm & Review",
     description: "Tradie completes the job. You confirm and leave a review. Your deposit is released. Dispute resolution available if needed.",
     tip: "Your honest review helps other homeowners find great tradies.",
+    image: "/imports/AI dispute and resolution.png",
   },
 ];
 
@@ -79,66 +85,11 @@ const faqs = [
   { q: "What is the lock amount?", a: "The lock amount is a security deposit ($50–$500) paid by the homeowner when accepting a quote. It's held by GeTradie and released to the tradie after job completion." },
 ];
 
-function StepCard({ step, index }: { step: typeof homeownerSteps[0]; index: number }) {
-  const Icon = step.icon;
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ y: -6, scale: 1.02 }}
-      className="relative group cursor-default"
-    >
-      {/* Shiny glow */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `radial-gradient(circle at 50% 0%, ${step.color}30, transparent 70%)`, filter: "blur(8px)" }}/>
-
-      {/* Card */}
-      <div className="relative bg-white rounded-2xl p-8 border border-gray-100 shadow-sm group-hover:shadow-xl group-hover:border-gray-200 transition-all duration-300 overflow-hidden">
-
-        {/* Shine sweep effect */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-          style={{
-            background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%)",
-            transform: "translateX(-100%)",
-            animation: "none",
-          }}/>
-
-        {/* Top accent line */}
-        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${step.gradient} rounded-t-2xl`}/>
-
-        {/* Number + Icon */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center flex-shrink-0 shadow-lg`}
-            style={{ boxShadow: `0 8px 20px ${step.color}40` }}>
-            <Icon size={22} className="text-white"/>
-          </div>
-          <span className="text-5xl font-black" style={{ color: `${step.color}15` }}>{step.number}</span>
-        </div>
-
-        <h3 className="font-bold text-gray-900 text-xl mb-3">{step.title}</h3>
-        <p className="text-gray-500 text-base leading-relaxed mb-4">{step.description}</p>
-
-        {/* Tip */}
-        <div className="flex items-start gap-2 bg-gray-50 rounded-xl px-3 py-2">
-          <span className="text-orange-400 text-xs mt-0.5">💡</span>
-          <p className="text-sm text-gray-500 leading-relaxed">{step.tip}</p>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 function FAQItem({ faq }: { faq: typeof faqs[0] }) {
   const [open, setOpen] = useState(false);
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm"
-    >
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      className="border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm">
       <button onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors">
         <span className="font-semibold text-gray-900 text-sm">{faq.q}</span>
@@ -154,6 +105,34 @@ function FAQItem({ faq }: { faq: typeof faqs[0] }) {
   );
 }
 
+function TradieStepCard({ step, index }: { step: typeof tradieSteps[0]; index: number }) {
+  const Icon = step.icon;
+  return (
+    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ y: -6, scale: 1.02 }} className="relative group cursor-default">
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: `radial-gradient(circle at 50% 0%, ${step.color}30, transparent 70%)`, filter: "blur(8px)" }}/>
+      <div className="relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm group-hover:shadow-xl transition-all duration-300 overflow-hidden">
+        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${step.gradient} rounded-t-2xl`}/>
+        <div className="flex items-center gap-3 mb-4">
+          <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center flex-shrink-0 shadow-lg`}
+            style={{ boxShadow: `0 8px 20px ${step.color}40` }}>
+            <Icon size={20} className="text-white"/>
+          </div>
+          <span className="text-4xl font-black" style={{ color: `${step.color}15` }}>{step.number}</span>
+        </div>
+        <h3 className="font-bold text-gray-900 text-base mb-2">{step.title}</h3>
+        <p className="text-gray-500 text-sm leading-relaxed mb-3">{step.description}</p>
+        <div className="flex items-start gap-2 bg-gray-50 rounded-xl px-3 py-2">
+          <span className="text-orange-400 text-xs mt-0.5">💡</span>
+          <p className="text-xs text-gray-500 leading-relaxed">{step.tip}</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function HowItWorksPage() {
   const [activeTab, setActiveTab] = useState<"homeowner" | "tradie">("homeowner");
 
@@ -162,17 +141,17 @@ export default function HowItWorksPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative py-20 lg:py-[22rem] overflow-hidden bg-[url('/imports/HowItWork.png')] bg-cover bg-[center]">
+      <section className="relative py-14 lg:py-[14rem] overflow-hidden bg-[url('/imports/HowItWork.png')] bg-cover bg-[center]">
         <div className="absolute inset-0 bg-blue-900/30"/>
         <div className="relative max-w-4xl mx-auto px-6 text-left">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
               Simple 5-Step Process
             </span>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
+            <h1 className="text-4xl lg:text-4xl font-bold text-white mb-5 leading-tight">
               How <span className="text-orange-400">GeTradie</span> Works
             </h1>
-            <p className="text-blue-100 text-lg max-w-2xl leading-relaxed mb-8">
+            <p className="text-blue-100 text-sm max-w-2xl leading-relaxed mb-8">
               From AI-powered estimates to job completion — GeTradie makes hiring a tradie simple, transparent and stress-free.
             </p>
             <Link href="/login">
@@ -194,38 +173,84 @@ export default function HowItWorksPage() {
                 className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
                   activeTab === "homeowner" ? "bg-blue-900 text-white shadow" : "text-gray-500 hover:text-gray-700"
                 }`}>
-                🏠 I'm a Homeowner
+                🏠 I&apos;m a Homeowner
               </button>
               <button onClick={() => setActiveTab("tradie")}
                 className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
                   activeTab === "tradie" ? "bg-orange-500 text-white shadow" : "text-gray-500 hover:text-gray-700"
                 }`}>
-                🔧 I'm a Tradie
+                🔧 I&apos;m a Tradie
               </button>
             </div>
           </div>
 
-          {/* Steps — alternating left right */}
-          <div className="max-w-4xl mx-auto space-y-6">
-            {(activeTab === "homeowner" ? homeownerSteps : tradieSteps).map((step, i) => (
-              <div key={step.number} className={`flex gap-6 items-center ${i % 2 === 1 ? "flex-row-reverse" : "flex-row"}`}>
-                <div className="flex-1 min-w-[320px]">
-                  <StepCard step={step} index={i}/>
-                </div>
-                {/* Connector line */}
-                <div className="flex flex-col items-center flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-lg"
-                    style={{ background: `linear-gradient(135deg, ${step.color}, ${step.color}cc)`, boxShadow: `0 8px 20px ${step.color}50` }}>
-                    {i + 1}
-                  </div>
-                  {i < (activeTab === "homeowner" ? homeownerSteps : tradieSteps).length - 1 && (
-                    <div className="w-0.5 h-16 mt-2" style={{ background: `linear-gradient(to bottom, ${step.color}50, transparent)` }}/>
-                  )}
-                </div>
-                <div className="flex-1"/>
-              </div>
-            ))}
-          </div>
+          {/* Homeowner steps — alternating screenshot layout */}
+          {activeTab === "homeowner" && (
+            <div className="space-y-20">
+              {homeownerSteps.map((step, i) => {
+                const Icon = step.icon;
+                const flip = i % 2 === 1;
+                return (
+                  <motion.div key={step.number}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${flip ? "lg:flex lg:flex-row-reverse" : ""}`}
+                  >
+                    {/* Text side */}
+                    <div className={flip ? "lg:pl-8" : "lg:pr-8"}>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center flex-shrink-0 shadow-lg`}
+                          style={{ boxShadow: `0 8px 20px ${step.color}40` }}>
+                          <Icon size={22} className="text-white"/>
+                        </div>
+                        <span className="text-6xl font-black" style={{ color: `${step.color}20` }}>{step.number}</span>
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-3">{step.title}</h3>
+                      <p className="text-gray-500 text-base leading-relaxed mb-4">{step.description}</p>
+                      <div className="flex items-start gap-2 bg-orange-50 border border-orange-100 rounded-xl px-4 py-3">
+                        <span className="text-orange-400 text-sm mt-0.5">💡</span>
+                        <p className="text-sm text-gray-600 leading-relaxed">{step.tip}</p>
+                      </div>
+                    </div>
+
+                    {/* Screenshot side */}
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative"
+                    >
+                      {/* Glow */}
+                      <div className="absolute inset-0 rounded-3xl" style={{
+                        background: `radial-gradient(ellipse, ${step.color}20 0%, transparent 70%)`,
+                        filter: "blur(20px)",
+                      }}/>
+                      {/* Screenshot as-is */}
+                      <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+                        <Image
+                          src={step.image}
+                          alt={step.title}
+                          width={400}
+                          height={200}
+                          className="w-full h-auto object-contain"
+                        />
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Tradie steps — card grid */}
+          {activeTab === "tradie" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tradieSteps.map((step, i) => (
+                <TradieStepCard key={step.number} step={step} index={i}/>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

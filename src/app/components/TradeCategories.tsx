@@ -66,11 +66,11 @@ export function TradeCategories() {
             All Trades Covered
           </span> <br /><br />
 
-          <h2 className="inline-block text-3xl lg:text-5xl font-bold text-orange-600 bg-blue-100/50 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl">
+          <h2 className="inline-block text-3xl lg:text-4xl font-bold text-orange-600 bg-blue-100/50 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl">
             Tradies <span className="text-black">You Can Hire</span>
           </h2>
 
-          <p className="text-black mt-3 max-w-xl mx-auto text-sm md:text-base">
+          <p className="text-black-500 text-sm max-w-2xl mx-auto">
             Whatever the job, we've got a verified tradie ready to help you
             today.
           </p>

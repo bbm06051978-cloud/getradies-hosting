@@ -190,3 +190,16 @@ input::placeholder {
   color: rgba(255, 255, 255, 0.85) !important;
   opacity: 1 !important;
 }
+
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 10px;
+  }
+}
+
+

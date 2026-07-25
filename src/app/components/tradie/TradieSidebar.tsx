@@ -1,97 +1,160 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
-  Briefcase,
-  MessageSquare,
-  Clock,
-  User,
-  Settings,
-  Rocket,
-  Home,
-  CreditCard,
+  Briefcase, MessageSquare, Clock, User,
+  Settings, Home, CreditCard,
+  ChevronLeft, ChevronRight, Menu, X,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const navItems = [
-  { label: "Dashboard",   icon: Home,          href: "/dashboard-tradie" },
-  { label: "Jobs",        icon: Briefcase,     href: "/tradie-jobs"    },
-  { label: "Messages",    icon: MessageSquare, href: "/tradie-chats"   },
-  { label: "My Schedule", icon: Clock,         href: "/tradie-schedule"},
-  { label: "Profile",     icon: User,          href: "/tradie-profile" },
-  { label: "Subscription", icon: CreditCard,   href: "/tradie-subscription" },
-  { label: "Settings",    icon: Settings,      href: "#"               },
+  { label: "Dashboard",    icon: Home,          href: "/dashboard-tradie"    },
+  { label: "Jobs",         icon: Briefcase,     href: "/tradie-jobs"         },
+  { label: "Messages",     icon: MessageSquare, href: "/tradie-chats"        },
+  { label: "My Schedule",  icon: Clock,         href: "/tradie-schedule"     },
+  { label: "Profile",      icon: User,          href: "/tradie-profile"      },
+  { label: "Subscription", icon: CreditCard,    href: "/tradie-subscription" },
+  { label: "Settings",     icon: Settings,      href: "#"                    },
 ];
 
 export function TradieSidebar() {
-const [user, setUser] = useState<{ name: string } | null>(null);
-  const [profile, setProfile] = useState<{ specialty: string; isVerified: boolean; rating: number; totalReviews: number } | null>(null);
+  const [collapsed,   setCollapsed]   = useState(false);
+  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const [isMobile,    setIsMobile]    = useState(false);
+  const [user,        setUser]        = useState<{ name: string } | null>(null);
+  const [profile,     setProfile]     = useState<{ specialty: string; isVerified: boolean; rating: number } | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => { if (data.user) setUser(data.user); })
-      .catch(() => {});
-
-    fetch("/api/tradie/profile")
-      .then((res) => res.json())
-      .then((data) => { if (data.profile) setProfile(data.profile); })
-      .catch(() => {});
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  return (
-    <aside className="w-60 min-h-screen bg-white border-r border-gray-100 flex flex-col flex-shrink-0">
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then(r => r.json()).then(d => { if (d.user) setUser(d.user); }).catch(() => {});
+    fetch("/api/tradie/profile").then(r => r.json()).then(d => { if (d.profile) setProfile(d.profile); }).catch(() => {});
+  }, []);
+
+  const isActive = (href: string) =>
+    href === "/dashboard-tradie" ? pathname === "/dashboard-tradie" : pathname.startsWith(href);
+
+  const NavContent = () => (
+    <>
       {/* Logo */}
-      <div className="p-4 border-b border-gray-100">
-        <Link href="/dashboard-tradie">
-          <div className="relative h-14 w-40">
-            <Image
-              src="/imports/GeTradie_Logo1111.png"
-              alt="GeTradie"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-        </Link>
+      <div className={`border-b border-gray-100 flex items-center ${collapsed && !isMobile ? "p-3 justify-center" : "p-5"}`}>
+        <Link href="/dashboard-tradie" className="flex items-center gap-2">
+<div className="relative h-15 w-37">
+            <img src="/imports/GeTradie_Logo1111.png" alt="GeTradie" style={{ objectFit: "contain", height: "100%", width: "100%" }}/>
+          </div>        </Link>
+        {isMobile && (
+          <button onClick={() => setMobileOpen(false)} className="ml-auto text-gray-400 hover:text-gray-600">
+            <X size={20}/>
+          </button>
+        )}
       </div>
 
-      
+
       {/* Nav */}
-      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group text-gray-600 hover:bg-slate-50 hover:text-gray-900`}
+            <Link key={item.label} href={item.href}
+              title={collapsed && !isMobile ? item.label : ""}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group ${
+                isActive(item.href)
+                  ? "bg-orange-500 text-white"
+                  : "text-gray-600 hover:bg-slate-50 hover:text-gray-900"
+              } ${collapsed && !isMobile ? "justify-center" : ""}`}
             >
-              <div className="flex items-center gap-3">
-                <Icon
-                  size={17}
-                  className="text-gray-400 group-hover:text-blue-900"
-                />
-                {item.label}
-              </div>
-              
+              <Icon size={17} className="flex-shrink-0"/>
+              {(!collapsed || isMobile) && item.label}
             </Link>
           );
         })}
       </nav>
 
       {/* Get More Jobs promo */}
-      <div className="m-3 bg-blue-900 rounded-2xl p-4 text-white relative overflow-hidden">
-        <div className="absolute right-2 top-2 text-4xl opacity-30">🚀</div>
-        <p className="font-bold text-sm text-yellow-400">Get More Jobs</p>
-        <p className="text-xs text-blue-200 mt-1 leading-relaxed">
-          Increase your visibility and get more leads daily.
-        </p>
-        <button className="mt-3 w-full bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold text-xs py-2 rounded-lg transition-colors flex items-center justify-center gap-1">
-          <Rocket size={12} />
-          Upgrade Now →
+      {(!collapsed || isMobile) && (
+        <div className="m-3 bg-blue-900 rounded-2xl p-4 text-white relative overflow-hidden">
+          <div className="absolute right-2 top-2 text-3xl opacity-20">🚀</div>
+          <p className="font-bold text-sm text-yellow-400">Get More Jobs</p>
+          <p className="text-xs text-blue-200 mt-1 leading-relaxed">
+            Upgrade your plan to get more leads daily.
+          </p>
+          <Link href="/tradie-subscription">
+            <button className="mt-3 w-full bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold text-xs py-2 rounded-lg transition-colors">
+              Upgrade Plan →
+            </button>
+          </Link>
+        </div>
+      )}
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile hamburger */}
+      {isMobile && (
+        <button
+          onClick={() => setMobileOpen(true)}
+          style={{
+            position: "fixed", top: "12px", left: "12px", zIndex: 9990,
+            background: "#F97316", color: "white",
+            border: "none", borderRadius: "10px",
+            width: "40px", height: "40px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+          }}
+        >
+          <Menu size={20}/>
         </button>
-      </div>
-    </aside>
+      )}
+
+      {/* Mobile overlay */}
+      {isMobile && mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          style={{
+            position: "fixed", inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            zIndex: 9991,
+          }}
+        />
+      )}
+
+      {/* Mobile sidebar */}
+      {isMobile ? (
+        <div style={{
+          position: "fixed", top: 0, left: 0, bottom: 0,
+          width: "260px", background: "white",
+          zIndex: 9992, display: "flex", flexDirection: "column",
+          transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.3s ease",
+          boxShadow: "4px 0 20px rgba(0,0,0,0.1)",
+        }}>
+          <NavContent/>
+        </div>
+      ) : (
+        /* Desktop sidebar */
+        <aside
+          style={{ transition: "width 0.3s ease" }}
+          className={`relative min-h-screen bg-white border-r border-gray-100 flex flex-col flex-shrink-0 ${collapsed ? "w-16" : "w-60"}`}
+        >
+          <button
+            onClick={() => setCollapsed(c => !c)}
+            className="absolute -right-3 top-20 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-shadow z-10"
+          >
+            {collapsed ? <ChevronRight size={12} className="text-gray-500"/> : <ChevronLeft size={12} className="text-gray-500"/>}
+          </button>
+          <NavContent/>
+        </aside>
+      )}
+    </>
   );
 }

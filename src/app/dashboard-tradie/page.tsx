@@ -165,46 +165,11 @@ if (data.subscription) setSubscription(data.subscription);
 
         <div className="p-6 flex-1">
 
-          {/* Welcome */}
-          <div className="flex items-start justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Welcome back, {user?.name?.split(" ")[0] || "there"}! 👋
-              </h2>
-              <p className="text-gray-500 mt-1 text-sm">
-                Here's what's happening with your business today.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {subscription.plan === "Free" ? (
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold ${
-                  subscription.freeQuotesUsed >= 3
-                    ? "bg-red-50 border border-red-300 text-red-700"
-                    : "bg-yellow-50 border border-yellow-200 text-yellow-700"
-                }`}>
-                  {subscription.freeQuotesUsed >= 3
-                    ? "⚠️ No free quotes left"
-                    : `🎉 ${3 - subscription.freeQuotesUsed} free quote${3 - subscription.freeQuotesUsed !== 1 ? "s" : ""} left`}
-                  <Link href="/tradie-subscription">
-                    <button className="bg-orange-500 text-white px-2 py-1 rounded-lg text-xs font-bold ml-1">
-                      Subscribe
-                    </button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 bg-green-50 border border-green-200 px-3 py-2 rounded-xl text-xs font-semibold text-green-700">
-                  ✅ {subscription.plan} Plan
-                  <span className="text-gray-400 font-normal">
-                    · {subscription.expiry ? new Date(subscription.expiry).toLocaleDateString("en-AU", { day: "numeric", month: "short" }) : "—"}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
+          
 
 
 {/* GeTradie Points Banner */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-500 rounded-2xl p-4 mb-6 flex items-center gap-6 shadow-lg">
+          <div className="bg-gradient-to-r from-blue-500 to-blue-500 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-lg">
             {/* Points + Badge */}
             <div>
               <p className="text-orange-100 text-xs font-semibold uppercase tracking-widest mb-1">Your GeTradie Points</p>
@@ -221,7 +186,8 @@ if (data.subscription) setSubscription(data.subscription);
               </div>
             </div>
             {/* Divider */}
-            <div className="w-px h-10 bg-orange-400"/>
+              <div className="hidden sm:block w-px h-10 bg-orange-400"/>
+              <div className="sm:hidden w-full h-px bg-orange-400"/>
             {/* Earn more info */}
             <div className="flex-1">
               <div className="overflow-hidden">

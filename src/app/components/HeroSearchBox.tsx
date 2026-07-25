@@ -81,8 +81,8 @@ export function HeroSearchBox({ onEstimate, loading }: Props) {
         position: "absolute",
         inset: "-2px",
         borderRadius: "18px",
-        background: `linear-gradient(135deg, ${glowColor}, rgba(99,102,241,0.3))`,
-        filter: "blur(8px)",
+        background: `linear-gradient(135deg, ${glowColor}, rgba(99,102,241,0.1))`,
+        filter: "blur(4px)",
         transition: "all 0.4s ease",
         zIndex: 0,
       }}/>
@@ -104,9 +104,9 @@ export function HeroSearchBox({ onEstimate, loading }: Props) {
             ? "1.5px solid rgba(249,115,22,0.6)"
             : "1.5px solid rgba(255,255,255,0.25)",
           borderRadius: "16px",
-          padding: "6px",
+          padding: "4px",
           flexWrap: "wrap",
-          gap: "6px",
+          gap: "4px",
           boxShadow: isFocused
             ? "0 8px 40px rgba(249,115,22,0.2), inset 0 1px 0 rgba(255,255,255,0.15)"
             : "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)",
@@ -143,7 +143,7 @@ export function HeroSearchBox({ onEstimate, loading }: Props) {
             border: "none",
             outline: "none",
             color: "#FFFFFF",
-            fontSize: "14px",
+            fontSize: "12px",
             letterSpacing: "0.01em",
           }}
             />
@@ -160,7 +160,7 @@ export function HeroSearchBox({ onEstimate, loading }: Props) {
             color: "#0047ff",
             border: "none",
             borderRadius: "12px",
-            padding: "10px 14px",
+            padding: "7px 12px",
             fontSize: "12px",
             fontWeight: 700,
             cursor: loading ? "not-allowed" : "pointer",
@@ -177,21 +177,7 @@ export function HeroSearchBox({ onEstimate, loading }: Props) {
         </button>
       </div>
 
-      {/* Sparkle hints */}
-      {!isFocused && !job && (
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          marginTop: "10px",
-          paddingLeft: "4px",
-        }}>
-          <Sparkles size={13} color="#F97316"/>
-          <span style={{ fontSize: "14px", color: "#FFFFFF", fontWeight: 600 }}>
-            Powered by AI · Accurate to 80% · Free to use
-          </span>
-        </div>
-      )}
+      
     </div>
   );
 }

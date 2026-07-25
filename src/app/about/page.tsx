@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Us — GeTradie | Australia's Smarter Tradie Marketplace",
+  title: "About Us — GeTradie | Australia's Only AI-Powered Tradie Marketplace",
   description: "Learn about GeTradie — the Australian platform connecting homeowners with verified local tradies using AI-powered price estimates. Our mission, values and story.",
 };
 
@@ -90,20 +90,20 @@ export default function AboutPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="w-full max-w-full py-20 lg:py-[18rem] overflow-hidden bg-[url('/imports/aboutus.png')] bg-contain lg:bg-cover bg-top bg-no-repeat">
+      <section className="w-full max-w-full py-16 lg:py-[15rem] overflow-hidden bg-[url('/imports/aboutus.png')] bg-contain lg:bg-cover bg-top bg-no-repeat">
         {/* Transparent layout to let the original background shine perfectly */}
             <div className="absolute inset-0 bg-blue-950/40" />
         
         <div className="relative max-w-4xl mx-auto px-4 text-left">
-          <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             Our Story
           </span>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
+          <h1 className="text-4xl lg:text-4xl font-bold text-white mb-5 leading-tight">
             Australia's Smarter Way to <br />
 	    <span className="text-orange-400">Hire a Tradie</span>
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mb-8">
-            GeTradie was built out of frustration. Finding a reliable tradie in Australia meant endless phone calls, vague quotes and no way to know if you were being overcharged. We built a better way.
+          <p className="text-blue-100 text-sm max-w-2xl mb-8">
+            GeTradie is Australia&apos;s only AI-powered tradie marketplace — the first platform to combine intelligent price estimation with verified tradie connections. Built out of frustration with endless phone calls, vague quotes and no way to know if you were being overcharged. We built a better way.
           </p>
           <Link href="/signup">
             <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3.5 rounded-xl font-bold text-sm transition-colors shadow-lg inline-flex items-center gap-2">

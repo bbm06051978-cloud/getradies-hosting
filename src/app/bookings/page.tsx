@@ -95,9 +95,9 @@ const refetchBookings = async () => {
     }
   };
 
-  const filtered = bookingIdParam
-    ? bookings.filter(b => b.id === bookingIdParam)
-    : filter === "ALL" ? bookings : bookings.filter(b => b.status === filter);
+  const filtered = filter === "ALL"
+    ? bookings
+    : bookings.filter(b => b.status === filter);
   const upcoming = bookings.filter(b => b.status === "CONFIRMED" && new Date(b.scheduledAt) >= new Date()).length;
   const completed = bookings.filter(b => b.status === "COMPLETED").length;
   const cancelled = bookings.filter(b => b.status === "CANCELLED").length;
@@ -132,7 +132,7 @@ const refetchBookings = async () => {
           </div>
 
           <div className="flex gap-2 mb-6 bg-white rounded-xl p-1 shadow-sm border border-gray-100 w-fit flex-wrap">
-            {["ALL", "CONFIRMED", "PENDING_CONFIRMATION", "COMPLETED", "CANCELLED", "DISPUTED"].map(f => (
+            {["ALL", "COMPLETED", "PENDING", "CANCELLED", "DISPUTED"].map(f => (
               <button key={f} onClick={() => setFilter(f)}
                 className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${filter === f ? "bg-blue-900 text-white" : "text-gray-500 hover:text-gray-700"}`}>
                 {f === "ALL" ? "All" : f === "PENDING_CONFIRMATION" ? "To Confirm" : f.charAt(0) + f.slice(1).toLowerCase()}

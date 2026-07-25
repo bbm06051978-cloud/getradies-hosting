@@ -85,8 +85,8 @@ function IPhoneFrame({ step }: { step: typeof steps[0] }) {
         {/* iPhone outer shell */}
         <div style={{
           position: "relative", zIndex: 1,
-          width: "220px", height: "460px",
-          borderRadius: "44px",
+          width: "160px", height: "340px",
+          borderRadius: "32px",
           background: "linear-gradient(145deg, #2a2a2a, #1a1a1a)",
           boxShadow: `0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 0 1px rgba(255,255,255,0.05), 0 20px 40px ${step.color}30`,
           padding: "10px",
@@ -100,7 +100,7 @@ function IPhoneFrame({ step }: { step: typeof steps[0] }) {
           {/* Inner bezel */}
           <div style={{
             width: "100%", height: "100%",
-            borderRadius: "36px",
+            borderRadius: "26px",
             background: "#000",
             overflow: "hidden",
             position: "relative",
@@ -252,12 +252,12 @@ export function HowItWorks() {
           
 <br/>         
 
-          <h2 className="inline-block text-4xl lg:text-5xl font-bold text-gray-900 bg-blue-100/50 backdrop-blur-md border border-blue-200 px-6 py-3 rounded-2xl mb-4">
+          <h2 className="inline-block text-2xl lg:text-3xl font-bold text-gray-900 bg-blue-100/50 backdrop-blur-md border border-blue-200 px-4 py-2 rounded-2xl mb-4">
             How <span className="text-orange-500">GeTradie</span> Works
           </h2>
 
 
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+          <p className="text-black-500 text-sm max-w-2xl mx-auto leading-relaxed">
             From AI-powered estimates to job completion — simple, transparent and stress-free.
           </p>
         </motion.div>
@@ -295,7 +295,7 @@ export function HowItWorks() {
                       {step.number}
                     </motion.span>
                   </div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">{step.title}</h3>
+                  <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
                   <p className="text-gray-500 text-lg leading-relaxed mb-6">{step.description}</p>
                   <div className="flex items-center gap-2">
                     <motion.div animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 2, repeat: Infinity }}

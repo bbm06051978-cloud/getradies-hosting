@@ -24,6 +24,7 @@ type Notification = {
 
 export function TradieTopbar() {
   const [user, setUser]                       = useState<TradieUser | null>(null);
+  const [subscription, setSubscription] = useState({ plan: "Free", freeQuotesUsed: 0, expiry: null as string | null });
   const [notifications, setNotifications]     = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount]         = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -31,10 +32,19 @@ export function TradieTopbar() {
   const dropdownRef                           = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/tradie/profile")
+    fetch("/api/auth/me")
       .then(r => r.json())
       .then(d => { if (d.user) setUser(d.user); })
       .catch(() => {});
+    fetch("/api/tradie/profile")
+      .then(r => r.json())
+      .then(d => {
+        if (d.profile) setSubscription({
+          plan: d.profile.subscriptionPlan ?? "Free",
+          freeQuotesUsed: d.profile.freeQuotesUsed ?? 0,
+          expiry: d.profile.subscriptionExpiry ?? null,
+        });
+      }).catch(() => {});
 
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000);
@@ -102,12 +112,36 @@ export function TradieTopbar() {
 
   return (
     <div className="bg-white border-b border-gray-100 px-8 py-3 flex items-center justify-between sticky top-0 z-10">
-      {/* Location */}
-      <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-gray-300 transition-colors">
-        <MapPin size={15} className="text-yellow-500" />
-        <span className="text-sm font-medium text-gray-700">Sydney, NSW</span>
-        <ChevronDown size={15} className="text-gray-400" />
-      </div>
+      {/* Location + Welcome */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-gray-300 transition-colors">
+            <MapPin size={15} className="text-yellow-500" />
+            <span className="text-sm font-medium text-gray-700">Sydney, NSW</span>
+            <ChevronDown size={15} className="text-gray-400" />
+          </div>
+          <div className="hidden md:flex items-center">
+            {subscription.plan === "Free" ? (
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold ${
+                subscription.freeQuotesUsed >= 3
+                  ? "bg-red-50 border border-red-300 text-red-700"
+                  : "bg-yellow-50 border border-yellow-200 text-yellow-700"
+              }`}>
+                {subscription.freeQuotesUsed >= 3
+                  ? "⚠️ No free quotes left"
+                  : `🎉 ${3 - subscription.freeQuotesUsed} free quote${3 - subscription.freeQuotesUsed !== 1 ? "s" : ""} left`}
+                <a href="/tradie-subscription">
+                  <button className="bg-orange-500 text-white px-2 py-1 rounded-lg text-xs font-bold ml-1">
+                    Subscribe
+                  </button>
+                </a>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 bg-green-50 border border-green-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-green-700">
+                ✅ {subscription.plan} Plan
+              </div>
+            )}
+          </div>
+        </div>
 
       {/* Right */}
       <div className="flex items-center gap-4" ref={dropdownRef}>

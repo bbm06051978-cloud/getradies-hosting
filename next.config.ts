@@ -8,6 +8,6 @@ const nextConfig = withPWA({
   disable: process.env.NODE_ENV === "development",
 })({
   turbopack: {},
-  allowedDevOrigins: ["172.20.10.2", "172.21.208.1"],
+  allowedDevOrigins: ["172.20.10.2", "172.21.208.1", "*.ngrok-free.app", "*.ngrok-free.dev", "*.ngrok.io"],
 });
 export default nextConfig;

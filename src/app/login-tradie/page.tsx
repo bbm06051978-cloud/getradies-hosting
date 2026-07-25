@@ -151,9 +151,9 @@ export default function TradieLoginPage() {
 
             {/* Forgot password */}
             <div className="flex justify-end">
-              <a href="#" className="text-xs text-orange-600 hover:text-orange-800 font-medium">
-                Forgot password?
-              </a>
+              <a href="/forgot-password" className="text-xs text-orange-600 hover:text-orange-800 font-medium">
+                  Forgot password?
+                </a>
             </div>
 
             {/* Submit */}
