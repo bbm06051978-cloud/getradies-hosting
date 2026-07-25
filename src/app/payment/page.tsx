@@ -16,11 +16,11 @@ import { Topbar } from "@/app/components/dashboard/Topbar";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-const LOCK_OPTIONS = [
-  { amount: 50,  points: 1,  label: "$50",  desc: "Basic protection",    badge: "🥉" },
-  { amount: 100, points: 2,  label: "$100", desc: "Standard protection", badge: "🥈", recommended: true },
-  { amount: 250, points: 5,  label: "$250", desc: "Strong protection",   badge: "🥇" },
-  { amount: 500, points: 10, label: "$500", desc: "Maximum protection",  badge: "🏆" },
+const ALL_LOCK_OPTIONS = [
+  { amount: 50,  points: 1,  label: "$50",  desc: "Basic protection",   badge: "🥉" },
+  { amount: 100, points: 2,  label: "$100", desc: "Standard protection",badge: "🥈" },
+  { amount: 250, points: 5,  label: "$250", desc: "Strong protection",  badge: "🥇" },
+  { amount: 500, points: 10, label: "$500", desc: "Maximum protection", badge: "🏆" },
 ];
 
 function PaymentForm({
@@ -116,14 +116,15 @@ function PaymentPageInner() {
   const router       = useRouter();
   const quoteId      = searchParams.get("quoteId") || "";
 
-  const [jobTitle,    setJobTitle]    = useState("");
+ const [jobTitle,    setJobTitle]    = useState("");
   const [tradie,      setTradie]      = useState("");
-  const [quoteAmount, setQuoteAmount] = useState(0);
   const [loading,     setLoading]     = useState(true);
   const [error,       setError]       = useState("");
   const [success,     setSuccess]     = useState(false);
 
-  // Lock amount selection
+  const [quoteAmount,   setQuoteAmount]   = useState(0);
+  // Lock amount selection — only show options <= quote amount
+  const LOCK_OPTIONS = ALL_LOCK_OPTIONS.filter(o => o.amount <= quoteAmount);
   const [selectedLock,  setSelectedLock]  = useState<number | null>(null);
   const [clientSecret,  setClientSecret]  = useState("");
   const [paymentReady,  setPaymentReady]  = useState(false);
