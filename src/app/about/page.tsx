@@ -102,7 +102,7 @@ export default function AboutPage() {
             Australia's Smarter Way to <br />
 	    <span className="text-orange-400">Hire a Tradie</span>
           </h1>
-          <p className="text-blue-100 text-sm max-w-2xl mb-8">
+          <p className="text-white text-sm max-w-2xl mb-8">
             GeTradie is Australia&apos;s only AI-powered tradie marketplace — the first platform to combine intelligent price estimation with verified tradie connections. Built out of frustration with endless phone calls, vague quotes and no way to know if you were being overcharged. We built a better way.
           </p>
           <Link href="/signup">

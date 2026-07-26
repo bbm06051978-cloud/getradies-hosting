@@ -122,7 +122,7 @@ export default function ServicesPage() {
           <h1 className="text-4xl lg:text-4xl font-semibold text-white mb-5 leading-tight">
             Find the Right <span className="text-orange-400">Tradie</span> for Any Job
           </h1>
-          <p className="text-blue-100 text-sm max-w-2xl mb-8">
+          <p className="text-white text-sm max-w-2xl mb-8">
             GeTradie connects you with verified local tradies across 7 major trade categories. Get AI-powered estimates and fixed-price quotes — all in one place.
           </p>
           <div className="flex flex-wrap gap-3 justify-start">
