@@ -17,10 +17,10 @@ import { Topbar } from "@/app/components/dashboard/Topbar";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const ALL_LOCK_OPTIONS = [
-  { amount: 50,  points: 1,  label: "$50",  desc: "Basic protection",   badge: "🥉" },
-  { amount: 100, points: 2,  label: "$100", desc: "Standard protection",badge: "🥈" },
-  { amount: 250, points: 5,  label: "$250", desc: "Strong protection",  badge: "🥇" },
-  { amount: 500, points: 10, label: "$500", desc: "Maximum protection", badge: "🏆" },
+  { amount: 50,  points: 1,  label: "$50",  desc: "Basic protection",   badge: "🥉", recommended: false },
+  { amount: 100, points: 2,  label: "$100", desc: "Standard protection",badge: "🥈", recommended: false },
+  { amount: 250, points: 5,  label: "$250", desc: "Strong protection",  badge: "🥇", recommended: false },
+  { amount: 500, points: 10, label: "$500", desc: "Maximum protection", badge: "🏆", recommended: false },
 ];
 
 function PaymentForm({
