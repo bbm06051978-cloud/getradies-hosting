@@ -202,8 +202,10 @@ html {
   }
 }
 
-/* Fix for fixed navbar overlap on all pages */
-body > div > nav + * {
-  padding-top: 80px;
+/* Fix for fixed navbar overlap on mobile only */
+@media (max-width: 768px) {
+  body > div > nav + * {
+    padding-top: 80px;
+  }
 }
 

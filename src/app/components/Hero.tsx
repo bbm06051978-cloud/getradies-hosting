@@ -134,7 +134,16 @@ export function Hero() {
               borderRadius: "16px",
               padding: "16px 20px",
               maxWidth: "520px",
+              position: "relative",
             }}>
+              <button onClick={() => setEstimate("")}
+                style={{
+                  position: "absolute", top: "10px", right: "10px",
+                  background: "rgba(255,255,255,0.15)", border: "none",
+                  borderRadius: "6px", width: "24px", height: "24px",
+                  color: "white", cursor: "pointer", fontSize: "14px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>✕</button>
               <p style={{ fontSize: "11px", fontWeight: 700, color: "rgba(249,115,22,0.9)", letterSpacing: ".08em", textTransform: "uppercase", marginBottom: "8px" }}>
                 AI Estimate for &ldquo;{jobText}&rdquo;
               </p>

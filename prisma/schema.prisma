@@ -26,6 +26,8 @@ model User {
   notifications    Notification[]
   reviews          Review[]
   tradieProfile    TradieProfile?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
 }
 
 model TradieProfile {
