@@ -142,10 +142,9 @@ export default function HowItWorksPage() {
 
       {/* Hero */}
       <section className="relative py-14 lg:py-[14rem] overflow-hidden bg-[url('/imports/HowItWork.png')] bg-cover bg-[center]">
-        <div className="absolute inset-0 bg-blue-900/30"/>
-        <div className="relative max-w-4xl mx-auto px-6 text-left">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
+        <div className="absolute inset-0 bg-blue-950/40" />
+        <div className="relative max-w-4xl mx-auto px-4 text-left">
+          <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-5 uppercase tracking-widest">
               Simple 5-Step Process
             </span>
             <h1 className="text-4xl lg:text-4xl font-bold text-white mb-5 leading-tight">
@@ -159,7 +158,7 @@ export default function HowItWorksPage() {
                 Post a Job Free <ArrowRight size={16}/>
               </button>
             </Link>
-          </motion.div>
+         
         </div>
       </section>
 
