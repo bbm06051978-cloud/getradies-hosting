@@ -7,10 +7,9 @@ export async function POST() {
 }
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
+  const { searchParams, origin } = new URL(req.url);
   const redirect = searchParams.get("redirect") || "/login";
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const response = NextResponse.redirect(new URL(redirect, baseUrl));
+  const response = NextResponse.redirect(new URL(redirect, origin));
   response.cookies.delete("token");
   response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
   return response;
