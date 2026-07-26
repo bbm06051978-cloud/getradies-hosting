@@ -35,7 +35,7 @@ export default function CostGuidesPage() {
             How Much Do <span className="text-orange-400">Tradies</span> Cost in Australia?
           </h1>
           
-          <p className="text-white text-sm mb-8 max-w-2xl">
+          <p className="text-white text-lg mb-8 max-w-2xl">
             Real price ranges based on thousands of Australian jobs. Know what to expect before hiring any tradie.
           </p>
 

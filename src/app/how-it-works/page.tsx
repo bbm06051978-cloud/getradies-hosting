@@ -150,7 +150,7 @@ export default function HowItWorksPage() {
             <h1 className="text-4xl lg:text-4xl font-bold text-white mb-5 leading-tight">
               How <span className="text-orange-400">GeTradie</span> Works
             </h1>
-            <p className="text-white text-sm max-w-2xl leading-relaxed mb-8">
+            <p className="text-white text-lg max-w-2xl leading-relaxed mb-8">
               From AI-powered estimates to job completion — GeTradie makes hiring a tradie simple, transparent and stress-free.
             </p>
             <Link href="/login">

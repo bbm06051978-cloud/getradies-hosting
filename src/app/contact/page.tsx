@@ -109,7 +109,7 @@ export default function ContactPage() {
             We are Here to <span className="text-orange-400">Help</span>
           </h1>
           
-          <p className="text-white font-small text-base lg:text-sm max-w-xl leading-relaxed drop-shadow-sm">
+          <p className="text-white font-small text-base lg:text-lg max-w-xl leading-relaxed drop-shadow-sm">
             Have a question, need support or want to partner with us? Our team is ready to help. We respond to all enquiries within 24 hours.
           </p>
         </div>
