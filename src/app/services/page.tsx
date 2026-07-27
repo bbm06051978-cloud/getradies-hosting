@@ -115,7 +115,7 @@ export default function ServicesPage() {
         {/* Transparent layout to let the original background shine perfectly */}
             <div className="absolute inset-0 bg-blue-950/40" />
 
-        <div className="relative max-w-4xl mx-auto px-6 text-left">
+        <div className="relative max-w-4xl mx-auto px-4 text-left -mt-16">
           <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             7 Trade Categories
           </span>

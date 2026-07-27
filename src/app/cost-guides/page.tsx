@@ -26,7 +26,7 @@ export default function CostGuidesPage() {
         <div className="absolute inset-0 bg-blue-950/40" />
         
         {/* Container: Left-aligned and pulled up by negative margin */}
-        <div className="relative max-w-4xl mx-auto px-6 text-left">
+        <div className="relative max-w-4xl mx-auto px-4 text-left -mt-19">
           <span className="inline-block bg-orange-500/80 backdrop-blur-sm text-blue-200 text-xs font-semibold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             2024 Australian Pricing Guide
           </span>
