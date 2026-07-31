@@ -21,12 +21,12 @@ export default function CostGuidesPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative py-14 lg:py-[15rem] overflow-hidden bg-[url('/imports/costguide.png')] bg-cover bg-[center]">
+      <section className="page-hero relative py-14 lg:py-[15rem] overflow-hidden bg-[url('/imports/costguide.png')] bg-cover bg-[center]">
         {/* Overlay to ensure text readability over the image */}
         <div className="absolute inset-0 bg-blue-950/40" />
         
         {/* Container: Left-aligned and pulled up by negative margin */}
-        <div className="relative max-w-4xl mx-auto px-4 text-left -mt-19">
+        <div className="relative max-w-4xl mx-auto px-4 text-left">
           <span className="inline-block bg-orange-500/80 backdrop-blur-sm text-blue-200 text-xs font-semibold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             2024 Australian Pricing Guide
           </span>
@@ -193,3 +193,5 @@ export default function CostGuidesPage() {
     </div>
   );
 }
+
+

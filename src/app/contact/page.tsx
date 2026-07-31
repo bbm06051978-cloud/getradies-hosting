@@ -97,10 +97,10 @@ export default function ContactPage() {
 
 
       {/* Hero Section */}
-	<section className="relative py-16 lg:py-[17rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center]">
+	<section className="page-hero relative py-16 lg:py-[17rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center]">
 
         <div className="absolute inset-0 bg-blue-950/40" />
-        <div className="relative max-w-4xl mx-auto px-4 text-left -mt-16">
+        <div className="relative max-w-4xl mx-auto px-4 text-left">
           <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest shadow-sm">
             Get in Touch
           </span>
@@ -383,3 +383,5 @@ export default function ContactPage() {
     </div>
   );
 }
+
+

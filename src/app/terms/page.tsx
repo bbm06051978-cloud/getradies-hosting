@@ -7,7 +7,7 @@ export default function TermsPage() {
       <Navbar/>
 
       {/* Hero */}
-      <section className="bg-[#060d4a] py-16 pt-28">
+      <section className="page-hero bg-[#060d4a] py-16 pt-28">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h1 className="text-4xl font-bold text-white mb-3">Terms of Service</h1>
           <p className="text-blue-200 text-sm">Last updated: July 2026 · Governed by the laws of New South Wales, Australia</p>
@@ -286,3 +286,4 @@ export default function TermsPage() {
     </div>
   );
 }
+

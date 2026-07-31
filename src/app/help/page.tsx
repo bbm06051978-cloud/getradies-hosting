@@ -188,7 +188,7 @@ export default function HelpPage() {
       <Navbar/>
 
       {/* Hero */}
-      <section className="relative py-20 lg:py-28 overflow-hidden" style={{
+      <section className="page-hero relative py-20 lg:py-28 overflow-hidden" style={{
         background: "linear-gradient(135deg, #060d4a 0%, #1d4ed8 60%, #0369a1 100%)",
       }}>
         <div className="absolute inset-0 opacity-5" style={{
@@ -281,3 +281,4 @@ export default function HelpPage() {
     </div>
   );
 }
+

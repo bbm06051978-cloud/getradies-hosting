@@ -1,8 +1,26 @@
+
 /* fonts.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 /* tailwind.css */
 @import 'tailwindcss' source(none);
+
+:root {
+  --navbar-height: 80px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --navbar-height: 70px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .page-hero {
+    padding-top: 120px !important;
+  }
+}
+
 @source '../**/*.{js,ts,jsx,tsx}';
 
 @import 'tw-animate-css';
@@ -207,12 +225,9 @@ html {
   body > div > nav + * {
     padding-top: 80px;
   }
-  
-  /* Push hero content down on mobile for all public pages */
-  section:first-of-type .relative.max-w-4xl,
-  section:first-of-type .relative.max-w-6xl,
-  section:first-of-type .relative.max-w-7xl {
-    padding-top: 60px !important;
+  body > div > nav + * > section:first-child {
+    padding-top: 120px !important;
+    min-height: 300px;
   }
 }
 

@@ -91,10 +91,10 @@ export default function AboutPage() {
 
       {/* Hero */}
 
-<section className="relative py-14 lg:py-[14rem] overflow-hidden bg-[url('/imports/aboutus.png')] bg-cover bg-[center]">
+<section className="page-hero relative pb-14 lg:py-[14rem] overflow-hidden bg-[url('/imports/aboutus.png')] bg-cover bg-[center]" >
         <div className="absolute inset-0 bg-blue-950/40" />
         
-        <div className="relative max-w-4xl mx-auto px-4 text-left -mt-16">
+        <div className="relative max-w-4xl mx-auto px-4 text-left ">
           <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-5 uppercase tracking-widest">
             Our Story
           </span>
@@ -359,3 +359,6 @@ export default function AboutPage() {
     </div>
   );
 }
+
+
+
