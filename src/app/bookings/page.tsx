@@ -95,7 +95,9 @@ const refetchBookings = async () => {
     }
   };
 
-  const filtered = filter === "ALL"
+  const filtered = bookingIdParam
+    ? bookings.filter(b => b.id === bookingIdParam)
+    : filter === "ALL"
     ? bookings
     : bookings.filter(b => b.status === filter);
   const upcoming = bookings.filter(b => b.status === "CONFIRMED" && new Date(b.scheduledAt) >= new Date()).length;

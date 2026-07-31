@@ -254,7 +254,7 @@ if (data.subscription) setSubscription(data.subscription);
             <div className="lg:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-base text-gray-900">Recent Job Leads</h3>
-                <Link href="#" className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800">
+                <Link href="/tradie-jobs" className="text-blue-600 text-sm font-medium flex items-center gap-1 hover:text-blue-800">
                   View All <ArrowRight size={14} />
                 </Link>
               </div>

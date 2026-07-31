@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowLeft, Briefcase, Calendar, Clock, MapPin,
@@ -20,11 +21,12 @@ type Booking = {
   payment: { id: string; amount: number; status: string; } | null;
 };
 
-export default function TradieBookingsPage() {
+function TradieBookingsInner() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+const searchParams = useSearchParams();
   const [filter, setFilter] = useState("ALL");
   const [tradiePhoto, setTradiePhoto] = useState<string | null>(null);
   const [tradieName, setTradieName] = useState<string>("");
@@ -91,7 +93,12 @@ const refetchBookings = async () => {
     }
   };
 
-  const filtered = filter === "ALL" ? bookings : bookings.filter(b => b.status === filter);
+  const bookingIdParam = searchParams.get("bookingId");
+  const filtered = bookingIdParam
+    ? bookings.filter(b => b.id === bookingIdParam)
+    : filter === "ALL"
+    ? bookings
+    : bookings.filter(b => b.status === filter);
   const upcoming = bookings.filter(b => b.status === "CONFIRMED" && new Date(b.scheduledAt) >= new Date()).length;
   const completed = bookings.filter(b => b.status === "COMPLETED").length;
   const totalEarnings = bookings.filter(b => b.status === "COMPLETED").reduce((sum, b) => sum + b.totalAmount, 0);
@@ -337,4 +344,8 @@ const refetchBookings = async () => {
       </main>
     </div>
   );
+}
+
+export default function TradieBookingsPage() {
+  return <Suspense><TradieBookingsInner/></Suspense>;
 }

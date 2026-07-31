@@ -38,6 +38,11 @@ export async function GET(req: NextRequest) {
         where: {
           trade: tradieProfile.specialty,
           status: "OPEN",
+          quotes: {
+            none: {
+              tradieProfileId,
+            },
+          },
         },
         orderBy: { createdAt: "desc" },
         take: 10,

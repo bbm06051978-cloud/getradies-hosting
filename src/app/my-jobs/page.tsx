@@ -28,7 +28,7 @@ type Job = {
   bookings: BookingRef[];
 };
 
-const STATUS_FILTERS = ["ALL", "OPEN", "BOOKED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
+const STATUS_FILTERS = ["ALL", "OPEN", "BOOKED", "COMPLETED", "CANCELLED", "DISPUTED"];
 
 function MyJobsPageInner() {
   const [jobs, setJobs]           = useState<Job[]>([]);

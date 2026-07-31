@@ -296,7 +296,7 @@ export default function TradieJobsPage() {
 
         {showActions === "none" && (
           <div className="mt-4 pt-4 border-t border-gray-100">
-            <Link href="/tradie-bookings">
+            <Link href={`/tradie-bookings?bookingId=${booking.id}`}>
               <button className="flex items-center gap-1 text-orange-500 text-xs font-semibold hover:text-orange-700">
                 Manage <ChevronRight size={13}/>
               </button>
