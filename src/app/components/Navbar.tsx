@@ -29,7 +29,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav style={{ zIndex: 9999 }} className={`fixed top-0 left-0 right-0 transition-all duration-500 ease-in-out h-20 flex items-center ${
+      <nav style={{ zIndex: 9999 }} className={`fixed top-0 left-0 right-0 transition-all duration-500 ease-in-out h-30 flex items-center ${
         scrolled
           ? "bg-[#060d4a]/40 backdrop-blur-md shadow-lg border-b border-white/10"
           : "bg-transparent border-b border-transparent"
@@ -37,21 +37,20 @@ export function Navbar() {
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between">
 
           {/* Logo + Globe */}
-          <div className="flex items-center gap-0">
-            <a href="/" className="relative h-30 w-50 flex-shrink-0 block">
+          <div className="flex items-center gap-1">
+            <a href="/" className="relative h-50 w-80 flex-shrink-0 block">
               <Image
                 src="/imports/GeTradie_Logo.png"
-              alt="GeTradie"
-              fill
-              loading="eager"
-              style={{ objectFit: "contain", objectPosition: "left" }}
-              priority
+                alt="GeTradie Logo"
+                fill
+                className="object-contain object-left"
+                priority
               />
             </a>
             <img
               src="/imports/globe.gif"
               alt=""
-              className="w-15 h-15 rounded-full hidden md:block"
+              className="w-20 h-20 rounded-full hidden md:block"
             />
           </div>
 
@@ -68,7 +67,7 @@ export function Navbar() {
                   className={`relative py-2 transition-colors duration-300 whitespace-nowrap ${
                     isActive ? "text-yellow-400" : "text-white/80 hover:text-yellow-300"
                   }`}
-                  style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "12px", fontWeight: "200" }}
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "19px", fontWeight: "400" }}
                 >
                   {link.label}
                   <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-yellow-400 transition-all duration-300 ${

@@ -207,5 +207,12 @@ html {
   body > div > nav + * {
     padding-top: 80px;
   }
+  
+  /* Push hero content down on mobile for all public pages */
+  section:first-of-type .relative.max-w-4xl,
+  section:first-of-type .relative.max-w-6xl,
+  section:first-of-type .relative.max-w-7xl {
+    padding-top: 60px !important;
+  }
 }
 
