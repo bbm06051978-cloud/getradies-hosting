@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
       take: 20,
       include: {
-        user: { select: { name: true, suburb: true, state: true } },
+        user: { select: { id: true, name: true, suburb: true, state: true } },
         _count: { select: { quotes: true } },
       },
     }),
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
       include: {
         job: {
           include: {
-            user: { select: { name: true, suburb: true, state: true } },
+            user: { select: { id: true, name: true, suburb: true, state: true } },
           },
         },
       },
@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
       include: {
         job: {
           include: {
-            user: { select: { name: true, suburb: true, state: true } },
+            user: { select: { id: true, name: true, suburb: true, state: true } },
           },
         },
       },
@@ -120,7 +120,7 @@ export async function GET(req: NextRequest) {
       include: {
         job: {
           include: {
-            user: { select: { name: true, suburb: true, state: true } },
+            user: { select: { id: true, name: true, suburb: true, state: true } },
           },
         },
       },
@@ -135,3 +135,4 @@ export async function GET(req: NextRequest) {
     serviceArea: suburbsToSearch,
   });
 }
+

@@ -21,7 +21,7 @@ type Job = {
   status: string;
   aiEstimate: string | null;
   createdAt: string;
-  user: { name: string; suburb: string; state: string };
+  user: { id: string; name: string; suburb: string; state: string };
   _count: { quotes: number };
 };
 
@@ -179,7 +179,7 @@ const [alreadyQuoted, setAlreadyQuoted] = useState(false);
                 <CheckCircle size={32} className="text-green-500 mx-auto mb-3"/>
                 <h3 className="font-bold text-green-800 mb-1">Quote Already Sent</h3>
                 <p className="text-green-600 text-sm">You have already sent a quote for this job. The homeowner will be in touch if they choose your quote.</p>
-                <Link href={`/tradie-chats?jobId=${job?.id}`}>
+                <Link href={job ? `/tradie-chats?jobId=${job.id}&receiverId=${job.user.id}&receiverName=${encodeURIComponent(job.user.name)}&jobTitle=${encodeURIComponent(job.title)}&trade=${encodeURIComponent(job.trade)}` : "#"}>
                   <button className="mt-4 bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
                     Open Chat
                   </button>

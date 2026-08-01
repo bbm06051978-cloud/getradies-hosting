@@ -10,7 +10,7 @@ import {
 import { TradieSidebar } from "@/app/components/tradie/TradieSidebar";
 import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
 
-type UserRef = { name: string; suburb: string | null; state: string | null };
+type UserRef = { id: string; name: string; suburb: string | null; state: string | null };
 type AvailableJob = {
   id: string; title: string; description: string; trade: string;
   suburb: string; state: string; status: string; aiEstimate: string | null;
@@ -227,7 +227,7 @@ export default function TradieJobsPage() {
                 <Briefcase size={12}/> View Job
               </button>
             </Link>
-            <Link href={`/tradie-chats?jobId=${quote.job.id}`}>
+            <Link href={`/tradie-chats?jobId=${quote.job.id}&receiverId=${quote.job.user.id}&receiverName=${encodeURIComponent(quote.job.user.name)}&jobTitle=${encodeURIComponent(quote.job.title)}&trade=${encodeURIComponent(quote.job.trade)}`}>
               <button className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-gray-800 border border-gray-200 hover:border-gray-400 px-3 py-2 rounded-xl transition-colors">
                 <MessageSquare size={12}/> Chat
               </button>
