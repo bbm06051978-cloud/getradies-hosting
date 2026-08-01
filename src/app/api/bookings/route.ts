@@ -75,8 +75,13 @@ export async function PATCH(req: NextRequest) {
 
   if (action === "dispute") {
     // Homeowner raises a dispute
-    await prisma.booking.update({
+    const disputeBooking = await prisma.booking.update({
       where: { id: bookingId },
+      data: { status: "DISPUTED" },
+    });
+    // Also update job status to DISPUTED
+    await prisma.job.update({
+      where: { id: disputeBooking.jobId },
       data: { status: "DISPUTED" },
     });
 

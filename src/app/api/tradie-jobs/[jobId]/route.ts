@@ -24,5 +24,13 @@ export async function GET(
 
   if (!job) return NextResponse.json({ error: "Job not found." }, { status: 404 });
 
-  return NextResponse.json({ job });
+  const tradieProfile = await prisma.tradieProfile.findUnique({
+    where: { userId: decoded.id },
+  });
+
+  const alreadyQuoted = tradieProfile ? await prisma.quote.findFirst({
+    where: { jobId, tradieProfileId: tradieProfile.id },
+  }) : null;
+
+  return NextResponse.json({ job, alreadyQuoted: !!alreadyQuoted });
 }

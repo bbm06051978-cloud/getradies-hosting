@@ -30,6 +30,7 @@ export default function TradieJobDetailPage() {
   const jobId = Array.isArray(params.jobId) ? params.jobId[0] : params.jobId;
 
   const [job, setJob]               = useState<Job | null>(null);
+const [alreadyQuoted, setAlreadyQuoted] = useState(false);
   const [loading, setLoading]       = useState(true);
   const [sending, setSending]       = useState(false);
   const [sent, setSent]             = useState(false);
@@ -47,7 +48,10 @@ export default function TradieJobDetailPage() {
     if (!jobId) return;
     fetch(`/api/tradie-jobs/${jobId}`)
       .then(r => r.json())
-      .then(d => { if (d.job) setJob(d.job); })
+      .then(d => { 
+        if (d.job) setJob(d.job);
+        if (d.alreadyQuoted) setAlreadyQuoted(true);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [jobId]);
@@ -170,11 +174,23 @@ export default function TradieJobDetailPage() {
           </div>
 
           {/* Quote form */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Send size={18} className="text-orange-500" />
-              Send Your Quote
-            </h3>
+            {alreadyQuoted ? (
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+                <CheckCircle size={32} className="text-green-500 mx-auto mb-3"/>
+                <h3 className="font-bold text-green-800 mb-1">Quote Already Sent</h3>
+                <p className="text-green-600 text-sm">You have already sent a quote for this job. The homeowner will be in touch if they choose your quote.</p>
+                <Link href={`/tradie-chats?jobId=${job?.id}`}>
+                  <button className="mt-4 bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
+                    Open Chat
+                  </button>
+                </Link>
+              </div>
+            ) : (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Send size={18} className="text-orange-500" />
+                Send Your Quote
+              </h3>
 
             {/* AI button */}
             <button
@@ -299,11 +315,12 @@ export default function TradieJobDetailPage() {
                 </button>
 
                 <p className="text-xs text-gray-400 text-center">
-                  The homeowner will see your quote alongside others and can message you before accepting.
-                </p>
-              </div>
+                    The homeowner will see your quote alongside others and can message you before accepting.
+                  </p>
+                </div>
+              )}
+            </div>
             )}
-          </div>
         </div>
       </main>
     </div>

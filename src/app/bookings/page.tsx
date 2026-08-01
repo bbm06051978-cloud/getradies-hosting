@@ -2,7 +2,7 @@
 import { LeaveReview } from "@/app/components/LeaveReview";
 import { useState, useEffect , Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowLeft, Briefcase, Calendar, Clock, MapPin,
@@ -30,6 +30,7 @@ function BookingsPageInner() {
   const [rescheduling, setRescheduling] = useState<string | null>(null);
   const [newDate, setNewDate] = useState("");
   const [filter, setFilter] = useState("ALL");
+const router = useRouter();
   const searchParams = useSearchParams();
   const bookingIdParam = searchParams.get("bookingId");
   const [reviewBooking, setReviewBooking] = useState<{ id: string; tradieName: string; jobTitle: string } | null>(null);
@@ -135,7 +136,7 @@ const refetchBookings = async () => {
 
           <div className="flex gap-2 mb-6 bg-white rounded-xl p-1 shadow-sm border border-gray-100 w-fit flex-wrap">
             {["ALL", "COMPLETED", "PENDING", "CANCELLED", "DISPUTED"].map(f => (
-              <button key={f} onClick={() => setFilter(f)}
+              <button key={f} onClick={() => { setFilter(f); router.replace("/bookings"); }}
                 className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${filter === f ? "bg-blue-900 text-white" : "text-gray-500 hover:text-gray-700"}`}>
                 {f === "ALL" ? "All" : f === "PENDING_CONFIRMATION" ? "To Confirm" : f.charAt(0) + f.slice(1).toLowerCase()}
               </button>

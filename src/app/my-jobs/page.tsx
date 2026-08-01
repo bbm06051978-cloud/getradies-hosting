@@ -87,7 +87,9 @@ function MyJobsPageInner() {
   const jobIdParam = searchParams.get("jobId");
   const filtered = jobIdParam
     ? jobs.filter(j => j.id === jobIdParam)
-    : filter === "ALL" ? jobs : jobs.filter(j => j.status === filter);
+    : filter === "ALL" ? jobs : filter === "DISPUTED"
+      ? jobs.filter(j => j.bookings?.some((b: {status: string}) => b.status === "DISPUTED"))
+      : jobs.filter(j => j.status === filter);
   const stats = {
     total:     jobs.length,
     active:    jobs.filter(j => ["OPEN","QUOTED","IN_PROGRESS"].includes(j.status)).length,

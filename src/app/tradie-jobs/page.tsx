@@ -218,11 +218,24 @@ export default function TradieJobsPage() {
               <span className="text-xs text-gray-400">AUD</span>
             </div>
             <span className="text-xs text-gray-400">{new Date(quote.createdAt).toLocaleDateString("en-AU", { day:"numeric", month:"short" })}</span>
+            </div>
           </div>
-        </div>
-      </motion.div>
-    );
-  };
+          {/* Actions */}
+          <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+            <Link href={`/tradie-jobs/${quote.job.id}`}>
+              <button className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-2 rounded-xl transition-colors">
+                <Briefcase size={12}/> View Job
+              </button>
+            </Link>
+            <Link href={`/tradie-chats?jobId=${quote.job.id}`}>
+              <button className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-gray-800 border border-gray-200 hover:border-gray-400 px-3 py-2 rounded-xl transition-colors">
+                <MessageSquare size={12}/> Chat
+              </button>
+            </Link>
+          </div>
+        </motion.div>
+      );
+    };
 
   const BookingCard = ({ booking, showActions }: { booking: Booking; showActions?: "confirm" | "markdone" | "none" }) => {
     const s = getBookingStatusStyle(booking.status);
