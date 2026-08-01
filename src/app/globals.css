@@ -29,7 +29,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-size: 16px;
+  --font-size: 17.6px;
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
@@ -211,12 +211,12 @@ input::placeholder {
 
 
 html {
-  font-size: 14px;
+  font-size: 15.4px;
 }
 
 @media (min-width: 1280px) {
   html {
-    font-size: 10px;
+    font-size: 14px;
   }
 }
 
@@ -251,3 +251,5 @@ html {
     min-height: 650px;
   }
 }
+
+
