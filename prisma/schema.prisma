@@ -187,6 +187,7 @@ enum UserRole {
 enum JobStatus {
   OPEN
   BOOKED
+  QUOTED
   IN_PROGRESS
   DISPUTED
   COMPLETED
