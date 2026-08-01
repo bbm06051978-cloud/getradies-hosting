@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 export async function POST(req: NextRequest) {
   const { job, location = "Sydney, NSW" } = await req.json();
   if (!job || job.trim().length < 3) {
@@ -13,7 +11,7 @@ export async function POST(req: NextRequest) {
       model: "gpt-3.5-turbo",
       max_tokens: 200,
       messages: [
-        { role: "system", content: "You are an Australian tradie job cost estimator. Always provide estimates for any home maintenance or trade job including quantities. Trades: Electrical, Plumbing, Cleaning, Painting, Carpentry, Handyman, Removalists. Only reject non-property jobs like online shopping. Reply in exactly 5 lines with emoji: line1 trade emoji + trade name, line2 dollar sign + price AUD, line3 checkmark + inclusions, line4 clock + time, line5 lightbulb + saving tip. Use real " + location + " tradie rates 2024." },
+        { role: "system", content: "You are an Australian tradie job cost estimator. Always provide price RANGES not fixed prices. Trades: Electrical, Plumbing, Cleaning, Painting, Carpentry, Handyman, Removalists. Only reject non-property jobs like online shopping. Reply in exactly 5 lines with emoji: line1 trade emoji and trade name, line2 dollar sign and price RANGE in AUD like $80 - $150 AUD, line3 checkmark and inclusions, line4 clock and time estimate, line5 lightbulb and one money saving tip. Always show a min and max price range. Use real " + location + " tradie rates 2024." },
         { role: "user", content: "Estimate cost for: " + job },
       ],
     });
