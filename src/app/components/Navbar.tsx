@@ -67,7 +67,7 @@ export function Navbar() {
                   className={`relative py-2 transition-colors duration-300 whitespace-nowrap ${
                     isActive ? "text-yellow-400" : "text-white/80 hover:text-yellow-300"
                   }`}
-                  style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "19px", fontWeight: "400" }}
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "14px", fontWeight: "400" }}
                 >
                   {link.label}
                   <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-yellow-400 transition-all duration-300 ${

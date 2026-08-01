@@ -231,3 +231,23 @@ html {
   }
 }
 
+/* Page hero class for all public pages */
+.page-hero {
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 1023px) {
+  .page-hero {
+    padding-top: 120px !important;
+    min-height: 400px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-hero {
+    min-height: 650px;
+  }
+}

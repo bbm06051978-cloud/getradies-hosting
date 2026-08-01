@@ -45,6 +45,7 @@ export function Hero() {
         backgroundSize: "cover",
         backgroundPosition: "center top",
         backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
       }}
     >
       <style>{`
