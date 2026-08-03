@@ -45,16 +45,17 @@ export function TradieSidebar() {
 
   const NavContent = () => (
     <>
-      {/* Logo */}
-      <div className={`border-b border-gray-100 flex items-center ${collapsed && !isMobile ? "p-3 justify-center" : "p-5"}`}>
+      {/* {/* Logo */}
+      <div className={`border-b border-gray-100 flex items-center ${collapsed && !isMobile ? "p-3 justify-center" : "p-4"}`}>
         <Link href="/dashboard-tradie" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-black text-sm">G</span>
-          </div>
-          {(!collapsed || isMobile) && (
-            <span className="text-lg font-black text-gray-900 tracking-tight">
-              Ge<span className="text-orange-500">Tradie</span>
-            </span>
+          {collapsed && !isMobile ? (
+            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-black text-sm">G</span>
+            </div>
+          ) : (
+            <div className="relative h-14 w-44">
+              <img src="/imports/GeTradie_Logo1111.png" alt="GeTradie" style={{ objectFit: "contain", height: "100%", width: "100%" }}/>
+            </div>
           )}
         </Link>
         {isMobile && (
