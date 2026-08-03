@@ -15,7 +15,7 @@ const navItems = [
   { label: "My Schedule",  icon: Clock,         href: "/tradie-schedule"     },
   { label: "Profile",      icon: User,          href: "/tradie-profile"      },
   { label: "Subscription", icon: CreditCard,    href: "/tradie-subscription" },
-  { label: "Settings",     icon: Settings,      href: "#"                    },
+  { label: "Settings",    icon: Settings,       href: "/tradie-settings"     },
 ];
 
 export function TradieSidebar() {
