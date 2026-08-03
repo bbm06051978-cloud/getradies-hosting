@@ -94,8 +94,9 @@ const refetchBookings = async () => {
   };
 
   const bookingIdParam = searchParams.get("bookingId");
-  const filtered = bookingIdParam
-    ? bookings.filter(b => b.id === bookingIdParam)
+  const [activeBookingId, setActiveBookingId] = useState(bookingIdParam);
+  const filtered = activeBookingId
+    ? bookings.filter(b => b.id === activeBookingId)
     : filter === "ALL"
     ? bookings
     : bookings.filter(b => b.status === filter);
@@ -141,7 +142,7 @@ const refetchBookings = async () => {
 
           <div className="flex gap-2 mb-6 bg-white rounded-xl p-1 shadow-sm border border-gray-100 w-fit flex-wrap">
             {["ALL", "CONFIRMED", "PENDING_CONFIRMATION", "COMPLETED", "CANCELLED", "DISPUTED"].map(f => (
-              <button key={f} onClick={() => setFilter(f)}
+              <button key={f} onClick={() => { setFilter(f); setActiveBookingId(null); }}
                 className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${filter === f ? "bg-orange-500 text-white" : "text-gray-500 hover:text-gray-700"}`}>
                 {f === "ALL" ? "All" : f === "PENDING_CONFIRMATION" ? "Awaiting" : f.charAt(0) + f.slice(1).toLowerCase()}
               </button>
@@ -264,13 +265,7 @@ const refetchBookings = async () => {
                               </div>
                             </div>
                             <div>
-                              {booking.job?.aiEstimate && (
-                                <div className="mt-3 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                                  <p className="text-xs text-gray-600 whitespace-pre-line leading-relaxed">
-                                    {booking.job.aiEstimate.split("\n").filter(l => !l.startsWith("🔧")).join("\n")}
-                                  </p>
-                                </div>
-                              )}
+                              
                               <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
                                 <p className="text-xs text-blue-700 font-semibold">💰 Payment Info</p>
                                 <p className="text-xs text-blue-600 mt-0.5">
