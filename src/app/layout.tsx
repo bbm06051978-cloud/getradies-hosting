@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "GeTradie — Australia's Only AI-Powered Tradie Marketplace",
+  title: "GeTradie-Australia's Only AI-Powered Tradie Marketplace",
   description:
     "Australia's only AI-powered tradie marketplace. Get instant AI price estimates, compare verified tradies and hire with confidence. Free for homeowners.",
 };
