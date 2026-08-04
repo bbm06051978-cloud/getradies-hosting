@@ -233,15 +233,15 @@ if (data.subscription) setSubscription(data.subscription);
             {statCards.map((s) => {
               const Icon = s.icon;
               return (
-                <div key={s.title} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-2xl ${s.iconBg} flex items-center justify-center flex-shrink-0`}>
-                    <Icon size={22} className={s.iconColor} />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">{s.value}</div>
-                    <div className="text-xs font-semibold text-gray-700">{s.title}</div>
-                    <div className="text-xs text-gray-400">{s.subtitle}</div>
-                  </div>
+                <div key={s.title} className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col lg:flex-row items-start lg:items-center gap-2">
+                  <div className={`w-8 h-8 lg:w-12 lg:h-12 rounded-xl ${s.iconBg} flex items-center justify-center flex-shrink-0`}>
+                      <Icon size={16} className={s.iconColor} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-lg lg:text-2xl font-bold text-gray-900 truncate">{s.value}</div>
+                      <div className="text-xs font-semibold text-gray-700 truncate">{s.title}</div>
+                      <div className="text-xs text-gray-400">{s.subtitle}</div>
+                    </div>
                 </div>
               );
             })}
