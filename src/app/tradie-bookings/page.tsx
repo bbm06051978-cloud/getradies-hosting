@@ -124,7 +124,7 @@ useEffect(() => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-3 gap-2 mb-6">
             {[
               { label: "Upcoming Jobs", value: upcoming, color: "text-green-600", bg: "bg-green-50", border: "border-green-100", icon: Calendar },
               { label: "Completed Jobs", value: completed, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100", icon: CheckCircle },
@@ -132,14 +132,10 @@ useEffect(() => {
             ].map(s => {
               const Icon = s.icon;
               return (
-                <div key={s.label} className={`${s.bg} border ${s.border} rounded-2xl p-4 flex items-center gap-4`}>
-                  <div className={`w-12 h-12 rounded-xl ${s.bg} flex items-center justify-center flex-shrink-0`}>
-                    <Icon size={22} className={s.color} />
-                  </div>
-                  <div>
-                    <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-                    <p className="text-sm text-gray-600 font-medium">{s.label}</p>
-                  </div>
+                <div key={s.label} className={`${s.bg} border ${s.border} rounded-2xl p-3 flex flex-col items-center text-center gap-1`}>
+                  <Icon size={18} className={s.color} />
+                  <p className={`text-lg font-bold ${s.color}`}>{s.value}</p>
+                  <p className="text-xs text-gray-600 font-medium leading-tight">{s.label}</p>
                 </div>
               );
             })}
