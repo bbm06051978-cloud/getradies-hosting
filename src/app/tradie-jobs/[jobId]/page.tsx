@@ -31,6 +31,8 @@ export default function TradieJobDetailPage() {
 
   const [job, setJob]               = useState<Job | null>(null);
 const [alreadyQuoted, setAlreadyQuoted] = useState(false);
+const [booking, setBooking] = useState<{ id: string; status: string; scheduledAt: string; totalAmount: number } | null>(null);
+const [confirming, setConfirming] = useState(false);
   const [loading, setLoading]       = useState(true);
   const [sending, setSending]       = useState(false);
   const [sent, setSent]             = useState(false);
@@ -51,6 +53,7 @@ const [alreadyQuoted, setAlreadyQuoted] = useState(false);
       .then(d => { 
         if (d.job) setJob(d.job);
         if (d.alreadyQuoted) setAlreadyQuoted(true);
+        if (d.booking) setBooking(d.booking);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -59,6 +62,20 @@ const [alreadyQuoted, setAlreadyQuoted] = useState(false);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => setForm({ ...form, [e.target.name]: e.target.value });
+
+const handleConfirmBooking = async () => {
+    if (!booking) return;
+    setConfirming(true);
+    try {
+      await fetch("/api/tradie-bookings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId: booking.id, action: "confirm" }),
+      });
+      setBooking(prev => prev ? { ...prev, status: "CONFIRMED" } : null);
+    } catch {}
+    finally { setConfirming(false); }
+  };
 
   const handleSendQuote = async () => {
     if (!form.amount || !form.description) {
@@ -177,9 +194,33 @@ const [alreadyQuoted, setAlreadyQuoted] = useState(false);
             {alreadyQuoted ? (
               <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
                 <CheckCircle size={32} className="text-green-500 mx-auto mb-3"/>
-                <h3 className="font-bold text-green-800 mb-1">Quote Already Sent</h3>
-                <p className="text-green-600 text-sm">You have already sent a quote for this job. The homeowner will be in touch if they choose your quote.</p>
-                <Link href={job ? `/tradie-chats?jobId=${job.id}&receiverId=${job.user.id}&receiverName=${encodeURIComponent(job.user.name)}&jobTitle=${encodeURIComponent(job.title)}&trade=${encodeURIComponent(job.trade)}` : "#"}>
+                {booking?.status === "PENDING" ? (
+                  <>
+                    <h3 className="font-bold text-green-800 mb-1">🎉 Quote Accepted!</h3>
+                    <p className="text-green-600 text-sm mb-4">The homeowner has accepted your quote. Please confirm the booking to proceed.</p>
+                    <div className="bg-white rounded-xl p-3 mb-4 text-left">
+                      <p className="text-xs text-gray-500">Scheduled</p>
+                      <p className="text-sm font-bold text-gray-900">{new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" })}</p>
+                      <p className="text-xs text-gray-500 mt-1">Amount</p>
+                      <p className="text-sm font-bold text-gray-900">${booking.totalAmount.toLocaleString()} AUD</p>
+                    </div>
+                    <button onClick={handleConfirmBooking} disabled={confirming}
+                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
+                      {confirming ? "Confirming..." : "✅ Confirm Booking"}
+                    </button>
+                  </>
+                ) : booking?.status === "CONFIRMED" ? (
+                  <>
+                    <h3 className="font-bold text-green-800 mb-1">✅ Booking Confirmed</h3>
+                    <p className="text-green-600 text-sm">You have confirmed this booking. Job is scheduled.</p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="font-bold text-green-800 mb-1">Quote Already Sent</h3>
+                    <p className="text-green-600 text-sm">You have already sent a quote for this job. The homeowner will be in touch if they choose your quote.</p>
+                  </>
+                )}
+                <Link href={`/tradie-chats?jobId=${job?.id}&receiverId=${job?.user?.id}&receiverName=${encodeURIComponent(job?.user?.name || "")}&jobTitle=${encodeURIComponent(job?.title || "")}&trade=${encodeURIComponent(job?.trade || "")}`}>
                   <button className="mt-4 bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
                     Open Chat
                   </button>

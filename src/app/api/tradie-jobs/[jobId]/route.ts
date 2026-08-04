@@ -32,5 +32,13 @@ export async function GET(
     where: { jobId, tradieProfileId: tradieProfile.id },
   }) : null;
 
-  return NextResponse.json({ job, alreadyQuoted: !!alreadyQuoted });
+  const booking = alreadyQuoted ? await prisma.booking.findFirst({
+    where: {
+      jobId,
+      tradieProfileId: tradieProfile?.id,
+    },
+    select: { id: true, status: true, scheduledAt: true, totalAmount: true },
+  }) : null;
+
+  return NextResponse.json({ job, alreadyQuoted: !!alreadyQuoted, booking });
 }

@@ -109,11 +109,11 @@ export async function GET(req: NextRequest) {
       },
     }),
 
-    // Completed bookings
+     // Completed/closed bookings
     prisma.booking.findMany({
       where: {
         tradieProfileId: tradieProfile.id,
-        status: "COMPLETED",
+        status: { in: ["COMPLETED", "CANCELLED", "DISPUTED"] },
       },
       orderBy: { updatedAt: "desc" },
       take: 20,

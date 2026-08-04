@@ -1,12 +1,11 @@
 "use client";
-import { useState, useEffect , Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
-  ArrowLeft, Briefcase, MapPin, Calendar,
-  CheckCircle, XCircle, AlertCircle, Clock,
-  MessageCircle, Plus, Zap, ChevronRight, User,
+  ArrowLeft, Briefcase, MapPin, Calendar, ChevronRight,
+  Plus, Clock, CheckCircle, XCircle, AlertCircle, RefreshCw,
 } from "lucide-react";
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
@@ -14,39 +13,51 @@ import { Topbar } from "@/app/components/dashboard/Topbar";
 type Quote = { id: string; amount: number; status: string };
 type BookingRef = {
   id: string; status: string; scheduledAt: string;
-  tradieProfile?: {
-    businessName: string; specialty: string;
-    user: { phone: string };
-  };
+  tradieProfile: { businessName: string; specialty: string; user: { phone: string } };
 };
 type Job = {
-  id: string; title: string; description: string;
-  trade: string; suburb: string; state: string;
-  postcode: string | null; status: string;
+  id: string; title: string; trade: string; suburb: string;
+  state: string; postcode: string | null; status: string;
   aiEstimate: string | null; createdAt: string;
-  quotes: Quote[];
-  bookings: BookingRef[];
+  quotes: Quote[]; bookings: BookingRef[];
 };
 
-const STATUS_FILTERS = ["ALL", "OPEN", "BOOKED", "COMPLETED", "CANCELLED", "DISPUTED"];
+// Map job/booking status to display badge
+const getStatusBadge = (job: Job) => {
+  const bookingStatus = job.bookings[0]?.status;
+  if (bookingStatus === "DISPUTED")           return { label: "⚠️ Disputed",              color: "bg-red-100 text-red-700" };
+  if (bookingStatus === "CANCELLED")          return { label: "❌ Cancelled",              color: "bg-gray-100 text-gray-600" };
+  if (bookingStatus === "COMPLETED")          return { label: "✅ Completed",              color: "bg-green-100 text-green-700" };
+  if (bookingStatus === "PENDING_CONFIRMATION") return { label: "🔔 Awaiting Confirmation", color: "bg-purple-100 text-purple-700" };
+  if (bookingStatus === "CONFIRMED")          return { label: "📅 Confirmed",              color: "bg-blue-100 text-blue-700" };
+  if (bookingStatus === "PENDING")            return { label: "🔨 In Progress",            color: "bg-orange-100 text-orange-700" };
+  if (job.status === "COMPLETED")             return { label: "✅ Completed",              color: "bg-green-100 text-green-700" };
+  if (job.status === "CANCELLED")             return { label: "❌ Cancelled",              color: "bg-gray-100 text-gray-600" };
+  if (job.status === "DISPUTED")              return { label: "⚠️ Disputed",              color: "bg-red-100 text-red-700" };
+  if (job.status === "BOOKED")               return { label: "🔵 Booked",                color: "bg-blue-100 text-blue-700" };
+  if (job.quotes.length > 0)                 return { label: "💬 Quotes Received",        color: "bg-yellow-100 text-yellow-700" };
+  return { label: "🟡 Waiting for Quotes", color: "bg-gray-100 text-gray-500" };
+};
+
+// Determine which tab a job belongs to
+const getJobTab = (job: Job): "open" | "inprogress" | "closed" => {
+  const bookingStatus = job.bookings[0]?.status;
+  if (bookingStatus === "COMPLETED" || bookingStatus === "CANCELLED" || bookingStatus === "DISPUTED") return "closed";
+  if (job.status === "COMPLETED" || job.status === "CANCELLED" || job.status === "DISPUTED") return "closed";
+  if (bookingStatus === "PENDING_CONFIRMATION" || bookingStatus === "CONFIRMED" || bookingStatus === "PENDING" || job.status === "IN_PROGRESS") return "inprogress";
+  if (job.status === "BOOKED") return "inprogress";
+  return "open";
+};
 
 function MyJobsPageInner() {
-  const [jobs, setJobs]           = useState<Job[]>([]);
-  const [loading, setLoading]     = useState(true);
-  const [filter, setFilter]       = useState("ALL");
-  const [cancelling, setCancelling] = useState<string | null>(null);
-  const searchParams = useSearchParams();
+  const [jobs, setJobs]       = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab]         = useState<"open" | "inprogress" | "closed">("open");
+  const searchParams          = useSearchParams();
 
   useEffect(() => {
-    const f = searchParams.get("filter");
-    if (f) setFilter(f);
-    const jobId = searchParams.get("jobId");
-    if (jobId) {
-      setTimeout(() => {
-        const el = document.getElementById(`job-${jobId}`);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 500);
-    }
+    const t = searchParams.get("tab");
+    if (t === "inprogress" || t === "closed") setTab(t);
   }, [searchParams]);
 
   useEffect(() => {
@@ -58,54 +69,35 @@ function MyJobsPageInner() {
   }, []);
 
   const handleCancel = async (jobId: string) => {
-    if (!confirm("Are you sure you want to cancel this job?")) return;
-    setCancelling(jobId);
-    try {
-      const res = await fetch("/api/my-jobs", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId, action: "cancel" }),
-      });
-      if (res.ok) {
-        setJobs(prev => prev.map(j => j.id === jobId ? { ...j, status: "CANCELLED" } : j));
-      }
-    } catch {} finally { setCancelling(null); }
+    const res = await fetch("/api/my-jobs", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jobId, action: "cancel" }),
+    });
+    if (res.ok) setJobs(prev => prev.map(j => j.id === jobId ? { ...j, status: "CANCELLED" } : j));
   };
 
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case "OPEN":        return { bg: "bg-blue-100 text-blue-700",    icon: Clock,         label: "Open"        };
-      case "QUOTED":      return { bg: "bg-orange-100 text-orange-700", icon: MessageCircle, label: "Quotes In"   };
-      case "BOOKED":      return { bg: "bg-purple-100 text-purple-700", icon: Calendar,      label: "Booked"      };
-      case "IN_PROGRESS": return { bg: "bg-yellow-100 text-yellow-700", icon: AlertCircle,   label: "In Progress" };
-      case "COMPLETED":   return { bg: "bg-green-100 text-green-700",   icon: CheckCircle,   label: "Completed"   };
-      case "CANCELLED":   return { bg: "bg-red-100 text-red-700",       icon: XCircle,       label: "Cancelled"   };
-      default:            return { bg: "bg-gray-100 text-gray-700",     icon: Clock,         label: status        };
-    }
-  };
+  const openJobs      = jobs.filter(j => getJobTab(j) === "open");
+  const inProgressJobs = jobs.filter(j => getJobTab(j) === "inprogress");
+  const closedJobs    = jobs.filter(j => getJobTab(j) === "closed");
 
-  const jobIdParam = searchParams.get("jobId");
-  const filtered = jobIdParam
-    ? jobs.filter(j => j.id === jobIdParam)
-    : filter === "ALL" ? jobs : filter === "DISPUTED"
-      ? jobs.filter(j => j.bookings?.some((b: {status: string}) => b.status === "DISPUTED"))
-      : jobs.filter(j => j.status === filter);
-  const stats = {
-    total:     jobs.length,
-    active:    jobs.filter(j => ["OPEN","QUOTED","IN_PROGRESS"].includes(j.status)).length,
-    booked:    jobs.filter(j => j.status === "BOOKED").length,
-    completed: jobs.filter(j => j.status === "COMPLETED").length,
-  };
+  const currentJobs = tab === "open" ? openJobs : tab === "inprogress" ? inProgressJobs : closedJobs;
+
+  const TABS = [
+    { key: "open",       label: "Open",        icon: Clock,         count: openJobs.length,       color: "text-blue-600" },
+    { key: "inprogress", label: "In Progress",  icon: RefreshCw,     count: inProgressJobs.length, color: "text-orange-500" },
+    { key: "closed",     label: "Closed",       icon: CheckCircle,   count: closedJobs.length,     color: "text-green-600" },
+  ] as const;
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <Sidebar />
-      <main className="flex-1 flex flex-col min-w-0">
-        <Topbar />
-        <div className="p-8 flex-1">
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar/>
+      <div className="flex-1 flex flex-col">
+        <Topbar/>
+        <div className="p-6 lg:p-8 flex-1">
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
               <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
                 <ArrowLeft size={20}/>
@@ -116,178 +108,128 @@ function MyJobsPageInner() {
               </div>
             </div>
             <Link href="/post-job">
-              <button className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-colors shadow-sm">
+              <button className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-colors">
                 <Plus size={16}/> Post New Job
               </button>
             </Link>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {[
-              { label:"Total Posted", value:stats.total,     color:"text-blue-600",   bg:"bg-blue-50",   border:"border-blue-100"   },
-              { label:"Active",       value:stats.active,    color:"text-orange-600", bg:"bg-orange-50", border:"border-orange-100" },
-              { label:"Booked",       value:stats.booked,    color:"text-purple-600", bg:"bg-purple-50", border:"border-purple-100" },
-              { label:"Completed",    value:stats.completed, color:"text-green-600",  bg:"bg-green-50",  border:"border-green-100"  },
-            ].map(s => (
-              <div key={s.label} className={`${s.bg} border ${s.border} rounded-2xl p-4 text-center`}>
-                <p className={`text-3xl font-bold ${s.color}`}>{s.value}</p>
-                <p className="text-sm text-gray-600 font-medium mt-1">{s.label}</p>
-              </div>
-            ))}
+          {/* 3 Tabs */}
+          <div className="flex gap-2 mb-6 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-100 w-fit">
+            {TABS.map(t => {
+              const Icon = t.icon;
+              return (
+                <button key={t.key} onClick={() => setTab(t.key)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    tab === t.key ? "bg-blue-900 text-white shadow" : "text-gray-500 hover:text-gray-700"
+                  }`}>
+                  <Icon size={14}/>
+                  {t.label}
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
+                    tab === t.key ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
+                  }`}>{t.count}</span>
+                </button>
+              );
+            })}
           </div>
 
-          {/* Filter tabs */}
-          <div className="flex gap-2 mb-6 bg-white rounded-xl p-1 shadow-sm border border-gray-100 w-fit flex-wrap">
-            {STATUS_FILTERS.map(f => (
-              <button key={f} onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                  filter === f ? "bg-blue-900 text-white" : "text-gray-500 hover:text-gray-700"
-                }`}>
-                {f === "ALL" ? "All" : f === "IN_PROGRESS" ? "In Progress" : f === "QUOTED" ? "Quotes" : f.charAt(0) + f.slice(1).toLowerCase()}
-              </button>
-            ))}
-          </div>
-
-          {/* Jobs list */}
+          {/* Content */}
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <svg className="animate-spin h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-              </svg>
-            </div>
-          ) : filtered.length === 0 ? (
+            <div className="text-center py-20 text-gray-400">Loading your jobs...</div>
+          ) : currentJobs.length === 0 ? (
             <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
               <Briefcase size={48} className="text-gray-200 mx-auto mb-4"/>
-              <h3 className="font-bold text-gray-700 text-lg mb-2">No jobs found</h3>
-              <p className="text-gray-400 text-sm">
-                {filter === "ALL" ? "You haven't posted any jobs yet." : `No jobs with status "${filter.toLowerCase()}".`}
+              <h3 className="font-bold text-gray-700 text-lg mb-2">
+                {tab === "open" ? "No open jobs" : tab === "inprogress" ? "No jobs in progress" : "No closed jobs"}
+              </h3>
+              <p className="text-gray-400 text-sm mb-6">
+                {tab === "open" ? "Post a new job to get quotes from verified tradies." : "Jobs will appear here as they progress."}
               </p>
-              <Link href="/post-job">
-                <button className="mt-6 bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
-                  Post Your First Job
-                </button>
-              </Link>
+              {tab === "open" && (
+                <Link href="/post-job">
+                  <button className="bg-blue-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm">
+                    Post a Job
+                  </button>
+                </Link>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
-              {filtered.map(job => {
-                const style     = getStatusStyle(job.status);
-                const StatusIcon = style.icon;
+              {currentJobs.map(job => {
+                const badge = getStatusBadge(job);
+                const booking = job.bookings[0];
                 const acceptedQuote = job.quotes.find(q => q.status === "ACCEPTED");
-                const booking       = job.bookings[0];
-                const tradie        = booking?.tradieProfile;
-
                 return (
-                  <motion.div key={job.id} id={`job-${job.id}`}
-                    animate={jobIdParam === job.id ? { scale: [1, 1.02, 1], opacity:1, y:0 } : { opacity:1, y:0 }}
-                  transition={{ duration: 0.5, repeat: 2 }}
-                  initial={{ opacity:0, y:12 }}
-                    className={`bg-white rounded-2xl shadow-sm border transition-all overflow-hidden ${
-                      jobIdParam === job.id 
-                        ? "border-orange-400 shadow-orange-100 shadow-lg" 
-                        : "border-gray-100 hover:border-blue-200"
-                    }`}>
-                    <div className="p-5">
-                      <div className="flex items-start justify-between gap-4">
-                        {/* Left */}
-                        <div className="flex items-start gap-4 flex-1">
-                          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                            <Briefcase size={20} className="text-blue-600"/>
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <h3 className="font-bold text-gray-900">{job.title}</h3>
-                              <span className={`flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${style.bg}`}>
-                                <StatusIcon size={10}/>{style.label}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-3 flex-wrap text-xs text-gray-500 mb-2">
-                              <span className="bg-gray-100 px-2 py-0.5 rounded-full font-medium">{job.trade}</span>
-                              <span className="flex items-center gap-1"><MapPin size={11}/>{job.suburb}, {job.state}</span>
-                              <span className="flex items-center gap-1"><Calendar size={11}/>{new Date(job.createdAt).toLocaleDateString("en-AU", { day:"numeric", month:"short", year:"numeric" })}</span>
-                            </div>
-                            <p className="text-sm text-gray-500 line-clamp-2">{job.description}</p>
-
-                            {/* AI Estimate */}
-                            {job.aiEstimate && (
-                              <div className="flex items-center gap-1.5 mt-2">
-                                <Zap size={11} className="text-blue-500 fill-blue-500"/>
-                                <span className="text-xs text-blue-600 font-medium">
-                                  {job.aiEstimate.split("\n").find(l => l.includes("AUD") || l.includes("$"))?.trim()}
-                                </span>
-                              </div>
-                            )}
-
-                            {/* Accepted tradie info */}
-                            {tradie && (
-                              <div className="mt-3 flex items-center gap-2 bg-green-50 border border-green-100 rounded-xl px-3 py-2">
-                                <User size={13} className="text-green-600 flex-shrink-0"/>
-                                <div>
-                                  <p className="text-xs font-bold text-green-800">{tradie.businessName}</p>
-                                  <p className="text-xs text-green-600">{tradie.specialty}{tradie.user.phone ? ` · ${tradie.user.phone}` : ""}</p>
-                                </div>
-                                {booking.scheduledAt && (
-                                  <div className="ml-auto flex items-center gap-1.5 text-xs text-green-700">
-                                    <Calendar size={11}/>
-                                    {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday:"short", day:"numeric", month:"short" })}
-                                    {" at "}
-                                    {new Date(booking.scheduledAt).toLocaleTimeString("en-AU", { hour:"2-digit", minute:"2-digit" })}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
+                  <motion.div key={job.id}
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-4 flex-1">
+                        <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <Briefcase size={20} className="text-blue-600"/>
                         </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-bold text-gray-900">{job.title}</h3>
+                            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${badge.color}`}>
+                              {badge.label}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 flex-wrap mt-1.5">
+                            <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">{job.trade}</span>
+                            <span className="flex items-center gap-1 text-xs text-gray-500">
+                              <MapPin size={11}/>{job.suburb}, {job.state}
+                            </span>
+                            <span className="flex items-center gap-1 text-xs text-gray-400">
+                              <Calendar size={11}/>
+                              {new Date(job.createdAt).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
+                            </span>
+                          </div>
 
-                        {/* Right — quote count + accepted amount */}
-                        <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                          <span className="text-xs text-gray-400">{job.quotes.length} quote{job.quotes.length !== 1 ? "s" : ""}</span>
-                          {acceptedQuote && (
-                            <div className="bg-green-100 border border-green-200 rounded-xl px-3 py-1.5 text-center">
-                              <p className="text-sm font-bold text-green-700">${acceptedQuote.amount.toLocaleString()}</p>
-                              <p className="text-xs text-green-600">accepted</p>
+                          {/* Quote info */}
+                          {job.quotes.length > 0 && (
+                            <div className="mt-2 flex items-center gap-3 flex-wrap">
+                              <span className="text-xs text-gray-500">{job.quotes.length} quote{job.quotes.length !== 1 ? "s" : ""} received</span>
+                              {acceptedQuote && (
+                                <span className="text-xs font-bold text-green-600">${acceptedQuote.amount.toLocaleString()} AUD accepted</span>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Booking info */}
+                          {booking && (
+                            <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                              <span className="font-semibold text-gray-700">{booking.tradieProfile.businessName}</span>
+                              {booking.scheduledAt && (
+                                <span>· {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" })}</span>
+                              )}
                             </div>
                           )}
                         </div>
                       </div>
 
-                      {/* Action buttons */}
-                      <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100 flex-wrap">
-                        {job.status === "OPEN" || job.status === "QUOTED" ? (
-                          <>
-                            <Link href={`/my-quotes?jobId=${job.id}`}>
-                              <button className="flex items-center gap-1.5 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">
-                                <MessageCircle size={13}/> View Quotes ({job.quotes.length})
-                              </button>
-                            </Link>
-                            <button onClick={() => handleCancel(job.id)} disabled={cancelling === job.id}
-                              className="flex items-center gap-1.5 border border-red-200 text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl text-xs font-semibold transition-colors disabled:opacity-50">
-                              <XCircle size={13}/>
-                              {cancelling === job.id ? "Cancelling..." : "Cancel Job"}
+                      {/* Actions */}
+                      <div className="flex flex-col gap-2 flex-shrink-0">
+                        {tab === "open" && job.quotes.length > 0 && (
+                          <Link href={`/my-quotes?jobId=${job.id}`}>
+                            <button className="flex items-center gap-1 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors">
+                              View Quotes <ChevronRight size={12}/>
                             </button>
-                          </>
-                        ) : job.status === "BOOKED" || job.status === "IN_PROGRESS" ? (
-                          <>
-                            <Link href={`/bookings?bookingId=${booking?.id}`}>
-                                <button className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">
-                                  <Calendar size={13}/> View Booking <ChevronRight size={12}/>
-                                </button>
-                              </Link>
-                            <Link href={`/chats?jobId=${job.id}`}>
-                              <button className="flex items-center gap-1.5 border border-gray-200 text-gray-600 hover:border-blue-300 px-4 py-2 rounded-xl text-xs font-semibold transition-colors">
-                                <MessageCircle size={13}/> Message Tradie
-                              </button>
-                            </Link>
-                          </>
-                        ) : job.status === "COMPLETED" ? (
-                          <Link href={`/bookings?bookingId=${booking?.id}`}>
-                              <button className="flex items-center gap-1.5 border border-gray-200 text-gray-600 px-4 py-2 rounded-xl text-xs font-semibold">
-                                <CheckCircle size={13}/> View Details
-                              </button>
-                            </Link>
-                        ) : null}
+                          </Link>
+                        )}
+                        {booking && (
+                          <Link href={`/bookings?bookingId=${booking.id}`}>
+                            <button className="flex items-center gap-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors">
+                              Manage <ChevronRight size={12}/>
+                            </button>
+                          </Link>
+                        )}
+                        {tab === "open" && job.status === "OPEN" && (
+                          <button onClick={() => handleCancel(job.id)}
+                            className="flex items-center gap-1 text-xs font-semibold text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 px-3 py-2 rounded-xl transition-colors">
+                            <XCircle size={12}/> Cancel
+                          </button>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -296,16 +238,11 @@ function MyJobsPageInner() {
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
 
-
 export default function MyJobsPage() {
-  return (
-    <Suspense>
-      <MyJobsPageInner />
-    </Suspense>
-  );
+  return <Suspense><MyJobsPageInner/></Suspense>;
 }

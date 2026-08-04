@@ -95,6 +95,11 @@ const refetchBookings = async () => {
 
   const bookingIdParam = searchParams.get("bookingId");
   const [activeBookingId, setActiveBookingId] = useState(bookingIdParam);
+useEffect(() => {
+    if (bookingIdParam && bookings.length > 0) {
+      setActiveBookingId(bookingIdParam);
+    }
+  }, [bookings, bookingIdParam]);
   const filtered = activeBookingId
     ? bookings.filter(b => b.id === activeBookingId)
     : filter === "ALL"
