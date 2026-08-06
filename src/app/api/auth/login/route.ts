@@ -28,10 +28,11 @@ export async function POST(req: NextRequest) {
       name: user.name,
     });
 
-    const response = NextResponse.json({
-      success: true,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
-    });
+    return NextResponse.json({
+    success: true,
+    token,
+    user: { id: user.id, name: user.name, email: user.email, role: user.role },
+  });
 
     response.cookies.set("token", token, {
       httpOnly: true,
