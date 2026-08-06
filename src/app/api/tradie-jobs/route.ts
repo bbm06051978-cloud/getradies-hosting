@@ -42,7 +42,7 @@ function getSuburbsToSearch(suburb: string): string[] {
 }
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   const decoded = verifyToken(token);
@@ -135,4 +135,5 @@ export async function GET(req: NextRequest) {
     serviceArea: suburbsToSearch,
   });
 }
+
 

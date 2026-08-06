@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 // GET — fetch all conversations or messages for a specific job
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   const decoded = verifyToken(token);
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
 
 // POST — send a message
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   const decoded = verifyToken(token);
@@ -141,3 +141,4 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ message });
 }
+

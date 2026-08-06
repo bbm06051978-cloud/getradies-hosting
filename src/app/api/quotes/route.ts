@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 // POST — Tradie sends a quote
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
 
 // GET — Fetch quotes
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
@@ -173,7 +173,7 @@ export async function GET(req: NextRequest) {
 
 // PATCH — Accept a quote
 export async function PATCH(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
@@ -208,3 +208,4 @@ const quote = await prisma.quote.update({
 
   return NextResponse.json({ success: true });
 }
+

@@ -3,7 +3,7 @@ import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   const decoded = verifyToken(token);
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   const decoded = verifyToken(token);
@@ -61,3 +61,4 @@ export async function PATCH(req: NextRequest) {
 
   return NextResponse.json({ error: "Invalid action." }, { status: 400 });
 }
+
