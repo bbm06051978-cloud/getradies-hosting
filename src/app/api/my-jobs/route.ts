@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
           id: true, status: true, scheduledAt: true,
           tradieProfile: {
             select: {
+              userId: true,
               businessName: true,
               specialty: true,
               user: { select: { phone: true } },
