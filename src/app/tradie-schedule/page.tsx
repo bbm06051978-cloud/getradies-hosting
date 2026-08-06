@@ -12,7 +12,7 @@ import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
 type Booking = {
   id: string; scheduledAt: string; status: string; totalAmount: number;
   job: { id: string; title: string; trade: string; suburb: string; state: string; };
-  homeowner?: { name: string; phone: string; email: string; suburb: string; state: string; };
+  homeowner?: { id: string; name: string; phone: string; email: string; suburb: string; state: string; };
 };
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -72,7 +72,7 @@ export default function TradieSchedulePage() {
 
   const getBookingsForDay = (day: Date) =>
     bookings
-      .filter(b => ["CONFIRMED", "IN_PROGRESS", "PENDING"].includes(b.status))
+      .filter(b => ["CONFIRMED", "IN_PROGRESS", "PENDING", "PENDING_CONFIRMATION"].includes(b.status))
       .filter(b => isSameDay(new Date(b.scheduledAt), day))
       .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime());
 
@@ -223,7 +223,7 @@ export default function TradieSchedulePage() {
                                     className="flex items-center gap-1.5 bg-white border border-gray-200 hover:border-orange-300 text-gray-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">
                                     <Navigation size={11}/> Directions
                                   </a>
-                                  <Link href={`/tradie-chats?jobId=${booking.job.id}`}>
+                                  <Link href={`/tradie-chats?jobId=${booking.job.id}&receiverId=${booking.homeowner?.id}&receiverName=${encodeURIComponent(booking.homeowner?.name || "")}&jobTitle=${encodeURIComponent(booking.job.title)}&trade=${encodeURIComponent(booking.job.trade)}`}>
                                     <button className="w-full flex items-center gap-1.5 bg-white border border-gray-200 hover:border-blue-300 text-gray-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">
                                       <MessageSquare size={11}/> Message
                                     </button>
