@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
           userId: user.id,
           businessName: businessName || name,
           specialty,
-          abn: abn || null,
           isVerified: false,
           rating: 0,
           totalReviews: 0,
