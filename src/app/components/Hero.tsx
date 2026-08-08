@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Zap } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
@@ -10,6 +10,14 @@ export function Hero() {
   const [loading, setLoading]   = useState(false);
   const [estimate, setEstimate] = useState("");
   const [jobText, setJobText]   = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkWidth = () => setIsMobile(window.innerWidth < 768);
+    checkWidth();
+    window.addEventListener("resize", checkWidth);
+    return () => window.removeEventListener("resize", checkWidth);
+  }, []);
 
   const handleEstimate = async (job: string) => {
     setJobText(job);
@@ -41,7 +49,7 @@ export function Hero() {
     <section
       className="relative overflow-hidden"
       style={{
-        backgroundImage: "url(/imports/hero_baground.png)",
+        backgroundImage: `url(${isMobile ? "/imports/getradie-mobile-background.png" : "/imports/hero_baground.png"})`,
         backgroundSize: "cover",
         backgroundPosition: "center top",
         backgroundRepeat: "no-repeat",
