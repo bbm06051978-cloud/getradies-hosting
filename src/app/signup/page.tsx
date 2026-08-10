@@ -55,6 +55,37 @@ function PasswordStrength({ password }: { password: string }) {
   );
 }
 
+function Field({ label, field, type = "text", icon: Icon, placeholder, value, error, showPassword, onChange, onTogglePassword }: {
+  label: string; field: string; type?: string; icon: React.ElementType; placeholder: string;
+  value: string; error?: string; showPassword?: boolean;
+  onChange: (field: string, value: string) => void; onTogglePassword?: () => void;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-200 mb-1">{label}</label>
+      <div className={`flex items-center border-2 rounded-xl px-4 py-3 gap-3 bg-white/5 transition-colors ${
+        error ? "border-red-400" : "border-white/20 focus-within:border-blue-400"
+      }`}>
+        <Icon size={16} className="text-gray-400 flex-shrink-0"/>
+        <input
+          type={field === "password" ? (showPassword ? "text" : "password") : type}
+          placeholder={placeholder}
+          value={value}
+          onChange={e => onChange(field, e.target.value)}
+          className="flex-1 text-sm text-white outline-none bg-transparent placeholder-white/40"
+        />
+        {field === "password" && onTogglePassword && (
+          <button type="button" onClick={onTogglePassword} className="text-gray-400">
+            {showPassword ? <EyeOff size={16}/> : <Eye size={16}/>}
+          </button>
+        )}
+      </div>
+      {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+      {field === "password" && <PasswordStrength password={value}/>}
+    </div>
+  );
+}
+
 function SignupPageInner() {
   const router = useRouter();
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "", suburb: "", state: "NSW" });
@@ -98,33 +129,6 @@ function SignupPageInner() {
     finally { setLoading(false); }
   };
 
-  const Field = ({ label, field, type = "text", icon: Icon, placeholder }: {
-    label: string; field: string; type?: string; icon: React.ElementType; placeholder: string;
-  }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-200 mb-1">{label}</label>
-      <div className={`flex items-center border-2 rounded-xl px-4 py-3 gap-3 bg-white/5 transition-colors ${
-        errors[field] ? "border-red-400" : "border-white/20 focus-within:border-blue-400"
-      }`}>
-        <Icon size={16} className="text-gray-400 flex-shrink-0"/>
-        <input
-          type={field === "password" ? (showPassword ? "text" : "password") : type}
-          placeholder={placeholder}
-          value={form[field as keyof typeof form]}
-          onChange={e => handleChange(field, e.target.value)}
-          className="flex-1 text-sm text-white outline-none bg-transparent placeholder-white/40"
-        />
-        {field === "password" && (
-          <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-gray-400">
-            {showPassword ? <EyeOff size={16}/> : <Eye size={16}/>}
-          </button>
-        )}
-      </div>
-      {errors[field] && <p className="text-red-400 text-xs mt-1">{errors[field]}</p>}
-      {field === "password" && <PasswordStrength password={form.password}/>}
-    </div>
-  );
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{
       background: "linear-gradient(135deg, #060d4a 0%, #0d1a8a 50%, #1a3adb 100%)"
@@ -144,11 +148,11 @@ function SignupPageInner() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Field label="Full Name" field="name" icon={User} placeholder="John Smith"/>
-          <Field label="Email Address" field="email" type="email" icon={Mail} placeholder="john@example.com"/>
-          <Field label="Phone Number" field="phone" type="tel" icon={Phone} placeholder="0412 345 678"/>
-          <Field label="Password" field="password" icon={Lock} placeholder="Min 8 chars with letters & numbers"/>
-          <Field label="Suburb" field="suburb" icon={MapPin} placeholder="Westmead"/>
+          <Field label="Full Name" field="name" icon={User} placeholder="John Smith" value={form.name} error={errors.name} onChange={handleChange}/>
+          <Field label="Email Address" field="email" type="email" icon={Mail} placeholder="john@example.com" value={form.email} error={errors.email} onChange={handleChange}/>
+          <Field label="Phone Number" field="phone" type="tel" icon={Phone} placeholder="0412 345 678" value={form.phone} error={errors.phone} onChange={handleChange}/>
+          <Field label="Password" field="password" icon={Lock} placeholder="Min 8 chars with letters & numbers" value={form.password} error={errors.password} showPassword={showPassword} onChange={handleChange} onTogglePassword={() => setShowPassword(!showPassword)}/>
+          <Field label="Suburb" field="suburb" icon={MapPin} placeholder="Westmead" value={form.suburb} error={errors.suburb} onChange={handleChange}/>
 
           {/* State */}
           <div>
