@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+
 export async function GET() {
-  const key = process.env.RESEND_API_KEY;
   return NextResponse.json({ 
-    hasKey: !!key, 
-    keyLength: key?.length,
-    keyStart: key?.substring(0, 5)
+    hasResend: !!process.env.RESEND_API_KEY,
+    hasDB: !!process.env.DATABASE_URL,
+    resendStart: process.env.RESEND_API_KEY?.substring(0, 8),
+    dbStart: process.env.DATABASE_URL?.substring(0, 20),
   });
 }
