@@ -3,16 +3,10 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install
-        - echo "DATABASE_URL=$DATABASE_URL" >> .env.production
-        - echo "DIRECT_URL=$DIRECT_URL" >> .env.production
-        - echo "JWT_SECRET=$JWT_SECRET" >> .env.production
-        - echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env.production
-        - echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY" >> .env.production
-        - echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" >> .env.production
-        - echo "NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL" >> .env.production
+        - npm ci
     build:
       commands:
+        - echo "RESEND_API_KEY=$RESEND_API_KEY" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
