@@ -1,626 +1,511 @@
 "use client";
-
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  User,
-  Mail,
-  Phone,
-  Lock,
-  Eye,
-  EyeOff,
-  Briefcase,
-  MapPin,
-  FileText,
-  CheckCircle,
-  ArrowRight,
-  ArrowLeft,
-  ShieldCheck,
-  Star,
-  DollarSign,
-} from "lucide-react";
+import Image from "next/image";
 
-const trades = [
-  "Plumbing",
-  "Electrical",
-  "Cleaning",
-  "Painting",
-  "Handyman",
-  "Carpentry",
-  "Removalists",
+// ─── CONSTANTS ──────────────────────────────────────────────
+const TRADES = ["Electrical","Plumbing","Cleaning","Painting","Handyman","Carpentry","Removalists"];
+const AU_STATES = [
+  { code: "NSW", name: "New South Wales" },
+  { code: "VIC", name: "Victoria" },
+  { code: "QLD", name: "Queensland" },
+  { code: "WA",  name: "Western Australia" },
+  { code: "SA",  name: "South Australia" },
+  { code: "TAS", name: "Tasmania" },
+  { code: "ACT", name: "Australian Capital Territory" },
+  { code: "NT",  name: "Northern Territory" },
 ];
 
-const australianStates = [
-  "NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT",
-];
+const AU_SUBURBS: Record<string, string[]> = {
+  NSW: ["Parramatta","Sydney","Westmead","Blacktown","Penrith","Liverpool","Campbelltown","Bankstown","Hurstville","Chatswood","Hornsby","Manly","Bondi","Surry Hills","Newtown","Leichhardt","Strathfield","Auburn","Merrylands","Granville","Seven Hills","Baulkham Hills","Castle Hill","Kellyville","Rouse Hill","Marsden Park","Quakers Hill","Mount Druitt","St Marys","Kingswood","Glenmore Park","Springwood","Richmond","Windsor","Gosford","Wyong","Newcastle","Maitland","Cessnock","Wagga Wagga","Albury","Orange","Dubbo","Tamworth","Coffs Harbour","Port Macquarie","Wollongong","Shellharbour","Nowra","Bowral"],
+  VIC: ["Melbourne","Southbank","Docklands","St Kilda","Prahran","Richmond","Fitzroy","Brunswick","Footscray","Sunshine","St Albans","Werribee","Frankston","Dandenong","Clayton","Box Hill","Ringwood","Lilydale","Croydon","Knox","Berwick","Cranbourne","Pakenham","Geelong","Ballarat","Bendigo","Shepparton","Mildura","Wodonga","Warrnambool"],
+  QLD: ["Brisbane","Southbank","Fortitude Valley","South Brisbane","West End","Toowong","Indooroopilly","Chermside","Nundah","Carindale","Logan","Beenleigh","Ipswich","Springfield","Richlands","Gold Coast","Southport","Surfers Paradise","Robina","Broadbeach","Sunshine Coast","Maroochydore","Caloundra","Noosa","Townsville","Cairns","Rockhampton","Mackay","Toowoomba"],
+  WA: ["Perth","Fremantle","Subiaco","Nedlands","Cottesloe","Claremont","Morley","Mirrabooka","Balga","Midland","Rockingham","Mandurah","Joondalup","Wanneroo","Armadale","Gosnells","Canning Vale","Thornlie","Bentley","Victoria Park"],
+  SA: ["Adelaide","North Adelaide","Glenelg","Norwood","Prospect","Campbelltown","Tea Tree Gully","Modbury","Elizabeth","Salisbury","Parafield Gardens","Golden Grove","Mount Barker","Murray Bridge","Whyalla","Port Augusta","Port Pirie","Gawler"],
+  TAS: ["Hobart","Sandy Bay","Battery Point","Launceston","Devonport","Burnie","Ulverstone","Queenstown","Huonville","Sorell"],
+  ACT: ["Canberra","Braddon","Civic","Kingston","Manuka","Woden","Belconnen","Tuggeranong","Gungahlin","Bruce","Charnwood","Palmerston","Macgregor","Amaroo"],
+  NT: ["Darwin","Palmerston","Casuarina","Nightcliff","Rapid Creek","Alice Springs","Katherine","Nhulunbuy","Tennant Creek"],
+};
 
-const steps = [
-  { number: 1, title: "Personal Info" },
-  { number: 2, title: "Business Info" },
-  { number: 3, title: "Location" },
-  { number: 4, title: "Security" },
-];
+// ─── VALIDATION ─────────────────────────────────────────────
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+function validatePhone(phone: string) {
+  const digits = phone.replace(/[\s-()]/g, "");
+  return /^[2-9]\d{8}$/.test(digits);
+}
+function validatePassword(pw: string) {
+  if (pw.length < 8)       return "Password must be at least 8 characters";
+  if (!/[A-Z]/.test(pw))   return "Must include at least one uppercase letter";
+  if (!/[a-z]/.test(pw))   return "Must include at least one lowercase letter";
+  if (!/[0-9]/.test(pw))   return "Must include at least one number";
+  return "";
+}
+function validateSuburb(suburb: string, state: string) {
+  if (!suburb.trim() || suburb.trim().length < 2) return false;
+  if (!state) return suburb.trim().length >= 2;
+  return (AU_SUBURBS[state] || []).some(
+    (s) => s.toLowerCase() === suburb.trim().toLowerCase()
+  );
+}
 
-export default function TradieSignupPage() {
-  const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+// ─── FIELD COMPONENT ────────────────────────────────────────
+function Field({
+  label, children, error, hint, required,
+}: {
+  label: string; children: React.ReactNode;
+  error?: string; hint?: string; required?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-sm font-bold text-gray-700">
+        {label}{required && <span className="text-red-500"> *</span>}
+      </label>
+      {children}
+      {error && <p className="text-xs text-red-500">{error}</p>}
+      {!error && hint && <p className="text-xs text-gray-400">{hint}</p>}
+    </div>
+  );
+}
+
+function Input({
+  error, className = "", ...props
+}: React.InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
+  return (
+    <input
+      {...props}
+      className={`w-full rounded-xl border-2 px-4 py-3 text-sm text-gray-900 outline-none transition
+        focus:border-blue-500 bg-gray-50
+        ${error ? "border-red-400" : "border-gray-200"}
+        ${className}`}
+    />
+  );
+}
+
+// ─── MAIN PAGE ──────────────────────────────────────────────
+export default function RegisterPage() {
+  const [tab, setTab] = useState<"homeowner" | "tradie">("homeowner");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-  const [form, setForm] = useState({
-    // Step 1 — Personal
-    name: "",
-    email: "",
-    phone: "",
-    // Step 2 — Business
-    businessName: "",
-    specialty: "",
-    licenseNumber: "",
-    bio: "",
-    // Step 3 — Location
-    suburb: "",
-    state: "",
-    // Step 4 — Security
-    password: "",
-    confirm: "",
-    agreeTerms: false,
-  });
+  // Fields
+  const [name, setName]             = useState("");
+  const [email, setEmail]           = useState("");
+  const [phone, setPhone]           = useState("");
+  const [password, setPassword]     = useState("");
+  const [confirm, setConfirm]       = useState("");
+  const [suburb, setSuburb]         = useState("");
+  const [state, setState]           = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [specialty, setSpecialty]   = useState("");
+  const [abn, setAbn]               = useState("");
+  const [showPw, setShowPw]         = useState(false);
+  const [suburbSuggestions, setSuburbSuggestions] = useState<string[]>([]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const target = e.target as HTMLInputElement;
-    setForm({
-      ...form,
-      [target.name]: target.type === "checkbox" ? target.checked : target.value,
-    });
-    setError("");
+  // Errors
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Password strength
+  const pwChecks = [
+    { label: "8+ characters", pass: password.length >= 8 },
+    { label: "Uppercase",     pass: /[A-Z]/.test(password) },
+    { label: "Lowercase",     pass: /[a-z]/.test(password) },
+    { label: "Number",        pass: /[0-9]/.test(password) },
+  ];
+
+  // Suburb autocomplete
+  const handleSuburbChange = (val: string) => {
+    setSuburb(val);
+    if (errors.suburb) setErrors((p) => ({ ...p, suburb: "" }));
+    if (val.length >= 2 && state) {
+      const matches = (AU_SUBURBS[state] || [])
+        .filter((s) => s.toLowerCase().startsWith(val.toLowerCase()))
+        .slice(0, 6);
+      setSuburbSuggestions(matches);
+    } else {
+      setSuburbSuggestions([]);
+    }
   };
 
-  const validateStep = () => {
-    if (currentStep === 1) {
-      if (!form.name.trim()) return "Full name is required.";
-      if (!form.email.trim()) return "Email is required.";
-      if (!/\S+@\S+\.\S+/.test(form.email)) return "Invalid email address.";
-      if (!form.phone.trim()) return "Phone number is required.";
+  // Validate
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!name.trim())           e.name = "Full name is required";
+    else if (name.trim().length > 30) e.name = "Name must be 30 characters or less";
+    if (!email.trim())          e.email = "Email address is required";
+    else if (!validateEmail(email)) e.email = "Please enter a valid email address";
+    if (phone && !validatePhone(phone)) e.phone = "Enter a valid Australian number (9 digits after +61, without leading 0)";
+    const pwErr = validatePassword(password);
+    if (!password)              e.password = "Password is required";
+    else if (pwErr)             e.password = pwErr;
+    if (!confirm)               e.confirm = "Please confirm your password";
+    else if (password !== confirm) e.confirm = "Passwords do not match";
+    if (tab === "homeowner") {
+      if (suburb && state && !validateSuburb(suburb, state))
+        e.suburb = `"${suburb}" is not a recognised suburb in ${state}`;
+      if (suburb && !state) e.state = "Please select a state first";
     }
-    if (currentStep === 2) {
-      if (!form.businessName.trim()) return "Business name is required.";
-      if (!form.specialty) return "Please select your trade specialty.";
-    }
-    if (currentStep === 3) {
-      if (!form.suburb.trim()) return "Suburb is required.";
-      if (!form.state) return "Please select your state.";
-    }
-    if (currentStep === 4) {
-      if (form.password.length < 8) return "Password must be at least 8 characters.";
-      if (!/\d/.test(form.password)) return "Password must include a number.";
-      if (!/[!@#$%^&*]/.test(form.password)) return "Password must include a special character (!@#$%^&*).";
-      if (form.password !== form.confirm) return "Passwords do not match.";
-      if (!form.agreeTerms) return "Please agree to the Terms of Service.";
-    }
-    return null;
+    if (tab === "tradie" && !specialty) e.specialty = "Please select your trade specialty";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const handleNext = () => {
-    const err = validateStep();
-    if (err) {
-      setError(err);
-      return;
-    }
-    setError("");
-    setCurrentStep((s) => s + 1);
-  };
-
-  const handleBack = () => {
-    setError("");
-    setCurrentStep((s) => s - 1);
-  };
-
+  // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const err = validateStep();
-    if (err) {
-      setError(err);
-      return;
-    }
-
+    setServerError("");
+    if (!validate()) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signup-tradie", {
+      const fullPhone = phone ? `+61${phone.replace(/[\s-()]/g, "")}` : "";
+      const body = tab === "homeowner"
+        ? { name: name.trim(), email: email.trim().toLowerCase(), phone: fullPhone, password, role: "HOMEOWNER", suburb: suburb.trim(), state }
+        : { name: name.trim(), email: email.trim().toLowerCase(), phone: fullPhone, password, role: "TRADIE", businessName: businessName.trim() || name.trim(), specialty };
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          password: form.password,
-          businessName: form.businessName,
-          specialty: form.specialty,
-          licenseNumber: form.licenseNumber,
-          suburb: form.suburb,
-          state: form.state,
-          bio: form.bio,
-        }),
+        body: JSON.stringify(body),
       });
-
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Signup failed.");
-        setLoading(false);
-        return;
+      if (data.success) {
+        setSuccess(true);
+        window.location.href = tab === "tradie" ? "/dashboard-tradie" : "/dashboard";
+      } else {
+        setServerError(data.error || "Registration failed. Please try again.");
       }
-
-      router.push("/dashboard-tradie");
     } catch {
-      setError("Something went wrong. Please try again.");
+      setServerError("Something went wrong. Please check your connection and try again.");
+    } finally {
       setLoading(false);
     }
   };
 
-  const features = [
-    {
-      icon: DollarSign,
-      title: "Get More Job Leads",
-      desc: "Access thousands of homeowners looking for your trade.",
-    },
-    {
-      icon: Star,
-      title: "Build Your Reputation",
-      desc: "Collect reviews and grow your business online.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Verified Badge",
-      desc: "Get verified to stand out and win more jobs.",
-    },
-  ];
+  const accentBlue  = "border-[#0047AB] text-[#0047AB] bg-blue-50";
+  const accentOrange = "border-[#F97316] text-[#F97316] bg-orange-50";
 
   return (
-    <div className="min-h-screen bg-blue-900 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex"
-      >
-        {/* LEFT PANEL */}
-        <div className="hidden md:flex flex-col w-[42%] bg-orange-50 p-8 justify-between">
-          {/* Logo */}
-          <div>
-            <div className="relative h-14 w-44 mb-6">
-              <Image
-                src="/imports/GeTradie_Logo.png"
-                alt="GeTradie"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
+    <div className="min-h-screen bg-[#F8FAFF]">
 
-            <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-600 text-xs font-bold px-3 py-1.5 rounded-full mb-4">
-              <Briefcase size={12} />
-              Tradie Registration
-            </div>
+      {/* Top bar */}
+      <div className="bg-[#0047AB] py-4 px-6 flex items-center justify-between">
+        <Link href="/">
+          <img src="/imports/GeTradie_Logo.png" alt="GeTradie" className="h-9 object-contain" />
+        </Link>
+        <span className="text-blue-200 text-sm">
+          Already have an account?{" "}
+          <Link href="/login" className="text-white font-bold underline">Sign in</Link>
+        </span>
+      </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Grow Your Business with{" "}
-              <span className="text-orange-500">GeTradie</span>
-            </h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Join thousands of tradies already winning jobs and growing their business on GeTradie.
-            </p>
+      <div className="max-w-2xl mx-auto px-4 py-10">
 
-            {/* Mascot */}
-            <div className="relative h-44 w-full my-6 rounded-2xl overflow-hidden bg-orange-100">
-              <Image
-                src="/imports/GeTredie_Mascot.jpg"
-                alt="GeTradie Mascot"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="space-y-4">
-            {features.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div key={f.title} className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Icon size={18} className="text-white" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">{f.title}</p>
-                    <p className="text-gray-500 text-xs mt-0.5">{f.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        {/* Heading */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-black text-gray-900 mb-2">Create Your Account</h1>
+          <p className="text-gray-500 text-sm">Join thousands of Australians on GeTradie — free to sign up</p>
         </div>
 
-        {/* RIGHT PANEL */}
-        <div className="flex-1 p-8 overflow-y-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                Create Tradie Account
-              </h1>
-              <p className="text-gray-500 text-xs mt-0.5">
-                Step {currentStep} of {steps.length}
-              </p>
-            </div>
-            <Link href="/" className="text-gray-400 hover:text-gray-600 text-xl">
-              ✕
-            </Link>
-          </div>
-
-          {/* Progress bar */}
-          <div className="flex gap-2 mb-6">
-            {steps.map((s) => (
-              <div key={s.number} className="flex-1">
-                <div
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    s.number <= currentStep ? "bg-orange-500" : "bg-gray-200"
-                  }`}
-                />
-                <p className={`text-xs mt-1 font-medium ${
-                  s.number === currentStep ? "text-orange-500" : "text-gray-400"
-                }`}>
-                  {s.title}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Error */}
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4"
+        {/* Tab toggle */}
+        <div className="flex bg-gray-100 rounded-2xl p-1 mb-8 shadow-inner">
+          {(["homeowner","tradie"] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => { setTab(t); setErrors({}); }}
+              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-200
+                ${tab === t
+                  ? t === "homeowner"
+                    ? "bg-white text-[#0047AB] shadow-md"
+                    : "bg-white text-[#F97316] shadow-md"
+                  : "text-gray-400"}`}
             >
-              {error}
-            </motion.div>
+              {t === "homeowner" ? "🏠 Homeowner" : "🔧 Tradie"}
+            </button>
+          ))}
+        </div>
+
+        {/* Form card */}
+        <div className="bg-white rounded-3xl shadow-xl border border-blue-50 p-8">
+          {serverError && (
+            <div className="mb-6 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+              {serverError}
+            </div>
           )}
 
-          <AnimatePresence mode="wait">
-            {/* STEP 1 — Personal Info */}
-            {currentStep === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-3"
-              >
-                <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <User size={18} className="text-orange-500" />
-                  Personal Information
-                </h2>
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
 
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <User size={17} className="text-gray-400" />
-                  <input
+            {/* Full Name */}
+            <Field label="Full Name" required error={errors.name}>
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="e.g. John Smith"
+                  value={name}
+                  maxLength={30}
+                  error={errors.name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errors.name) setErrors((p) => ({ ...p, name: "" }));
+                  }}
+                />
+                <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs
+                  ${name.length > 25 ? "text-orange-500" : "text-gray-300"}`}>
+                  {name.length}/30
+                </span>
+              </div>
+            </Field>
+
+            {/* Email */}
+            <Field label="Email Address" required error={errors.email}>
+              <Input
+                type="email"
+                placeholder="john@example.com"
+                value={email}
+                error={errors.email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors((p) => ({ ...p, email: "" }));
+                }}
+              />
+            </Field>
+
+            {/* Phone — +61 built in */}
+            <Field
+              label="Phone Number"
+              error={errors.phone}
+              hint="Australian mobile or landline — enter digits after +61 without leading 0"
+            >
+              <div className={`flex items-center rounded-xl border-2 bg-gray-50 overflow-hidden transition
+                ${errors.phone ? "border-red-400" : "border-gray-200 focus-within:border-blue-500"}`}>
+                <div className="flex items-center gap-2 px-3 py-3 bg-blue-50 border-r border-gray-200 shrink-0">
+                  <span className="text-lg">🇦🇺</span>
+                  <span className="text-sm font-bold text-[#0047AB]">+61</span>
+                </div>
+                <input
+                  type="tel"
+                  placeholder="4XX XXX XXX"
+                  value={phone}
+                  maxLength={11}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/[^\d\s-]/g, "");
+                    setPhone(cleaned);
+                    if (errors.phone) setErrors((p) => ({ ...p, phone: "" }));
+                  }}
+                  className="flex-1 bg-transparent px-3 py-3 text-sm text-gray-900 outline-none"
+                />
+              </div>
+            </Field>
+
+            {/* Tradie-specific */}
+            {tab === "tradie" && (
+              <>
+                <Field label="Business Name">
+                  <Input
                     type="text"
-                    name="name"
-                    placeholder="Full Name *"
-                    value={form.name}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
+                    placeholder="e.g. Smith Electrical"
+                    value={businessName}
+                    maxLength={50}
+                    onChange={(e) => setBusinessName(e.target.value)}
                   />
-                </div>
+                </Field>
 
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <Mail size={17} className="text-gray-400" />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address *"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
-                  />
-                </div>
-
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <Phone size={17} className="text-gray-400" />
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone Number *"
-                    value={form.phone}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* STEP 2 — Business Info */}
-            {currentStep === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-3"
-              >
-                <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <Briefcase size={18} className="text-orange-500" />
-                  Business Information
-                </h2>
-
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <Briefcase size={17} className="text-gray-400" />
-                  <input
-                    type="text"
-                    name="businessName"
-                    placeholder="Business Name *"
-                    value={form.businessName}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
-                  />
-                </div>
-
-                {/* Trade specialty */}
-                <div className="border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 transition-colors">
-                  <label className="text-xs text-gray-400 block mb-1">Trade Specialty *</label>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {trades.map((trade) => (
+                <Field label="Trade Specialty" required error={errors.specialty}>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {TRADES.map((t) => (
                       <button
-                        key={trade}
+                        key={t}
                         type="button"
                         onClick={() => {
-                          setForm({ ...form, specialty: trade });
-                          setError("");
+                          setSpecialty(t);
+                          if (errors.specialty) setErrors((p) => ({ ...p, specialty: "" }));
                         }}
-                        className={`text-sm py-2 px-3 rounded-lg border transition-colors text-left font-medium ${
-                          form.specialty === trade
-                            ? "bg-orange-500 text-white border-orange-500"
-                            : "border-gray-200 text-gray-600 hover:border-orange-300"
-                        }`}
+                        className={`px-4 py-2 rounded-full text-sm font-semibold border-2 transition
+                          ${specialty === t
+                            ? "bg-[#FFF7ED] border-[#F97316] text-[#F97316]"
+                            : "bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-300"}`}
                       >
-                        {trade}
+                        {t}
                       </button>
                     ))}
                   </div>
-                </div>
+                </Field>
 
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <FileText size={17} className="text-gray-400" />
-                  <input
+                <Field label="ABN (Optional)">
+                  <Input
                     type="text"
-                    name="licenseNumber"
-                    placeholder="License Number (Optional)"
-                    value={form.licenseNumber}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
+                    placeholder="12 345 678 901"
+                    value={abn}
+                    maxLength={14}
+                    onChange={(e) => setAbn(e.target.value.replace(/[^\d\s]/g, ""))}
                   />
-                </div>
-
-                <div className="border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 transition-colors">
-                  <textarea
-                    name="bio"
-                    placeholder="Tell homeowners about your experience (Optional)"
-                    value={form.bio}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full text-sm text-gray-700 outline-none bg-transparent resize-none"
-                  />
-                </div>
-              </motion.div>
+                </Field>
+              </>
             )}
 
-            {/* STEP 3 — Location */}
-            {currentStep === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-3"
-              >
-                <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <MapPin size={18} className="text-orange-500" />
-                  Service Location
-                </h2>
-
-                <p className="text-xs text-gray-500 mb-3">
-                  This helps homeowners find you in their area.
-                </p>
-
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <MapPin size={17} className="text-gray-400" />
-                  <input
-                    type="text"
-                    name="suburb"
-                    placeholder="Suburb *"
-                    value={form.suburb}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
-                  />
-                </div>
-
-                <div className="border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 transition-colors">
-                  <label className="text-xs text-gray-400 block mb-2">State *</label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {australianStates.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => {
-                          setForm({ ...form, state: s });
-                          setError("");
-                        }}
-                        className={`text-sm py-2 rounded-lg border font-medium transition-colors ${
-                          form.state === s
-                            ? "bg-orange-500 text-white border-orange-500"
-                            : "border-gray-200 text-gray-600 hover:border-orange-300"
-                        }`}
-                      >
-                        {s}
-                      </button>
+            {/* Homeowner-specific */}
+            {tab === "homeowner" && (
+              <div className="grid grid-cols-2 gap-4">
+                {/* State */}
+                <Field label="State" required error={errors.state}>
+                  <select
+                    value={state}
+                    onChange={(e) => {
+                      setState(e.target.value);
+                      setSuburb("");
+                      setSuburbSuggestions([]);
+                      if (errors.state) setErrors((p) => ({ ...p, state: "", suburb: "" }));
+                    }}
+                    className={`w-full rounded-xl border-2 px-4 py-3 text-sm bg-gray-50 outline-none
+                      transition focus:border-blue-500
+                      ${errors.state ? "border-red-400" : "border-gray-200"}
+                      ${!state ? "text-gray-400" : "text-gray-900"}`}
+                  >
+                    <option value="">Select state</option>
+                    {AU_STATES.map((s) => (
+                      <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
                     ))}
+                  </select>
+                </Field>
+
+                {/* Suburb */}
+                <Field label="Suburb" error={errors.suburb}>
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder={state ? `Search in ${state}...` : "Select state first"}
+                      value={suburb}
+                      disabled={!state}
+                      error={errors.suburb}
+                      onChange={(e) => handleSuburbChange(e.target.value)}
+                      onBlur={() => setTimeout(() => setSuburbSuggestions([]), 200)}
+                    />
+                    {suburbSuggestions.length > 0 && (
+                      <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white rounded-xl
+                        border-2 border-blue-200 shadow-lg overflow-hidden">
+                        {suburbSuggestions.map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => {
+                              setSuburb(s);
+                              setSuburbSuggestions([]);
+                              setErrors((p) => ({ ...p, suburb: "" }));
+                            }}
+                            className="w-full text-left px-4 py-2.5 text-sm text-gray-800
+                              hover:bg-blue-50 hover:text-[#0047AB] border-b border-gray-50 last:border-0"
+                          >
+                            📍 {s}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              </motion.div>
+                </Field>
+              </div>
             )}
 
-            {/* STEP 4 — Security */}
-            {currentStep === 4 && (
-              <motion.div
-                key="step4"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-3"
-              >
-                <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <Lock size={18} className="text-orange-500" />
-                  Create Password
-                </h2>
-
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <Lock size={17} className="text-gray-400" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="Password *"
-                    value={form.password}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-                  </button>
+            {/* Password */}
+            <Field
+              label="Password"
+              required
+              error={errors.password}
+              hint={!errors.password ? "Must include uppercase, lowercase, and a number" : ""}
+            >
+              <div className="relative">
+                <Input
+                  type={showPw ? "text" : "password"}
+                  placeholder="Min 8 characters"
+                  value={password}
+                  error={errors.password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors((p) => ({ ...p, password: "" }));
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600"
+                >
+                  {showPw ? "Hide" : "Show"}
+                </button>
+              </div>
+              {/* Strength indicators */}
+              {password.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {pwChecks.map((c) => (
+                    <span
+                      key={c.label}
+                      className={`text-xs font-medium px-2 py-0.5 rounded-full
+                        ${c.pass ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-400"}`}
+                    >
+                      {c.pass ? "✓" : "○"} {c.label}
+                    </span>
+                  ))}
                 </div>
+              )}
+            </Field>
 
-                <div className="flex items-center border border-gray-200 focus-within:border-orange-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                  <Lock size={17} className="text-gray-400" />
-                  <input
-                    type={showConfirm ? "text" : "password"}
-                    name="confirm"
-                    placeholder="Confirm Password *"
-                    value={form.confirm}
-                    onChange={handleChange}
-                    className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm(!showConfirm)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    {showConfirm ? <EyeOff size={17} /> : <Eye size={17} />}
-                  </button>
-                </div>
+            {/* Confirm Password */}
+            <Field label="Confirm Password" required error={errors.confirm}>
+              <Input
+                type="password"
+                placeholder="Repeat your password"
+                value={confirm}
+                error={errors.confirm}
+                onChange={(e) => {
+                  setConfirm(e.target.value);
+                  if (errors.confirm) setErrors((p) => ({ ...p, confirm: "" }));
+                }}
+              />
+            </Field>
 
-                <p className="text-xs text-gray-400 px-1">
-                  Must be 8+ characters with a number and special character (!@#$%^&*)
-                </p>
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`mt-2 w-full py-4 rounded-2xl text-white font-black text-base
+                transition-all duration-200 active:scale-[0.98] disabled:opacity-60
+                ${tab === "homeowner"
+                  ? "bg-[#0047AB] hover:bg-[#003d99]"
+                  : "bg-[#F97316] hover:bg-[#ea580c]"}`}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/>
+                    <path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8v8z"/>
+                  </svg>
+                  Creating Account...
+                </span>
+              ) : "Create Account →"}
+            </button>
 
-                {/* Summary */}
-                <div className="bg-orange-50 rounded-xl p-4 mt-4">
-                  <p className="text-xs font-bold text-gray-700 mb-3">Account Summary</p>
-                  <div className="space-y-1.5 text-xs text-gray-600">
-                    <p><span className="font-semibold">Name:</span> {form.name}</p>
-                    <p><span className="font-semibold">Email:</span> {form.email}</p>
-                    <p><span className="font-semibold">Business:</span> {form.businessName}</p>
-                    <p><span className="font-semibold">Trade:</span> {form.specialty}</p>
-                    <p><span className="font-semibold">Location:</span> {form.suburb}, {form.state}</p>
-                  </div>
-                </div>
+            {/* Terms */}
+            <p className="text-center text-xs text-gray-400 mt-2">
+              By creating an account you agree to our{" "}
+              <Link href="/terms" className="text-[#0047AB] font-semibold hover:underline">Terms of Service</Link>
+              {" "}and{" "}
+              <Link href="/privacy" className="text-[#0047AB] font-semibold hover:underline">Privacy Policy</Link>
+            </p>
 
-                {/* Terms */}
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="agreeTerms"
-                    checked={form.agreeTerms}
-                    onChange={handleChange}
-                    className="mt-0.5 accent-orange-500"
-                  />
-                  <span className="text-xs text-gray-500">
-                    I agree to the{" "}
-                    <a href="#" className="text-orange-500 hover:underline">Terms of Service</a>{" "}
-                    and{" "}
-                    <a href="#" className="text-orange-500 hover:underline">Privacy Policy</a>
-                  </span>
-                </label>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Navigation buttons */}
-          <div className="flex gap-3 mt-6">
-            {currentStep > 1 && (
-              <button
-                type="button"
-                onClick={handleBack}
-                className="flex items-center gap-2 border border-gray-200 hover:border-gray-300 text-gray-600 px-5 py-3 rounded-xl font-semibold text-sm transition-colors"
-              >
-                <ArrowLeft size={16} />
-                Back
-              </button>
-            )}
-
-            {currentStep < 4 ? (
-              <button
-                type="button"
-                onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl font-bold text-sm transition-colors"
-              >
-                Continue
-                <ArrowRight size={16} />
-              </button>
-            ) : (
-              <motion.button
-                type="button"
-                onClick={handleSubmit}
-                disabled={loading}
-                whileHover={{ scale: loading ? 1 : 1.02 }}
-                whileTap={{ scale: loading ? 1 : 0.98 }}
-                className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white py-3 rounded-xl font-bold text-sm transition-colors shadow-md"
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                    </svg>
-                    Creating Account...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle size={16} />
-                    Create Tradie Account
-                  </>
-                )}
-              </motion.button>
-            )}
-          </div>
-
-          {/* Login link */}
-          <p className="text-center text-sm text-gray-500 mt-4">
-            Already have an account?{" "}
-            <Link href="/login-tradie" className="text-orange-500 hover:text-orange-600 font-semibold">
-              Log In
-            </Link>
-          </p>
+          </form>
         </div>
-      </motion.div>
+
+        {/* Sign in link */}
+        <p className="text-center text-sm text-gray-500 mt-6">
+          Already have an account?{" "}
+          <Link
+            href={tab === "tradie" ? "/login-tradie" : "/login"}
+            className="text-[#0047AB] font-bold hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+
+      </div>
     </div>
   );
 }
