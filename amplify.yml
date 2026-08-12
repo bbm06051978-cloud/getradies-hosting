@@ -8,6 +8,9 @@ frontend:
     build:
       commands:
         - echo "RESEND_API_KEY=$RESEND_API_KEY" >> .env.production
+        - echo "DATABASE_URL=$DATABASE_URL" >> .env.production
+        - echo "DIRECT_URL=$DIRECT_URL" >> .env.production
+        - echo "JWT_SECRET=$JWT_SECRET" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
