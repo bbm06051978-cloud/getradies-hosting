@@ -4,6 +4,7 @@ frontend:
     preBuild:
       commands:
         - npm ci
+        - npx prisma generate
     build:
       commands:
         - echo "RESEND_API_KEY=$RESEND_API_KEY" >> .env.production
