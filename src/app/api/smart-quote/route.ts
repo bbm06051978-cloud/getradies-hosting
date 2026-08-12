@@ -5,7 +5,7 @@ import { verifyToken } from "@/lib/auth";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token || !verifyToken(token)) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
   }
@@ -62,3 +62,4 @@ Rules:
     return NextResponse.json({ error: "Failed to generate quote. Please try again." }, { status: 500 });
   }
 }
+
