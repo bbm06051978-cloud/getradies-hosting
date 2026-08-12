@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "GeTradie <onboarding@resend.dev>",
+        from: "GeTradie <noreply@getradie.com.au>",
         to: user.email,
         subject: "Your GeTradie Password Reset Code",
         html: `<div style="font-family:Arial,sans-serif;padding:40px;"><h1 style="color:#0047AB;">GeTradie</h1><p>Hi ${user.name},</p><p>Your password reset code is:</p><h2 style="color:#0047AB;letter-spacing:8px;font-size:36px;">${otp}</h2><p>This code expires in 15 minutes.</p></div>`,
@@ -45,3 +45,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Server error: " + (err?.message || "unknown") }, { status: 500 });
   }
 }
+
