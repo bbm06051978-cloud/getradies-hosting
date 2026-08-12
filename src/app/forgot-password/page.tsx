@@ -1,104 +1,125 @@
+// src/app/forgot-password/page.tsx
 "use client";
 import { useState } from "react";
-import { Mail } from "lucide-react";
 import Link from "next/link";
-import { motion } from "motion/react";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail]     = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [sent, setSent]       = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState("");
-
-  const validateEmail = (val: string) => {
-    if (!val) return "Email is required";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return "Enter a valid email address";
-    return "";
-  };
+  const [email, setEmail]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [sent, setSent]         = useState(false);
+  const [error, setError]       = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const err = validateEmail(email);
-    if (err) { setEmailError(err); return; }
-
+    setError("");
+    if (!email.trim()) { setError("Please enter your email address."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email address."); return; }
     setLoading(true);
-    setServerError("");
     try {
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.toLowerCase().trim() }),
       });
       const data = await res.json();
-      if (!res.ok || data.error) {
-        setServerError(data.error || "No account found with this email address.");
-        return;
+      if (data.success) {
+        setSent(true);
+        // Store email for next step
+        sessionStorage.setItem("reset_email", email.toLowerCase().trim());
+      } else {
+        setError(data.error || "Something went wrong. Please try again.");
       }
-      setSent(true);
-    } catch { setServerError("Something went wrong. Please try again."); }
-    finally { setLoading(false); }
+    } catch {
+      setError("Could not connect. Please check your internet connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{
-      background: "linear-gradient(135deg, #060d4a 0%, #0d1a8a 50%, #1a3adb 100%)"
-    }}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+    <div className="min-h-screen bg-[#F8FAFF] flex flex-col items-center justify-center px-4">
 
-        <div className="text-center mb-6">
-          <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Mail size={28} className="text-blue-300"/>
-          </div>
-          <h1 className="text-2xl font-bold text-white">Forgot Password?</h1>
-          <p className="text-blue-200 text-sm mt-1">Enter your email and we&apos;ll send you a reset link</p>
-        </div>
+      {/* Logo */}
+      <Link href="/" className="mb-8">
+        <img src="/imports/GeTradie_Logo.png" alt="GeTradie" className="h-10 object-contain" />
+      </Link>
 
-        {sent ? (
-          <div className="text-center">
-            <div className="bg-green-500/20 border border-green-400 rounded-xl p-4 mb-5">
-              <p className="text-green-300 font-semibold text-sm">✅ Reset link sent!</p>
-              <p className="text-green-200 text-xs mt-1">Check your email inbox. The link expires in 1 hour.</p>
-            </div>
-            <Link href="/login" className="text-blue-300 text-sm hover:text-white hover:underline">
-              ← Back to Login
-            </Link>
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-3xl shadow-xl border border-blue-50 overflow-hidden">
+
+          {/* Header */}
+          <div className="bg-gradient-to-r from-[#0047AB] to-[#003d99] px-8 py-8 text-center">
+            <div className="text-4xl mb-3">🔐</div>
+            <h1 className="text-2xl font-black text-white mb-1">Forgot Password?</h1>
+            <p className="text-blue-200 text-sm">Enter your email and we will send you a reset code</p>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {serverError && (
-              <div className="bg-red-500/20 border border-red-400 text-red-200 text-sm rounded-xl px-4 py-3">
-                {serverError}
+
+          <div className="px-8 py-8">
+            {!sent ? (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setError(""); }}
+                    className={`w-full rounded-xl border-2 px-4 py-3 text-sm outline-none transition bg-gray-50
+                      focus:border-[#0047AB] ${error ? "border-red-400" : "border-gray-200"}`}
+                    autoFocus
+                  />
+                  {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 rounded-2xl bg-[#0047AB] hover:bg-[#003d99] text-white
+                    font-black text-base transition disabled:opacity-60 mt-2"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/>
+                        <path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8v8z"/>
+                      </svg>
+                      Sending Code...
+                    </span>
+                  ) : "Send Reset Code →"}
+                </button>
+
+                <Link href="/login" className="text-center text-sm text-gray-400 hover:text-[#0047AB] transition">
+                  ← Back to Sign In
+                </Link>
+              </form>
+            ) : (
+              // Success state
+              <div className="text-center">
+                <div className="text-5xl mb-4">📬</div>
+                <h2 className="text-xl font-black text-gray-900 mb-2">Check Your Email</h2>
+                <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                  We sent a 6-digit code to<br/>
+                  <strong className="text-gray-800">{email}</strong><br/>
+                  The code expires in <strong>15 minutes</strong>.
+                </p>
+                <Link
+                  href="/verify-otp"
+                  className="block w-full py-4 rounded-2xl bg-[#0047AB] hover:bg-[#003d99]
+                    text-white font-black text-base text-center transition"
+                >
+                  Enter Code →
+                </Link>
+                <button
+                  onClick={() => { setSent(false); setEmail(""); }}
+                  className="mt-4 text-sm text-gray-400 hover:text-gray-600 transition"
+                >
+                  Use a different email
+                </button>
               </div>
             )}
-            <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1">Email Address</label>
-              <div className={`flex items-center border-2 rounded-xl px-4 py-3 gap-3 bg-white/5 transition-colors ${
-                emailError ? "border-red-400" : "border-white/20 focus-within:border-blue-400"
-              }`}>
-                <Mail size={16} className="text-gray-400 flex-shrink-0"/>
-                <input type="email" placeholder="Enter your email address" value={email}
-                  onChange={e => { setEmail(e.target.value); setEmailError(validateEmail(e.target.value)); }}
-                  className="flex-1 text-sm text-white outline-none bg-transparent placeholder-white/40"/>
-              </div>
-              {emailError && <p className="text-red-400 text-xs mt-1">{emailError}</p>}
-            </div>
-
-            <motion.button type="submit" disabled={loading}
-              whileHover={{ scale: loading ? 1 : 1.02 }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm transition-colors">
-              {loading ? "Sending..." : "Send Reset Link"}
-            </motion.button>
-
-            <div className="text-center">
-              <Link href="/login" className="text-blue-300 text-sm hover:text-white hover:underline">
-                ← Back to Login
-              </Link>
-            </div>
-          </form>
-        )}
-      </motion.div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
