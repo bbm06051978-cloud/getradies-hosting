@@ -18,7 +18,26 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: "desc" },
     include: {
       quotes: {
-        select: { id: true, amount: true, status: true },
+        select: {
+          id: true,
+          amount: true,
+          status: true,
+          tradieProfileId: true,
+          description: true,
+          availability: true,
+          warranty: true,
+          tradieProfile: {
+            select: {
+              id: true,
+              userId: true,
+              businessName: true,
+              specialty: true,
+              rating: true,
+              totalReviews: true,
+              isVerified: true,
+            },
+          },
+        },
       },
       bookings: {
         select: {
@@ -63,6 +82,7 @@ export async function PATCH(req: NextRequest) {
 
   return NextResponse.json({ error: "Invalid action." }, { status: 400 });
 }
+
 
 
 
