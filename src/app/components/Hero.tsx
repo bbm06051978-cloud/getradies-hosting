@@ -74,7 +74,7 @@ export function Hero() {
 
       
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 lg:pt-54 lg:pb-20">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16 sm:pt-24 lg:pt-54 lg:pb-20">
         <div className="max-w-2xl space-y-6">
 
           {/* Mini marquee */}
