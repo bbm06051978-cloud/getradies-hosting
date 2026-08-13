@@ -161,10 +161,11 @@ export async function POST(req: NextRequest) {
   // Create booking
   const booking = await prisma.booking.create({
     data: {
-      jobId,
-      tradieProfileId,
+      job: { connect: { id: jobId } },
+      tradieProfile: { connect: { id: tradieProfileId } },
       totalAmount: parseFloat(totalAmount) || 0,
       status: "CONFIRMED",
+      scheduledAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // default 1 week
     },
   });
 
