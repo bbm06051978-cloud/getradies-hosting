@@ -24,8 +24,7 @@ export async function GET(req: NextRequest) {
           status: true,
           tradieProfileId: true,
           description: true,
-          availability: true,
-          warranty: true,
+          
           tradieProfile: {
             select: {
               id: true,
