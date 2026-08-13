@@ -132,6 +132,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   return NextResponse.json({ error: "Invalid action." }, { status: 400 });
+}
 
 export async function POST(req: NextRequest) {
   const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
