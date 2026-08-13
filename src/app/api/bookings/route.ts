@@ -132,5 +132,45 @@ export async function PATCH(req: NextRequest) {
   }
 
   return NextResponse.json({ error: "Invalid action." }, { status: 400 });
+
+export async function POST(req: NextRequest) {
+  const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+
+  const decoded = verifyToken(token);
+  if (!decoded) return NextResponse.json({ error: "Invalid token." }, { status: 401 });
+
+  const { jobId, quoteId, tradieProfileId, totalAmount } = await req.json();
+
+  if (!jobId || !quoteId || !tradieProfileId) {
+    return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+  }
+
+  // Check job belongs to this user
+  const job = await prisma.job.findUnique({ where: { id: jobId, userId: decoded.id } });
+  if (!job) return NextResponse.json({ error: "Job not found." }, { status: 404 });
+
+  // Accept the quote and reject others
+  await prisma.quote.update({ where: { id: quoteId }, data: { status: "ACCEPTED" } });
+  await prisma.quote.updateMany({
+    where: { jobId, id: { not: quoteId } },
+    data: { status: "REJECTED" },
+  });
+
+  // Create booking
+  const booking = await prisma.booking.create({
+    data: {
+      jobId,
+      tradieProfileId,
+      totalAmount: parseFloat(totalAmount) || 0,
+      status: "CONFIRMED",
+    },
+  });
+
+  // Update job status
+  await prisma.job.update({ where: { id: jobId }, data: { status: "BOOKED" } });
+
+  return NextResponse.json({ success: true, booking });
+}
 }
 
