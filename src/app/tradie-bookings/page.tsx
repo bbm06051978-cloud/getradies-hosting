@@ -18,7 +18,7 @@ type Booking = {
   id: string; scheduledAt: string; status: string; totalAmount: number; createdAt: string;
   homeowner?: Homeowner;
   job: { id: string; title: string; trade: string; suburb: string; state: string; description: string; aiEstimate: string | null; };
-  payment: { id: string; amount: number; status: string; } | null;
+  payment: { id: string; amount: number; status: string; getradieFee: number | null; tradieEarning: number | null; paidAt: string | null; } | null;
 };
 
 function TradieBookingsInner() {
@@ -269,9 +269,27 @@ useEffect(() => {
                               
                               <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
                                 <p className="text-xs text-blue-700 font-semibold">💰 Payment Info</p>
-                                <p className="text-xs text-blue-600 mt-0.5">
-                                  {"📌 The lock amount of $"}{booking.totalAmount}{" AUD is held securely by GeTradie. Please collect the remaining job amount directly from the homeowner after job completion."}
-                                </p>
+                                {booking.payment && booking.status === "COMPLETED" ? (
+                                  <div className="mt-1 space-y-1">
+                                    <div className="flex justify-between">
+                                      <span className="text-xs text-gray-500">Lock Amount Paid</span>
+                                      <span className="text-xs font-bold text-gray-700">${booking.payment.amount} AUD</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-xs text-gray-500">GeTradie Fee</span>
+                                      <span className="text-xs font-bold text-red-500">-${booking.payment.getradieFee} AUD</span>
+                                    </div>
+                                    <div className="flex justify-between border-t border-blue-200 pt-1 mt-1">
+                                      <span className="text-xs font-bold text-green-700">Your Payout</span>
+                                      <span className="text-xs font-bold text-green-700">${booking.payment.tradieEarning} AUD</span>
+                                    </div>
+                                    <p className="text-xs text-blue-500 mt-1">Plus direct payment from homeowner for remaining balance.</p>
+                                  </div>
+                                ) : (
+                                  <p className="text-xs text-blue-600 mt-0.5">
+                                    The lock amount is held securely by GeTradie. Collect the remaining balance directly from the homeowner after job completion.
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
