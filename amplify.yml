@@ -13,7 +13,7 @@ frontend:
         - echo "DIRECT_URL=$DIRECT_URL" >> .env.production
         - echo "RESEND_API_KEY=$RESEND_API_KEY" >> .env.production
         - echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env.production
-- echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY" >> .env.production
+	- echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY" >> .env.production
         - echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" >> .env.production
         - echo "JWT_SECRET=$JWT_SECRET" >> .env.production
         - npm run build
