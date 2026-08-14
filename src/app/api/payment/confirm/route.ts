@@ -80,8 +80,8 @@ export async function POST(req: NextRequest) {
 
       // Calculate GeTradie fee based on lock amount
       const lockAmount = paymentIntent.amount / 100;
-      const getradieFee = lockAmount >= 500 ? 20 :
-                          lockAmount >= 250 ? 15 :
+      const getradieFee = lockAmount >= 500 ? 50 :
+                          lockAmount >= 250 ? 25 :
                           lockAmount >= 100 ? 10 : 5;
       const tradieEarning = lockAmount - getradieFee;
 
@@ -104,9 +104,9 @@ export async function POST(req: NextRequest) {
 // Award GeTradie points to tradie based on lock amount
     try {
       const lockAmount = paymentIntent.amount / 100;
-      const pointsToAdd = lockAmount >= 500 ? 10 :
-                          lockAmount >= 250 ? 5  :
-                          lockAmount >= 100 ? 2  : 1;
+      const pointsToAdd = lockAmount >= 500 ? 200 :
+                          lockAmount >= 250 ? 75  :
+                          lockAmount >= 100 ? 25  : 10;
 
       const updatedProfile = await prisma.tradieProfile.update({
         where: { id: tradieProfileId },
