@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// Nearby suburbs map for Western Sydney and greater Sydney
 const nearbySuburbs: Record<string, string[]> = {
   "Parramatta": ["Parramatta", "Westmead", "Harris Park", "North Parramatta", "Granville", "Merrylands", "Wentworthville", "Northmead", "Toongabbie", "Rydalmere", "Ermington", "Dundas"],
   "Westmead": ["Westmead", "Parramatta", "Harris Park", "Northmead", "Wentworthville", "Pendle Hill"],
@@ -30,14 +29,11 @@ const nearbySuburbs: Record<string, string[]> = {
 
 function getSuburbsToSearch(suburb: string): string[] {
   if (!suburb) return [];
-  // Check exact match first
   if (nearbySuburbs[suburb]) return nearbySuburbs[suburb];
-  // Check case-insensitive match
   const key = Object.keys(nearbySuburbs).find(
     k => k.toLowerCase() === suburb.toLowerCase()
   );
   if (key) return nearbySuburbs[key];
-  // Fallback — just use the tradie's own suburb
   return [suburb];
 }
 
@@ -59,7 +55,7 @@ export async function GET(req: NextRequest) {
 
   const [availableJobs, myQuotes, activeBookings, completedBookings] = await Promise.all([
 
-    // Available job leads — match by suburb radius and state
+    // Available job leads
     prisma.job.findMany({
       where: {
         trade: tradieProfile.specialty,
@@ -109,7 +105,7 @@ export async function GET(req: NextRequest) {
       },
     }),
 
-     // Completed/closed bookings
+    // Completed/closed bookings
     prisma.booking.findMany({
       where: {
         tradieProfileId: tradieProfile.id,
@@ -121,6 +117,15 @@ export async function GET(req: NextRequest) {
         job: {
           include: {
             user: { select: { id: true, name: true, suburb: true, state: true } },
+          },
+        },
+        payment: {
+          select: {
+            amount: true,
+            getradieFee: true,
+            tradieEarning: true,
+            status: true,
+            paidAt: true,
           },
         },
       },
@@ -135,5 +140,3 @@ export async function GET(req: NextRequest) {
     serviceArea: suburbsToSearch,
   });
 }
-
-
