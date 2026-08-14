@@ -174,7 +174,7 @@ export async function POST(req: NextRequest) {
       job: { connect: { id: jobId } },
       tradieProfile: { connect: { id: tradieProfileId } },
       totalAmount: parseFloat(totalAmount) || 0,
-      status: "CONFIRMED",
+      status: "PENDING",
       scheduledAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // default 1 week
     },
   });
