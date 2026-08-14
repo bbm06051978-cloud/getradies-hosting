@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
       bookings: {
         select: {
           id: true, status: true, scheduledAt: true,
+          review: { select: { id: true } },
           tradieProfile: {
             select: {
               userId: true,
