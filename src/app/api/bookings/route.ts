@@ -64,12 +64,22 @@ export async function PATCH(req: NextRequest) {
     const booking = await prisma.booking.update({
       where: { id: bookingId },
       data: { status: "COMPLETED" },
-      select: { jobId: true },
+      include: { tradieProfile: { select: { userId: true } }, job: { select: { title: true } } },
     });
     await prisma.job.update({
       where: { id: booking.jobId },
       data: { status: "COMPLETED" },
     });
+    // Notify tradie
+    if (booking.tradieProfile?.userId) {
+      await prisma.notification.create({
+        data: {
+          userId: booking.tradieProfile.userId,
+          title: "Job Confirmed Complete!",
+          message: `The homeowner confirmed "${booking.job.title}" is complete. Payment will be released shortly.`,
+        },
+      });
+    }
     return NextResponse.json({ success: true });
   }
 
@@ -171,6 +181,21 @@ export async function POST(req: NextRequest) {
 
   // Update job status
   await prisma.job.update({ where: { id: jobId }, data: { status: "BOOKED" } });
+
+  // Notify tradie — quote accepted
+  const tradieProfile = await prisma.tradieProfile.findUnique({
+    where: { id: tradieProfileId },
+    select: { userId: true },
+  });
+  if (tradieProfile) {
+    await prisma.notification.create({
+      data: {
+        userId: tradieProfile.userId,
+        title: "Quote Accepted!",
+        message: `Your quote for "${job.title}" was accepted. The job is now confirmed.`,
+      },
+    });
+  }
 
   return NextResponse.json({ success: true, booking });
 }
