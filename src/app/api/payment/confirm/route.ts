@@ -9,7 +9,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
     if (!token) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
     const decoded = verifyToken(token);
     if (!decoded) return NextResponse.json({ error: "Invalid token." }, { status: 401 });
