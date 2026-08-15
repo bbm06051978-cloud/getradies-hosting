@@ -1,175 +1,221 @@
 "use client";
-import { motion } from "motion/react";
-import { ShieldCheck, Zap, Star, DollarSign, MessageSquare, Clock, Search, Bell, FileText } from "lucide-react";
-import React from "react";
-const SCREENS = [
-  { src: "/imports/Get AI Estimate.jpeg",     label: "AI Estimate" },
-  { src: "/imports/Post your job.jpeg",        label: "Post a Job" },
-  { src: "/imports/Compare quotes.jpeg",       label: "Compare Quotes" },
-  { src: "/imports/Hire with confidence.jpeg", label: "Hire with Confidence" },
-  { src: "/imports/Job done and review.jpeg",  label: "Job Done & Review" },
-];
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Zap, FileText, Users, ShieldCheck, Lock, MessageSquare, Star, Trophy } from "lucide-react";
 
-function PhoneScreenSlider() {
-  const [current, setCurrent] = React.useState(0);
-  React.useEffect(() => {
-    const t = setInterval(() => setCurrent(c => (c + 1) % SCREENS.length), 3000);
-    return () => clearInterval(t);
-  }, []);
-  return (
-    <div className="flex flex-col items-center gap-4">
-      <div style={{ width: 240, height: 480, borderRadius: 36, overflow: "hidden", border: "8px solid #1a1a2e", boxShadow: "0 30px 60px rgba(0,0,0,0.3)", background: "#000", position: "relative" }}>
-        {SCREENS.map((s, i) => (
-          <div key={i} style={{ position: "absolute", inset: 0, opacity: i === current ? 1 : 0, transition: "opacity 0.6s ease" }}>
-            <img src={s.src} alt={s.label} style={{ width: "100%", height: "100%", objectFit: "cover" }}/>
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-2">
-        {SCREENS.map((s, i) => (
-          <button key={i} onClick={() => setCurrent(i)}
-            style={{ width: i === current ? 24 : 8, height: 8, borderRadius: 4, background: i === current ? "#F97316" : "#D1D5DB", transition: "all 0.3s", border: "none", cursor: "pointer" }}
-          />
-        ))}
-      </div>
-      <p className="text-sm font-semibold text-gray-500">{SCREENS[current].label}</p>
-    </div>
-  );
-}
 const features = [
-  { icon: Zap,          title: "AI-Powered Estimates",    desc: "Know your budget before hiring anyone", color: "#F97316" },
-  { icon: ShieldCheck,  title: "Verified Tradies Only",   desc: "Every tradie background-checked",       color: "#3B82F6" },
-  { icon: DollarSign,   title: "Booking Protection",      desc: "Pay a small lock amount to confirm your booking and protect against disputes",      color: "#10B981" },
-  { icon: Star,         title: "Genuine Reviews",         desc: "Real reviews from verified homeowners", color: "#F59E0B" },
-  { icon: MessageSquare,title: "Direct Messaging",        desc: "Chat with tradies before committing",   color: "#8B5CF6" },
-  { icon: Clock,        title: "Fast Response",           desc: "Most jobs get quotes within 24 hours",  color: "#EC4899" },
+  {
+    icon: Zap,
+    color: "#3B82F6",
+    gradient: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
+    title: "AI Price Estimate Before You Post",
+    desc: "The only Australian tradie platform that shows homeowners a fair price range before contacting anyone. Homeowners arrive informed. Conversations start fairly.",
+    tag: "Australia's First",
+  },
+  {
+    icon: FileText,
+    color: "#F97316",
+    gradient: "linear-gradient(135deg, #F97316, #EA580C)",
+    title: "Post a Job for Free",
+    desc: "No sign-up fees, no commissions, no per-lead charges. Post in 2 minutes and receive competing quotes from verified local tradies.",
+    tag: "Zero Cost to Homeowners",
+  },
+  {
+    icon: Users,
+    color: "#8B5CF6",
+    gradient: "linear-gradient(135deg, #8B5CF6, #7C3AED)",
+    title: "Maximum 5 Tradies Per Job",
+    desc: "Smart matching limits each job to 5 best-fit tradies — not dozens. A 1-in-5 chance means your quote gets proper consideration every time.",
+    tag: "Better Odds for Tradies",
+  },
+  {
+    icon: ShieldCheck,
+    color: "#10B981",
+    gradient: "linear-gradient(135deg, #10B981, #059669)",
+    title: "Verified Tradies Only",
+    desc: "Trade licence and public liability insurance independently verified — not self-declared — before any tradie appears in search results.",
+    tag: "Full Verification",
+  },
+  {
+    icon: Lock,
+    color: "#EC4899",
+    gradient: "linear-gradient(135deg, #EC4899, #DB2777)",
+    title: "Stripe Payment Protection — Both Sides",
+    desc: "Homeowners lock part of payment via Stripe before work starts. Tradies know their money is guaranteed. No other Australian platform protects both parties simultaneously.",
+    tag: "Unique to GeTradie",
+  },
+  {
+    icon: MessageSquare,
+    color: "#0891B2",
+    gradient: "linear-gradient(135deg, #0891B2, #0E7490)",
+    title: "Direct In-App Messaging",
+    desc: "Chat directly with tradies before committing. No sharing personal phone numbers. All communication stays secure within the GeTradie platform.",
+    tag: "Safe & Secure",
+  },
+  {
+    icon: Star,
+    color: "#F59E0B",
+    gradient: "linear-gradient(135deg, #F59E0B, #D97706)",
+    title: "Genuine Reviews That Actually Matter",
+    desc: "Real reviews from verified homeowners only. Every review directly impacts tradie search ranking — so quality work is always rewarded.",
+    tag: "Verified Reviews Only",
+  },
+  {
+    icon: Trophy,
+    color: "#EF4444",
+    gradient: "linear-gradient(135deg, #EF4444, #DC2626)",
+    title: "Points & Ranking System",
+    desc: "The only platform where quality work automatically improves your search ranking. Earn GeTradie Points, reach Trusted or Premium Tradie status, get more leads.",
+    tag: "Rewards Quality",
+  },
 ];
-
-function AppScreen() {
-  return (
-    <motion.div initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
-      transition={{ duration:0.7 }} className="flex items-center justify-center">
-      <div className="relative w-48 h-[380px] rounded-[2rem] border-4 border-gray-800 bg-gray-900 shadow-2xl overflow-hidden"
-        style={{ boxShadow: "0 40px 80px rgba(249,115,22,0.25), 0 0 0 1px rgba(255,255,255,0.05)" }}>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-10"/>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#060d4a] to-[#1a2066] flex flex-col">
-          <div className="flex justify-between px-5 pt-8 pb-2">
-            <span className="text-white/50 text-sm font-medium">9:41</span>
-            <span className="text-white/50 text-xs">●●● WiFi</span>
-          </div>
-          <div className="px-5 pb-3">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-white/50 text-xs">Welcome back</p>
-                <p className="text-white font-semibold text-base">Bidhu 👋</p>
-              </div>
-              <div className="w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center">
-                <Bell size={14} className="text-white"/>
-              </div>
-            </div>
-            <div className="bg-white/10 rounded-2xl px-2 py-2 flex items-center gap-1">
-              <Search size={13} className="text-white/40"/>
-              <span className="text-white/30 text-xs">Search jobs, tradies...</span>
-            </div>
-          </div>
-          <div className="px-4 pb-3 grid grid-cols-3 gap-1">
-            {[
-              { label: "Active Jobs", value: "2", color: "#F97316" },
-              { label: "Quotes In",   value: "5", color: "#3B82F6" },
-              { label: "Done",   value: "8", color: "#10B981" },
-            ].map(s => (
-              <div key={s.label} className="bg-white/5 rounded-2xl p-2 text-center border border-white/10">
-                <p className="font-bold text-base" style={{ color: s.color }}>{s.value}</p>
-                <p className="text-white/40 text-xs leading-tight">{s.label}</p>
-              </div>
-            ))}
-          </div>
-          <div className="px-5 flex-1">
-            <p className="text-white/50 text-xs font-bold uppercase tracking-widest mb-2">Recent Jobs</p>
-            <div className="space-y-2">
-              {[
-                { title: "Fan Installation",  trade: "Electrical", status: "Booked", statusColor: "#8B5CF6", amount: "$300" },
-                { title: "Blocked Drain Fix", trade: "Plumbing",   status: "Open",   statusColor: "#F97316", amount: "$150" },
-                { title: "House Cleaning",    trade: "Cleaning",   status: "Done",   statusColor: "#10B981", amount: "$220" },
-              ].map(job => (
-                <div key={job.title} className="bg-white/5 border border-white/10 rounded-2xl p-2.5 flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${job.statusColor}20` }}>
-                    <FileText size={12} style={{ color: job.statusColor }}/>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-xs font-semibold truncate">{job.title}</p>
-                    <p className="text-white/40 text-xs">{job.trade}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-xs font-bold" style={{ color: job.statusColor }}>{job.status}</p>
-                    <p className="text-white/50 text-xs">{job.amount}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex justify-around px-5 py-3 border-t border-white/10 mt-2">
-            {[Search, FileText, Bell, Star].map((Icon, i) => (
-              <div key={i} className={`flex flex-col items-center gap-0.5 ${i === 0 ? "opacity-100" : "opacity-30"}`}>
-                <Icon size={16} className="text-white"/>
-                {i === 0 && <div className="w-1 h-1 bg-orange-400 rounded-full"/>}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-20 h-1 bg-white/20 rounded-full"/>
-      </div>
-    </motion.div>
-  );
-}
 
 export function WhyGeTradie() {
-  return (
-    <section className="py-24 bg-gray-50 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6">
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
 
-        {/* Centered header */}
-        <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-          viewport={{ once:true }} transition={{ duration:0.6 }} className="text-center mb-16">
-          <div className="block mb-4">
-            <span className="inline-block bg-orange-100 text-orange-600 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
-              Why Choose Us
-            </span>
-          </div>
-          <div className="block mb-4">
-            <h2 className="inline-block text-2xl lg:text-3xl font-bold text-gray-900 bg-blue-100/50 backdrop-blur-md border border-blue-200 px-4 py-2 rounded-2xl">
-              Why <span className="text-orange-500">GeTradie</span>?
-            </h2>
-          </div>
-          <p className="text-black-500 text-sm max-w-2xl mx-auto leading-relaxed">
-            Australia's only tradie marketplace with AI-powered estimates, verified tradies and built-in dispute protection.
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => setCurrent(c => (c + 1) % features.length), 4000);
+    return () => clearInterval(t);
+  }, [paused]);
+
+  const f = features[current];
+  const Icon = f.icon;
+
+  return (
+    <section className="py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #060d4a 0%, #0d1a8a 60%, #1a3adb 100%)" }}>
+      <div className="max-w-5xl mx-auto px-6">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+          <span className="inline-block bg-orange-500/20 text-orange-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest border border-orange-500/30">
+            Why Choose GeTradie
+          </span>
+          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+            The <span className="text-orange-400">7 Key Differences</span>
+          </h2>
+          <p className="text-blue-200 text-sm max-w-xl mx-auto">
+            Australia's only AI-powered tradie marketplace — built differently from the ground up.
           </p>
         </motion.div>
 
-        {/* Phone + Features side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <PhoneScreenSlider/>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {features.map((f, i) => {
-              const Icon = f.icon;
-              return (
-                <motion.div key={f.title}
-                  initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-                  viewport={{ once:true }} transition={{ duration:0.4, delay: i * 0.08 }}
-                  className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-300 transition-all">
-                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-3"
-                    style={{ background: `${f.color}15` }}>
-                    <Icon size={18} style={{ color: f.color }}/>
+        {/* Main slide */}
+        <div
+          className="relative"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.5 }}
+              style={{
+                background: "rgba(255,255,255,0.07)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: "1.5px solid rgba(255,255,255,0.12)",
+                borderRadius: 28,
+                padding: "48px 48px",
+                boxShadow: `0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px ${f.color}20`,
+                minHeight: 280,
+              }}
+            >
+              {/* Top accent */}
+              <div style={{ position: "absolute", top: 0, left: 48, right: 48, height: 3, borderRadius: "0 0 4px 4px", background: f.gradient }}/>
+
+              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
+                {/* Icon */}
+                <div style={{ width: 80, height: 80, borderRadius: 24, background: f.gradient, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 16px 40px ${f.color}40` }}>
+                  <Icon size={36} color="#fff"/>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3 flex-wrap">
+                    <span style={{ background: `${f.color}20`, border: `1px solid ${f.color}40`, color: f.color, fontSize: 11, fontWeight: 700, padding: "3px 12px", borderRadius: 20, letterSpacing: 0.5 }}>
+                      {f.tag}
+                    </span>
+                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, fontWeight: 700 }}>
+                      {String(current + 1).padStart(2, "0")} / {String(features.length).padStart(2, "0")}
+                    </span>
                   </div>
-                  <p className="font-bold text-gray-900 text-md mb-1">{f.title}</p>
-                  <p className="text-gray-700 text-xs leading-relaxed">{f.desc}</p>
-                </motion.div>
-              );
-            })}
-          </div>
+                  <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">{f.title}</h3>
+                  <p className="text-blue-200 text-base leading-relaxed">{f.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation arrows */}
+          <button
+            onClick={() => setCurrent(c => (c - 1 + features.length) % features.length)}
+            style={{ position: "absolute", left: -20, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >‹</button>
+          <button
+            onClick={() => setCurrent(c => (c + 1) % features.length)}
+            style={{ position: "absolute", right: -20, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >›</button>
         </div>
 
+        {/* Dots */}
+        <div className="flex justify-center gap-2 mt-8">
+          {features.map((feat, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              style={{
+                width: i === current ? 28 : 8,
+                height: 8,
+                borderRadius: 4,
+                background: i === current ? features[i].color : "rgba(255,255,255,0.2)",
+                border: "none",
+                cursor: "pointer",
+                transition: "all 0.3s",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ height: 2, background: "rgba(255,255,255,0.1)", borderRadius: 2, marginTop: 16, overflow: "hidden" }}>
+          <motion.div
+            key={current}
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: paused ? 0 : 4, ease: "linear" }}
+            style={{ height: "100%", background: f.color, borderRadius: 2 }}
+          />
+        </div>
+
+        {/* All features grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-12">
+          {features.map((feat, i) => {
+            const FeatIcon = feat.icon;
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                style={{
+                  background: i === current ? `${feat.color}20` : "rgba(255,255,255,0.05)",
+                  border: `1px solid ${i === current ? feat.color + "40" : "rgba(255,255,255,0.08)"}`,
+                  borderRadius: 14,
+                  padding: "12px",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                  textAlign: "left",
+                }}
+              >
+                <FeatIcon size={16} color={i === current ? feat.color : "rgba(255,255,255,0.4)"} style={{ marginBottom: 6 }}/>
+                <p style={{ color: i === current ? "#fff" : "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, lineHeight: 1.4, margin: 0 }}>
+                  {feat.title.split(" ").slice(0, 4).join(" ")}
+                </p>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
