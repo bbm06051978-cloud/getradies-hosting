@@ -98,7 +98,7 @@ function LoginPageInner() {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12">
+      <div className="flex-1 w-full flex items-center justify-center px-4 py-8 lg:px-6 lg:py-12">
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
           className="w-full max-w-md">
 
