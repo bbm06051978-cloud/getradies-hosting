@@ -84,17 +84,17 @@ export function WhyGeTradie() {
   const Icon = f.icon;
 
   return (
-    <section className="py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #060d4a 0%, #0d1a8a 60%, #1a3adb 100%)" }}>
+    <section className="py-24 overflow-hidden" style={{ background: "#f8faff" }}>
       <div className="max-w-5xl mx-auto px-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
           <span className="inline-block bg-orange-500/20 text-orange-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest border border-orange-500/30">
             Why Choose GeTradie
           </span>
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            The <span className="text-orange-400">7 Key Differences</span>
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            The <span className="text-orange-500">7 Key Differences</span>
           </h2>
-          <p className="text-blue-200 text-sm max-w-xl mx-auto">
+          <p className="text-gray-500 text-sm max-w-xl mx-auto">
             Australia's only AI-powered tradie marketplace — built differently from the ground up.
           </p>
         </motion.div>
@@ -113,10 +113,10 @@ export function WhyGeTradie() {
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.5 }}
               style={{
-                background: "rgba(255,255,255,0.07)",
+                background: "rgba(255,255,255,0.9)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                border: "1.5px solid rgba(255,255,255,0.12)",
+                border: "1.5px solid rgba(0,0,0,0.08)",
                 borderRadius: 28,
                 padding: "48px 48px",
                 boxShadow: `0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px ${f.color}20`,
@@ -142,8 +142,8 @@ export function WhyGeTradie() {
                       {String(current + 1).padStart(2, "0")} / {String(features.length).padStart(2, "0")}
                     </span>
                   </div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">{f.title}</h3>
-                  <p className="text-blue-200 text-base leading-relaxed">{f.desc}</p>
+                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">{f.title}</h3>
+                  <p className="text-gray-600 text-base leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             </motion.div>
