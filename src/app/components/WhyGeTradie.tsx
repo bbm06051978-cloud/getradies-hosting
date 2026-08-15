@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "motion/react";
 import { ShieldCheck, Zap, Star, DollarSign, MessageSquare, Clock, Search, Bell, FileText } from "lucide-react";
-import Image from "next/image";
 import React from "react";
 const SCREENS = [
   { src: "/imports/Get AI Estimate.jpeg",     label: "AI Estimate" },
@@ -22,7 +21,7 @@ function PhoneScreenSlider() {
       <div style={{ width: 240, height: 480, borderRadius: 36, overflow: "hidden", border: "8px solid #1a1a2e", boxShadow: "0 30px 60px rgba(0,0,0,0.3)", background: "#000", position: "relative" }}>
         {SCREENS.map((s, i) => (
           <div key={i} style={{ position: "absolute", inset: 0, opacity: i === current ? 1 : 0, transition: "opacity 0.6s ease" }}>
-            <Image src={s.src} alt={s.label} fill style={{ objectFit: "cover" }}/>
+            <img src={s.src} alt={s.label} style={{ width: "100%", height: "100%", objectFit: "cover" }}/>
           </div>
         ))}
       </div>
