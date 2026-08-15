@@ -1,8 +1,42 @@
 "use client";
 import { motion } from "motion/react";
 import { ShieldCheck, Zap, Star, DollarSign, MessageSquare, Clock, Search, Bell, FileText } from "lucide-react";
-import { AppScreenIllustration } from "@/app/components/AppScreenIllustration";
+import Image from "next/image";
+import React from "react";
+const SCREENS = [
+  { src: "/imports/Get AI Estimate.jpeg",     label: "AI Estimate" },
+  { src: "/imports/Post your job.jpeg",        label: "Post a Job" },
+  { src: "/imports/Compare quotes.jpeg",       label: "Compare Quotes" },
+  { src: "/imports/Hire with confidence.jpeg", label: "Hire with Confidence" },
+  { src: "/imports/Job done and review.jpeg",  label: "Job Done & Review" },
+];
 
+function PhoneScreenSlider() {
+  const [current, setCurrent] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setCurrent(c => (c + 1) % SCREENS.length), 3000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div style={{ width: 240, height: 480, borderRadius: 36, overflow: "hidden", border: "8px solid #1a1a2e", boxShadow: "0 30px 60px rgba(0,0,0,0.3)", background: "#000", position: "relative" }}>
+        {SCREENS.map((s, i) => (
+          <div key={i} style={{ position: "absolute", inset: 0, opacity: i === current ? 1 : 0, transition: "opacity 0.6s ease" }}>
+            <Image src={s.src} alt={s.label} fill style={{ objectFit: "cover" }}/>
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        {SCREENS.map((s, i) => (
+          <button key={i} onClick={() => setCurrent(i)}
+            style={{ width: i === current ? 24 : 8, height: 8, borderRadius: 4, background: i === current ? "#F97316" : "#D1D5DB", transition: "all 0.3s", border: "none", cursor: "pointer" }}
+          />
+        ))}
+      </div>
+      <p className="text-sm font-semibold text-gray-500">{SCREENS[current].label}</p>
+    </div>
+  );
+}
 const features = [
   { icon: Zap,          title: "AI-Powered Estimates",    desc: "Know your budget before hiring anyone", color: "#F97316" },
   { icon: ShieldCheck,  title: "Verified Tradies Only",   desc: "Every tradie background-checked",       color: "#3B82F6" },
@@ -116,7 +150,7 @@ export function WhyGeTradie() {
 
         {/* Phone + Features side by side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <AppScreenIllustration/>
+          <PhoneScreenSlider/>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {features.map((f, i) => {
               const Icon = f.icon;
