@@ -151,7 +151,7 @@ export default function HowItWorksPage() {
         <div className="absolute inset-0 bg-blue-950/40" />
         <div className="relative max-w-4xl mx-auto px-4 text-left">
           <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-5 uppercase tracking-widest">
-              Simple 5-Step Process
+              Simple 5-Step Process 
             </span>
             <h1 className="text-4xl lg:text-4xl font-bold text-white mb-5 leading-tight">
               How <span className="text-orange-400">GeTradie</span> Works
