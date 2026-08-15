@@ -199,8 +199,11 @@ export function WhyGeTradie() {
                 key={i}
                 onClick={() => setCurrent(i)}
                 style={{
-                  background: i === current ? `${feat.color}20` : "rgba(255,255,255,0.05)",
-                  border: `1px solid ${i === current ? feat.color + "40" : "rgba(255,255,255,0.08)"}`,
+                  background: i === current ? `${feat.color}15` : "rgba(255,255,255,0.7)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: `1px solid ${i === current ? feat.color + "40" : "rgba(0,0,0,0.08)"}`,
+                  boxShadow: i === current ? `0 4px 16px ${feat.color}20` : "0 2px 8px rgba(0,0,0,0.06)",
                   borderRadius: 14,
                   padding: "12px",
                   cursor: "pointer",
@@ -209,7 +212,7 @@ export function WhyGeTradie() {
                 }}
               >
                 <FeatIcon size={16} color={i === current ? feat.color : "rgba(255,255,255,0.4)"} style={{ marginBottom: 6 }}/>
-                <p style={{ color: i === current ? "#fff" : "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, lineHeight: 1.4, margin: 0 }}>
+                <p style={{ color: i === current ? feat.color : "#6B7280", fontSize: 11, fontWeight: 700, lineHeight: 1.4, margin: 0 }}>
                   {feat.title.split(" ").slice(0, 4).join(" ")}
                 </p>
               </button>
