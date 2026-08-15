@@ -191,7 +191,7 @@ export default function HowItWorksPage() {
 
           {/* Homeowner steps — glassmorphic vertical cards */}
           {activeTab === "homeowner" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-6 max-w-3xl mx-auto">
               {homeownerSteps.map((step, i) => {
                 const Icon = step.icon;
                 return (
