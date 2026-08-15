@@ -189,71 +189,116 @@ export default function HowItWorksPage() {
             </div>
           </div>
 
-          {/* Homeowner steps — alternating screenshot layout */}
+          {/* Homeowner steps — glassmorphic vertical cards */}
           {activeTab === "homeowner" && (
-            <div className="space-y-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {homeownerSteps.map((step, i) => {
                 const Icon = step.icon;
-                const flip = i % 2 === 1;
                 return (
                   <motion.div key={step.number}
-                    initial={{ opacity: 0, y: 40 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${flip ? "lg:flex lg:flex-row-reverse" : ""}`}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="relative group"
                   >
-                    {/* Text side */}
-                    <div className={flip ? "lg:pl-8" : "lg:pr-8"}>
+                    <div style={{
+                      background: "rgba(255,255,255,0.7)",
+                      backdropFilter: "blur(16px)",
+                      WebkitBackdropFilter: "blur(16px)",
+                      border: `1.5px solid ${step.color}30`,
+                      borderRadius: "20px",
+                      padding: "28px",
+                      boxShadow: `0 8px 32px ${step.color}15`,
+                      height: "100%",
+                      transition: "all 0.3s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.boxShadow = `0 16px 48px ${step.color}30`)}
+                    onMouseLeave={e => (e.currentTarget.style.boxShadow = `0 8px 32px ${step.color}15`)}
+                    >
+                      {/* Top accent line */}
+                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", borderRadius: "20px 20px 0 0", background: `linear-gradient(90deg, ${step.color}, ${step.color}60)` }}/>
+                      
+                      {/* Icon + Number */}
                       <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center flex-shrink-0 shadow-lg`}
-                          style={{ boxShadow: `0 8px 20px ${step.color}40` }}>
-                          <Icon size={22} className="text-white"/>
+                        <div style={{ width: 44, height: 44, borderRadius: 14, background: `${step.color}15`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <Icon size={20} style={{ color: step.color }}/>
                         </div>
-                        <span className="text-6xl font-black" style={{ color: `${step.color}20` }}>{step.number}</span>
+                        <span style={{ fontSize: 48, fontWeight: 900, color: `${step.color}20`, lineHeight: 1 }}>{step.number}</span>
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-3">{step.title}</h3>
-                      <p className="text-gray-500 text-base leading-relaxed mb-4">{step.description}</p>
-                      <div className="flex items-start gap-2 bg-orange-50 border border-orange-100 rounded-xl px-4 py-3">
-                        <span className="text-orange-400 text-sm mt-0.5">💡</span>
-                        <p className="text-sm text-gray-600 leading-relaxed">{step.tip}</p>
+
+                      {/* Title */}
+                      <h3 className="font-bold text-gray-900 text-lg mb-2">{step.title}</h3>
+
+                      {/* Description */}
+                      <p className="text-gray-500 text-sm leading-relaxed mb-4">{step.description}</p>
+
+                      {/* Tip */}
+                      <div style={{ background: `${step.color}08`, border: `1px solid ${step.color}20`, borderRadius: 12, padding: "10px 14px", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                        <span style={{ fontSize: 14, flexShrink: 0 }}>💡</span>
+                        <p style={{ fontSize: 12, color: "#6B7280", lineHeight: 1.6, margin: 0 }}>{step.tip}</p>
                       </div>
                     </div>
-
-                    {/* Screenshot side */}
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.3 }}
-                      className="relative"
-                    >
-                      {/* Glow */}
-                      <div className="absolute inset-0 rounded-3xl" style={{
-                        background: `radial-gradient(ellipse, ${step.color}20 0%, transparent 70%)`,
-                        filter: "blur(20px)",
-                      }}/>
-                      {/* Screenshot as-is */}
-                      <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
-                        <Image
-                          src={step.image}
-                          alt={step.title}
-                          width={400}
-                          height={200}
-                          className="w-full h-auto object-contain"
-                        />
-                      </div>
-                    </motion.div>
                   </motion.div>
                 );
               })}
             </div>
           )}
 
-          {/* Tradie steps — card grid */}
+
+          {/* Tradie steps — glassmorphic vertical cards */}
           {activeTab === "tradie" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {tradieSteps.map((step, i) => (
-                <TradieStepCard key={step.number} step={step} index={i}/>
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tradieSteps.map((step, i) => {
+                const Icon = step.icon;
+                return (
+                  <motion.div key={step.number}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="relative group"
+                  >
+                    <div style={{
+                      background: "rgba(255,255,255,0.7)",
+                      backdropFilter: "blur(16px)",
+                      WebkitBackdropFilter: "blur(16px)",
+                      border: `1.5px solid ${step.color}30`,
+                      borderRadius: "20px",
+                      padding: "28px",
+                      boxShadow: `0 8px 32px ${step.color}15`,
+                      height: "100%",
+                      transition: "all 0.3s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.boxShadow = `0 16px 48px ${step.color}30`)}
+                    onMouseLeave={e => (e.currentTarget.style.boxShadow = `0 8px 32px ${step.color}15`)}
+                    >
+                      {/* Top accent line */}
+                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", borderRadius: "20px 20px 0 0", background: `linear-gradient(90deg, ${step.color}, ${step.color}60)` }}/>
+
+                      {/* Icon + Number */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <div style={{ width: 44, height: 44, borderRadius: 14, background: `${step.color}15`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <Icon size={20} style={{ color: step.color }}/>
+                        </div>
+                        <span style={{ fontSize: 48, fontWeight: 900, color: `${step.color}20`, lineHeight: 1 }}>{step.number}</span>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="font-bold text-gray-900 text-lg mb-2">{step.title}</h3>
+
+                      {/* Description */}
+                      <p className="text-gray-500 text-sm leading-relaxed mb-4">{step.description}</p>
+
+                      {/* Tip */}
+                      <div style={{ background: `${step.color}08`, border: `1px solid ${step.color}20`, borderRadius: 12, padding: "10px 14px", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                        <span style={{ fontSize: 14, flexShrink: 0 }}>💡</span>
+                        <p style={{ fontSize: 12, color: "#6B7280", lineHeight: 1.6, margin: 0 }}>{step.tip}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </div>
