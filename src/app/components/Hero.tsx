@@ -11,6 +11,7 @@ export function Hero() {
   const [estimate, setEstimate] = useState("");
   const [jobText, setJobText]   = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const checkWidth = () => setIsMobile(window.innerWidth < 768);
@@ -49,7 +50,7 @@ export function Hero() {
     <section
       className="relative overflow-hidden"
       style={{
-        backgroundImage: `url(${isMobile ? "/imports/getradie-mobile-background.webp" : "/imports/hero_baground.webp"})`,
+        backgroundImage: `url(${mounted && isMobile ? "/imports/getradie-mobile-background.webp" : "/imports/hero_baground.webp"})`,
         backgroundSize: "cover",
         backgroundPosition: "center top",
         backgroundRepeat: "no-repeat",
