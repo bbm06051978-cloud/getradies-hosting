@@ -6,27 +6,23 @@ import { motion } from "motion/react";
 const categories = [
   {
     label: "Plumbing",
-    img: "/imports/plumber.png",
+    img: "/imports/plumber.webp",
     shadow: "hover:shadow-blue-300",
   },
   {
     label: "Electrical",
-    img: "/imports/electrician.png",
+    img: "/imports/electrician.webp",
     shadow: "hover:shadow-yellow-300",
   },
-  {
-    label: "Removals",
-    img: "/imports/mover.png",
-    shadow: "hover:shadow-indigo-300",
-  },
+  
   {
     label: "Painting",
-    img: "/imports/painter.png",
+    img: "/imports/painter.webp",
     shadow: "hover:shadow-sky-300",
   },
   {
     label: "Cleaning",
-    img: "/imports/cleaner.png",
+    img: "/imports/cleaner.webp",
     shadow: "hover:shadow-cyan-300",
   },
   {
@@ -36,7 +32,7 @@ const categories = [
   },
   {
     label: "Carpentry",
-    img: "/imports/carpenter.png",
+    img: "/imports/carpenter.webp",
     shadow: "hover:shadow-orange-300",
   },
 ];
