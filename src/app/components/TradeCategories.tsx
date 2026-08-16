@@ -30,11 +30,7 @@ const categories = [
     img: "/imports/handyman.png",
     shadow: "hover:shadow-amber-300",
   },
-  {
-    label: "Carpentry",
-    img: "/imports/carpenter.webp",
-    shadow: "hover:shadow-orange-300",
-  },
+
 ];
 
 export function TradeCategories() {
