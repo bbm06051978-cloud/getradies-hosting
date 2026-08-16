@@ -191,7 +191,7 @@ export default function RegisterPage() {
       {/* Top bar */}
       <div className="bg-[#0047AB] py-4 px-6 flex items-center justify-between">
         <Link href="/">
-          <img src="/imports/GeTradie_Logo.png" alt="GeTradie" className="h-9 object-contain" />
+          <img src="/imports/GeTradie_Logo.webp" alt="GeTradie" className="h-9 object-contain" />
         </Link>
         <span className="text-blue-200 text-sm">
           Already have an account?{" "}

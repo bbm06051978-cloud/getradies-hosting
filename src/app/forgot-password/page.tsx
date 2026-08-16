@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
 
       {/* Logo */}
       <Link href="/" className="mb-8">
-        <img src="/imports/GeTradie_Logo.png" alt="GeTradie" className="h-10 object-contain" />
+        <img src="/imports/GeTradie_Logo.webp" alt="GeTradie" className="h-10 object-contain" />
       </Link>
 
       <div className="w-full max-w-md">

@@ -21,7 +21,7 @@ export default function CostGuidesPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="page-hero relative py-14 lg:py-[15rem] overflow-hidden bg-[url('/imports/costguide.png')] bg-cover bg-[center]">
+      <section className="page-hero relative py-14 lg:py-[15rem] overflow-hidden bg-[url('/imports/costguide.webp')] bg-cover bg-[center]">
         {/* Overlay to ensure text readability over the image */}
         <div className="absolute inset-0 bg-blue-950/40" />
         

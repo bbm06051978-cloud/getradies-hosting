@@ -155,7 +155,7 @@ export default function AboutPage() {
           <div
             className="rounded-2xl overflow-hidden h-80 lg:h-96 relative shadow-xl"
             style={{
-              backgroundImage: "url(/imports/hero_baground.png)",
+              backgroundImage: "url(/imports/hero_baground.webp)",
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
@@ -227,7 +227,7 @@ export default function AboutPage() {
       <section
         className="py-16 px-4 relative"
         style={{
-          backgroundImage: "url(/imports/HowItWork.png)",
+          backgroundImage: "url(/imports/HowItWork.webp)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

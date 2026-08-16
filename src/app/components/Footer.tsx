@@ -12,7 +12,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="relative h-10 w-40">
-              <Image src="/imports/GeTradie_Logo.png" alt="GeTradie" fill className="object-contain"/>
+              <Image src="/imports/GeTradie_Logo.webp" alt="GeTradie" fill className="object-contain"/>
             </div>
             <p className="text-sm leading-relaxed">
               Australia&apos;s trusted platform for finding verified local tradies. Get quotes, compare prices, and hire with confidence.

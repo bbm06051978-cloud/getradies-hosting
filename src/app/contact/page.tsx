@@ -97,7 +97,7 @@ export default function ContactPage() {
 
 
       {/* Hero Section */}
-	<section className="page-hero relative py-16 lg:py-[17rem] overflow-hidden bg-[url('/imports/contactus.png')] bg-cover bg-[center]">
+	<section className="page-hero relative py-16 lg:py-[17rem] overflow-hidden bg-[url('/imports/contactus.webp')] bg-cover bg-[center]">
 
         <div className="absolute inset-0 bg-blue-950/40" />
         <div className="relative max-w-4xl mx-auto px-4 text-left">

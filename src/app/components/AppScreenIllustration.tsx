@@ -85,7 +85,7 @@ export function AppScreenIllustration() {
               background: "#000", borderRadius: "20px", zIndex: 20,
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <img src="/imports/GeTradie_Logo.png" alt="GeTradie" style={{ height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }}/>
+              <img src="/imports/GeTradie_Logo.webp" alt="GeTradie" style={{ height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }}/>
             </div>
 
             {/* Status bar */}

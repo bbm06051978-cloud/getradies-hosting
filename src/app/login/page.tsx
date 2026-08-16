@@ -64,13 +64,13 @@ function LoginPageInner() {
       {/* Left panel — branding */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: "url('/imports/hero_baground.png')",
+          backgroundImage: "url('/imports/hero_baground.webp')",
           backgroundSize: "cover", backgroundPosition: "center",
         }}/>
         <div className="relative z-10">
          <Link href="/">
             <div className="relative h-30 w-40 mb-12">
-              <Image src="/imports/GeTradie_Logo.png" alt="GeTradie" fill className="object-contain object-left"/>
+              <Image src="/imports/GeTradie_Logo.webp" alt="GeTradie" fill className="object-contain object-left"/>
             </div>
           </Link>
           <h2 className="text-4xl font-black text-white leading-tight mb-4">
@@ -106,7 +106,7 @@ function LoginPageInner() {
           <div className="lg:hidden flex items-center justify-between mb-8">
             <Link href="/">
               <div className="relative h-10 w-36">
-                <Image src="/imports/GeTradie_Logo.png" alt="GeTradie" fill className="object-contain object-left"/>
+                <Image src="/imports/GeTradie_Logo.webp" alt="GeTradie" fill className="object-contain object-left"/>
               </div>
             </Link>
             <Link href="/" className="text-blue-200 text-sm hover:text-white flex items-center gap-1">

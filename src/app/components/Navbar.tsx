@@ -40,7 +40,7 @@ export function Navbar() {
           <div className="flex items-center gap-1">
             <a href="/" className="relative h-50 w-80 flex-shrink-0 block">
               <Image
-                src="/imports/GeTradie_Logo.png"
+                src="/imports/GeTradie_Logo.webp"
                 alt="GeTradie Logo"
                 fill
                 className="object-contain object-left"

@@ -111,7 +111,7 @@ export default function ServicesPage() {
 
       {/* Hero */}
       
-	<section className="page-hero relative py-16 lg:py-[17rem] overflow-hidden bg-[url('/imports/services.png')] bg-cover bg-[center]">
+	<section className="page-hero relative py-16 lg:py-[17rem] overflow-hidden bg-[url('/imports/services.webp')] bg-cover bg-[center]">
         {/* Transparent layout to let the original background shine perfectly */}
             <div className="absolute inset-0 bg-blue-950/40" />
 
