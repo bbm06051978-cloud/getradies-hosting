@@ -73,13 +73,18 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     if (!form.name.trim()) { setError("Name is required."); return; }
+    if (form.phone) {
+      const digits = form.phone.replace(/[\s\-()]/g, "");
+      const cleaned = digits.startsWith("0") ? digits.slice(1) : digits;
+      if (!/^[2-9]\d{8}$/.test(cleaned)) { setError("Enter a valid Australian phone number (e.g. 0412 345 678)."); return; }
+    }
     setSaving(true);
     setError("");
     try {
       const res = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, phone: form.phone ? "+61" + form.phone.replace(/[\s\-()]/g, "").replace(/^0/, "") : form.phone }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Failed to save."); return; }
@@ -274,9 +279,10 @@ export default function ProfilePage() {
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Full Name</label>
                 {editing ? (
                   <div className="flex items-center border border-gray-200 focus-within:border-blue-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                    <User size={16} className="text-gray-400" />
-                    <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                      className="flex-1 text-sm text-gray-700 outline-none bg-transparent" placeholder="Full name" />
+                    <Phone size={16} className="text-gray-400" />
+                    <span className="text-sm font-semibold text-gray-500 flex-shrink-0">+61</span>
+                    <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value.replace(/[^0-9\s]/g, "") })}
+                      className="flex-1 text-sm text-gray-700 outline-none bg-transparent" placeholder="4XX XXX XXX" maxLength={12} />
                   </div>
                 ) : (
                   <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl">
