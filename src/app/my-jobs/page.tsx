@@ -94,7 +94,7 @@ function MyJobsPageInner() {
       <Sidebar/>
       <div className="flex-1 flex flex-col">
         <Topbar/>
-        <div className="p-6 lg:p-8 flex-1">
+        <div className="p-4 lg:p-8 flex-1 overflow-hidden">
 
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
@@ -115,7 +115,7 @@ function MyJobsPageInner() {
           </div>
 
           {/* 3 Tabs */}
-          <div className="flex gap-2 mb-6 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-100 w-fit">
+          <div className="flex gap-1 mb-6 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-100 w-full overflow-x-auto">
             {TABS.map(t => {
               const Icon = t.icon;
               return (
@@ -137,7 +137,7 @@ function MyJobsPageInner() {
           {loading ? (
             <div className="text-center py-20 text-gray-400">Loading your jobs...</div>
           ) : currentJobs.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100 w-full overflow-hidden">
               <Briefcase size={48} className="text-gray-200 mx-auto mb-4"/>
               <h3 className="font-bold text-gray-700 text-lg mb-2">
                 {tab === "open" ? "No open jobs" : tab === "inprogress" ? "No jobs in progress" : "No closed jobs"}
