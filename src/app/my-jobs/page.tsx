@@ -163,7 +163,7 @@ function MyJobsPageInner() {
                   <motion.div key={job.id}
                     initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                     className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                       <div className="flex items-start gap-4 flex-1">
                         <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
                           <Briefcase size={20} className="text-blue-600"/>
@@ -209,7 +209,7 @@ function MyJobsPageInner() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-col gap-2 flex-shrink-0">
+                      <div className="flex flex-col gap-2 flex-shrink-0 min-w-0">
                         {tab === "open" && job.quotes.length > 0 && (
                           <Link href={`/my-quotes?jobId=${job.id}`}>
                             <button className="flex items-center gap-1 bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors">
