@@ -91,7 +91,7 @@ export default function AboutPage() {
 
       {/* Hero */}
 
-<section className="page-hero relative pb-14 lg:py-[14rem] overflow-hidden bg-[url('/imports/aboutus.png')] bg-cover bg-[center]" >
+<section className="page-hero relative pb-14 lg:py-[14rem] overflow-hidden bg-[url('/imports/aboutus.webp')] bg-cover bg-[center]" >
         <div className="absolute inset-0 bg-blue-950/40" />
         
         <div className="relative max-w-4xl mx-auto px-4 text-left ">

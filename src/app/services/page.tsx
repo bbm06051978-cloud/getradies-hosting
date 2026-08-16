@@ -228,7 +228,7 @@ export default function ServicesPage() {
 
       {/* How it works */}
       <section className="relative py-16 px-4 overflow-hidden" style={{
-        backgroundImage: "url('/imports/hero_baground_5.png')",
+        backgroundImage: "url('/imports/hero_baground.webp')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
