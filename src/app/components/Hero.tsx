@@ -49,7 +49,7 @@ export function Hero() {
     <section
       className="relative overflow-hidden"
       style={{
-        backgroundImage: `url(${isMobile ? "/imports/getradie-mobile-background.png" : "/imports/hero_baground.webp"})`,
+        backgroundImage: `url(${isMobile ? "/imports/getradie-mobile-background.webp" : "/imports/hero_baground.webp"})`,
         backgroundSize: "cover",
         backgroundPosition: "center top",
         backgroundRepeat: "no-repeat",

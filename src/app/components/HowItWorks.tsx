@@ -10,7 +10,7 @@ const steps = [
     color: "#3B82F6",
     gradient: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
     icon: Zap,
-    image: "/imports/AI Estimate.png",
+    image: "/imports/AI Estimate.webp",
   },
   {
     number: "02",
@@ -19,7 +19,7 @@ const steps = [
     color: "#F97316",
     gradient: "linear-gradient(135deg, #F97316, #EA580C)",
     icon: FileText,
-    image: "/imports/AI post a job.png",
+    image: "/imports/AI post a job.webp",
   },
   {
     number: "03",
@@ -28,7 +28,7 @@ const steps = [
     color: "#8B5CF6",
     gradient: "linear-gradient(135deg, #8B5CF6, #7C3AED)",
     icon: MessageSquare,
-    image: "/imports/AI quote and compare.png",
+    image: "/imports/AI quote and compare.webp",
   },
   {
     number: "04",
@@ -37,7 +37,7 @@ const steps = [
     color: "#10B981",
     gradient: "linear-gradient(135deg, #10B981, #059669)",
     icon: ShieldCheck,
-    image: "/imports/AI completed and review.png",
+    image: "/imports/AI completed and review.webp",
   },
   {
     number: "05",
@@ -46,7 +46,7 @@ const steps = [
     color: "#F59E0B",
     gradient: "linear-gradient(135deg, #F59E0B, #D97706)",
     icon: ThumbsUp,
-    image: "/imports/AI dispute and resolution.png",
+    image: "/imports/AI dispute and resolution.webp",
   },
 ];
 
