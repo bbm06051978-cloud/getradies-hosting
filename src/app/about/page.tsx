@@ -71,8 +71,6 @@ const trades = [
   { emoji: "🧹", label: "Cleaning" },
   { emoji: "🎨", label: "Painting" },
   { emoji: "🔨", label: "Handyman" },
-  { emoji: "🪚", label: "Carpentry" },
-  { emoji: "🚚", label: "Removalists" },
 ];
 
 const teamValues = [
