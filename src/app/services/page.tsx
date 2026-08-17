@@ -67,34 +67,7 @@ const trades = [
     jobs: ["Interior painting", "Exterior painting", "Deck staining", "Fence painting", "Roof painting", "Pressure washing"],
   },
 
-  {
-    slug: "carpentry",
-    emoji: "🪚",
-    name: "Carpentry",
-    tagline: "Custom woodwork and structural carpentry",
-    description: "Experienced carpenters for decks, pergolas, wardrobes, doors and all timber work.",
-    avgCost: "$200 – $1,500",
-    hourly: "$70 – $150/hr",
-    color: "text-orange-600",
-    bg: "bg-orange-50",
-    border: "border-orange-100",
-    button: "bg-orange-500 hover:bg-orange-600",
-    jobs: ["Deck building", "Pergola construction", "Wardrobe installation", "Door fitting", "Fence building", "Flooring"],
-  },
-  {
-    slug: "removalists",
-    emoji: "🚚",
-    name: "Removalists",
-    tagline: "Safe and reliable moving services",
-    description: "Professional removalists for local, interstate and single-item moves. Packing services and storage available.",
-    avgCost: "$400 – $1,200",
-    hourly: "$100 – $200/hr",
-    color: "text-indigo-600",
-    bg: "bg-indigo-50",
-    border: "border-indigo-100",
-    button: "bg-indigo-600 hover:bg-indigo-700",
-    jobs: ["Local moves", "Interstate moves", "Single item delivery", "Packing service", "Storage solutions", "Piano removal"],
-  },
+  
 ];
 
 const howItWorks = [
