@@ -38,6 +38,8 @@ Renderer: render house, render exterior, repair render, cracked render, cement r
 Flooring Specialist: install timber flooring, install laminate, hybrid flooring, vinyl flooring, replace carpet, install carpet, sand timber floors, polish timber floors, floorboards damaged, replace floorboards, floor sanding, floor polishing, engineered timber
 Carpet Cleaner: clean carpet, carpet stain, deep clean carpet, steam clean carpet, carpet smells, pet stains carpet, carpet cleaning, carpet shampoo, carpet sanitising
 Pressure Cleaning Specialist: pressure wash driveway, clean driveway, pressure clean patio, pressure wash walls, high pressure cleaning, pressure clean roof, clean pavers, remove mould exterior, pressure wash house
+Welder: weld broken metal, repair metal gate, broken metal railing, metal railing repair, weld steel, broken steel, repair metal fence, metal balustrade repair, weld aluminium, metal welding, cracked metal, repair metal structure, rusted metal repair, metal fabrication
+Metal Fabricator: custom metal gate, metal frame, steel frame, custom steel, metal railing, steel railing, custom brackets, stainless steel, steel stairs, metal balustrade, fabricate metal
 Bricklayer: brick wall repair, cracked brick wall, build brick wall, replace bricks, repoint brickwork, brick fence, brick retaining wall, masonry repair, stone wall, repair mortar, brickwork restoration, brickie
 Rubbish Removal: remove rubbish, household waste, old furniture removal, construction waste, building debris, remove appliances, garage cleanout, house cleanout, garden waste, green waste removal, old mattress, skip bin alternative
 Removalist: move house, help moving, move furniture, apartment removal, office relocation, move piano, heavy furniture, furniture removal, house removal, moving service, pack and move
@@ -53,6 +55,7 @@ DISAMBIGUATION RULES:
 - Solar → Solar Technician (not Electrician)
 - Major structural work → Builder (not Carpenter/Handyman)
 - Small repairs → Handyman
+- Metal/steel railing/gate/structure repair → Welder or Metal Fabricator (not Carpenter)
 
 UNKNOWN JOBS: Classify as Handyman. Add "A specialist tradie may be needed after assessment."
 
