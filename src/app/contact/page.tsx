@@ -1,4 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Contact GeTradie | Australia's Tradie Marketplace",
+  description: "Get in touch with GeTradie. We're here to help homeowners and tradies get the most out of Australia's AI-powered tradie marketplace.",
+  keywords: "contact getradie, getradie support, tradie marketplace contact",
+  openGraph: {
+    title: "Contact GeTradie | Australia's Tradie Marketplace",
+    description: "Get in touch with GeTradie. We're here to help homeowners and tradies get the most out of Australia's AI-powered tradie marketplace.",
+    url: "https://getradie.com.au/contact",
+    siteName: "GeTradie",
+    type: "website",
+  },
+};"use client";
 
 import { useState } from "react";
 import Link from "next/link";

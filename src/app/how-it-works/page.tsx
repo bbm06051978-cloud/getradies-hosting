@@ -1,4 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "How GeTradie Works | AI-Powered Tradie Marketplace Australia",
+  description: "Learn how GeTradie works for homeowners and tradies. Get AI price estimates, post jobs free, compare verified tradies and hire with confidence.",
+  keywords: "how getradie works, find tradies australia, hire tradie online, tradie marketplace australia",
+  openGraph: {
+    title: "How GeTradie Works | AI-Powered Tradie Marketplace Australia",
+    description: "Learn how GeTradie works for homeowners and tradies. Get AI price estimates, post jobs free, compare verified tradies and hire with confidence.",
+    url: "https://getradie.com.au/how-it-works",
+    siteName: "GeTradie",
+    type: "website",
+  },
+};"use client";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
