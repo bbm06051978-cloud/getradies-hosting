@@ -38,7 +38,7 @@ export function Navbar() {
 
           {/* Logo + Globe */}
           <div className="flex items-center gap-1">
-            <a href="/" className="relative h-20 w-48 flex-shrink-0 block">
+            <a href="/" className="relative h-30 w-46 flex-shrink-0 block">
               <Image
                 src="/imports/GeTradie_Logo.webp"
                 alt="GeTradie Logo"
@@ -48,10 +48,10 @@ export function Navbar() {
               />
             </a>
             <img
-              src="/imports/globe.gif"
-              alt=""
-              className="w-20 h-20 rounded-full hidden md:block"
-            />
+  src="/imports/globe.gif"
+  alt=""
+  className="w-15 h-15 rounded-full hidden md:block"
+/>
           </div>
 
           {/* Desktop Nav Links */}

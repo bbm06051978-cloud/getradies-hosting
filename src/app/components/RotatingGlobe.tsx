@@ -13,7 +13,7 @@ export default function RotatingGlobe() {
       }}
       className="absolute top-10 right-12 hidden lg:block z-20"
     >
-      <div className="relative w-40 h-40">
+      <div className="relative w-24 h-24">
 
         {/* Blue Glow */}
         <div className="absolute inset-0 rounded-full bg-blue-500/30 blur-3xl"></div>
