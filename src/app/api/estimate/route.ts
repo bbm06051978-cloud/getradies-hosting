@@ -66,6 +66,13 @@ Line 3: ✅ [key inclusions]
 Line 4: ⏰ [time estimate]
 Line 5: 💡 [one money saving tip]
 
+Reply in exactly 6 lines:
+Line 1: [trade emoji] [Trade Name]
+Line 2: 💲 $MIN - $MAX AUD
+Line 3: ✅ [key inclusions]
+Line 4: ⏰ [time estimate]
+Line 5: 💡 [one money saving tip]
+Line 6: ℹ️ GeTradie currently supports: Electrical, Plumbing, Cleaning, Painting & Handyman. More trades coming soon!
 Use real Australian tradie rates 2026. Always min-max range. Never single price.`;
 
 export async function POST(req: NextRequest) {
