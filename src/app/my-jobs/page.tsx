@@ -2,7 +2,7 @@
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import {
   ArrowLeft, Briefcase, MapPin, Calendar, ChevronRight,
   Plus, Clock, CheckCircle, XCircle, RefreshCw, ChevronDown, ChevronUp, Zap,
@@ -219,13 +219,8 @@ function MyJobsPageInner() {
                     </div>
 
                     {/* Expanded panel */}
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
+                    <div
+                          style={{ maxHeight: isExpanded ? "600px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
                           className="border-t border-gray-100 bg-slate-50"
                         >
                           <div className="p-5 space-y-4">
@@ -298,9 +293,7 @@ function MyJobsPageInner() {
                               )}
                             </div>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                        </div>
                   </motion.div>
                 );
               })}
