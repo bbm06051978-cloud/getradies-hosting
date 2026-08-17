@@ -61,7 +61,7 @@ const values = [
 const stats = [
   { value: "10,000+", label: "Jobs Completed" },
   { value: "2,500+", label: "Verified Tradies" },
-  { value: "7", label: "Trade Categories" },
+  { value: "5", label: "Trade Categories" },
   { value: "4.8★", label: "Average Rating" },
 ];
 
@@ -238,12 +238,12 @@ export default function AboutPage() {
             Trade Categories
           </span>
           <h2 className="text-3xl font-bold text-white mb-4">
-            7 Trades. One Platform.
+            5 Trades. One Platform.
           </h2>
           <p className="text-blue-100 mb-10 max-w-xl mx-auto">
-            GeTradie covers the most common home maintenance and improvement trades across Australia.
+            GeTradie currently covers the 5 most common home maintenance trades across Australia. More trades coming soon!
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+          <div className="flex flex-wrap justify-center gap-4 max-w-2xl mx-auto">
             {trades.map(t => (
               <div key={t.label} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/20 transition-colors">
                 <span className="text-3xl block mb-2">{t.emoji}</span>
