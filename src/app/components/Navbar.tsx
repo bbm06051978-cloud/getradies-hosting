@@ -38,7 +38,7 @@ export function Navbar() {
 
           {/* Logo + Globe */}
           <div className="flex items-center gap-1">
-            <a href="/" className="relative h-30 w-55 flex-shrink-0 block">
+            <a href="/" className="relative h-20 w-48 flex-shrink-0 block">
               <Image
                 src="/imports/GeTradie_Logo.webp"
                 alt="GeTradie Logo"
