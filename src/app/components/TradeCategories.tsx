@@ -69,7 +69,7 @@ export function TradeCategories() {
         </motion.div>
 
         {/* Category Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-6 justify-items-center place-content-center max-w-5xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
           {categories.map((cat, i) => (
             <motion.button
               key={cat.label}
