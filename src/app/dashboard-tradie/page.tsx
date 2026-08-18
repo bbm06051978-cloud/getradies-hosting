@@ -158,6 +158,7 @@ if (data.subscription) setSubscription(data.subscription);
 
   return (
     <div className="flex min-h-screen bg-slate-50">
+      <style>{`@keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }`}</style>
       <TradieSidebar />
 
       <main className="flex-1 flex flex-col min-w-0">
@@ -191,7 +192,7 @@ if (data.subscription) setSubscription(data.subscription);
             {/* Earn more info */}
             <div className="flex-1">
               <div className="overflow-hidden">
-                <p className="text-orange font-bold text-lg mb-0.5 animate-pulse">
+                <p className="text-orange font-bold text-sm mb-0.5">
                   🔥 Earn MORE POINTS to RANK HIGHER! 🔥 Ask homeowner for more Lock amount🔥 
                 </p>
               </div>

@@ -65,7 +65,41 @@ function PostJobPageInner() {
   const [aiEstimate, setAiEstimate] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
 
- const [form, setForm] = useState({
+ const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string; postcode: string}[]>([]);
+  const [suburbLoading, setSuburbLoading] = useState(false);
+  const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
+  const handleSuburbSearch = async (value: string) => {
+    setForm(prev => ({ ...prev, suburb: value }));
+    setError("");
+    if (value.length < 3) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
+    setSuburbLoading(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(value)},Australia&format=json&addressdetails=1&limit=6&countrycodes=au`, {
+        headers: { "Accept-Language": "en", "User-Agent": "GeTradie/1.0" }
+      });
+      const data = await res.json();
+      const suggestions = data
+        .filter((d: any) => d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district)
+        .map((d: any) => ({
+          suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || "",
+          state: d.address?.state_code || d.address?.state || "",
+          postcode: d.address?.postcode || "",
+        }))
+        .filter((s: any) => s.suburb)
+        .reduce((acc: any[], cur: any) => {
+          if (!acc.find(a => a.suburb === cur.suburb && a.state === cur.state)) acc.push(cur);
+          return acc;
+        }, []);
+      setSuburbSuggestions(suggestions);
+      setShowSuburbDropdown(suggestions.length > 0);
+    } catch {} finally { setSuburbLoading(false); }
+  };
+  const selectSuburb = (s: {suburb: string; state: string; postcode: string}) => {
+    setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state, postcode: s.postcode }));
+    setSuburbSuggestions([]);
+    setShowSuburbDropdown(false);
+  };
+  const [form, setForm] = useState({
     title: searchParams.get("job") || "",
     description: searchParams.get("job") || "",
     trade: "",
