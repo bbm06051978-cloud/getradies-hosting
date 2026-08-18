@@ -44,7 +44,7 @@ export function Sidebar() {
     <>
       {/* Logo */}
       <div className={`border-b border-gray-100 flex items-center ${collapsed && !isMobile ? "p-3 justify-center" : "p-1"}`}>
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
 <div className="relative h-14 w-44">
             <img src="/imports/GeTradie_Logo1111.png" alt="GeTradie" style={{ objectFit: "contain", height: "100%", width: "100%" }}/>
           </div>
