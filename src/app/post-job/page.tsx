@@ -76,7 +76,7 @@ function PostJobPageInner() {
       const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(value + ' Australia') + '&format=json&addressdetails=1&limit=8&countrycodes=au', { headers: { 'Accept-Language': 'en', 'User-Agent': 'GeTradie/1.0' } });
       const data = await res.json();
       const seen = new Set();
-      const suggestions = data.map(d => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' })).filter(s => { const key = s.suburb + s.state; if (!s.suburb || seen.has(key)) return false; seen.add(key); return true; });
+      const suggestions = data.map((d: any) => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' })).filter(s => { const key = s.suburb + s.state; if (!s.suburb || seen.has(key)) return false; seen.add(key); return true; });
       setSuburbSuggestions(suggestions);
       setShowSuburbDropdown(suggestions.length > 0);
     } catch(e) {} finally { setSuburbLoading(false); }
