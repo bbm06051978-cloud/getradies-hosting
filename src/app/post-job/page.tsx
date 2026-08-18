@@ -64,6 +64,28 @@ function PostJobPageInner() {
   const [error, setError] = useState("");
   const [aiEstimate, setAiEstimate] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [suburbSuggestions, setSuburbSuggestions] = useState([]);
+  const [suburbLoading, setSuburbLoading] = useState(false);
+  const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
+  const handleSuburbSearch = async (value) => {
+    setForm(prev => ({ ...prev, suburb: value }));
+    setError('');
+    if (value.length < 3) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
+    setSuburbLoading(true);
+    try {
+      const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(value + ' Australia') + '&format=json&addressdetails=1&limit=8&countrycodes=au', { headers: { 'Accept-Language': 'en', 'User-Agent': 'GeTradie/1.0' } });
+      const data = await res.json();
+      const seen = new Set();
+      const suggestions = data.map(d => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' })).filter(s => { const key = s.suburb + s.state; if (!s.suburb || seen.has(key)) return false; seen.add(key); return true; });
+      setSuburbSuggestions(suggestions);
+      setShowSuburbDropdown(suggestions.length > 0);
+    } catch(e) {} finally { setSuburbLoading(false); }
+  };
+  const selectSuburb = (s) => {
+    setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state, postcode: s.postcode }));
+    setSuburbSuggestions([]);
+    setShowSuburbDropdown(false);
+  };
 
  const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string; postcode: string}[]>([]);
   const [suburbLoading, setSuburbLoading] = useState(false);
@@ -344,7 +366,7 @@ function PostJobPageInner() {
                     Job Location
                   </h2>
 
-                  <div>
+                  <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Suburb *
                     </label>
@@ -353,12 +375,28 @@ function PostJobPageInner() {
                       <input
                         type="text"
                         name="suburb"
-                        placeholder="e.g. Bondi"
+                        placeholder="Type suburb name (3+ letters)"
                         value={form.suburb}
-                        onChange={handleChange}
+                        onChange={e => handleSuburbSearch(e.target.value)}
+                        onBlur={() => setTimeout(() => setShowSuburbDropdown(false), 200)}
+                        onFocus={() => suburbSuggestions.length > 0 && setShowSuburbDropdown(true)}
                         className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
+                        autoComplete="off"
                       />
+                      {suburbLoading && <div style={{width:14,height:14,border:"2px solid #3B82F6",borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>}
                     </div>
+                    {showSuburbDropdown && suburbSuggestions.length > 0 && (
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                        {suburbSuggestions.map((s, i) => (
+                          <button key={i} type="button"
+                            onMouseDown={() => selectSuburb(s)}
+                            className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 flex items-center justify-between border-b border-gray-50 last:border-0">
+                            <span className="font-medium text-gray-800">{s.suburb}</span>
+                            <span className="text-xs text-gray-400">{s.state} {s.postcode}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div>
