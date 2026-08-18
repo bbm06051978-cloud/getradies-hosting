@@ -20,16 +20,15 @@ import {
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
 
-
 const AU_SUBURBS: Record<string, string[]> = {
-  NSW: ["Parramatta","Sydney","Westmead","Blacktown","Penrith","Liverpool","Campbelltown","Bankstown","Hurstville","Chatswood","Hornsby","Manly","Bondi","Surry Hills","Newtown","Strathfield","Auburn","Merrylands","Granville","Seven Hills","Castle Hill","Kellyville","Mount Druitt","St Marys","Kingswood","Gosford","Newcastle","Wollongong","Baulkham Hills","Ryde","Eastwood","Epping","North Sydney","Neutral Bay","Mosman","Cremorne","Crows Nest","Lane Cove","Artarmon","Balmain","Rozelle","Leichhardt","Glebe","Pyrmont","Haymarket","Chippendale","Redfern","Waterloo","Zetland","Rosebery","Alexandria","Erskineville","Marrickville","Dulwich Hill","Canterbury","Campsie","Belmore","Lakemba","Punchbowl","Beverly Hills","Kingsgrove","Bexley","Rockdale","Kogarah","Arncliffe","Wolli Creek","Mascot","Botany","Maroubra","Randwick","Kensington","Kingsford","Lidcombe","Homebush","Concord","Rhodes","Meadowbank","West Ryde","Ermington","Rydalmere","Dundas","Carlingford","North Rocks","Northmead","Winston Hills","Toongabbie","Pendle Hill","Wentworthville","Guildford","Yennora","Fairfield","Wetherill Park","Bossley Park","Cecil Hills","Green Valley","Casula","Moorebank","Sutherland","Kirrawee","Gymea","Miranda","Caringbah","Cronulla"],
-  VIC: ["Melbourne","St Kilda","Richmond","Fitzroy","Brunswick","Footscray","Sunshine","Werribee","Frankston","Dandenong","Clayton","Box Hill","Ringwood","Berwick","Cranbourne","Geelong","Ballarat","Bendigo","Moonee Ponds","Essendon","Broadmeadows","Coburg","Preston","Reservoir","Thornbury","Northcote","Fairfield","Ivanhoe","Heidelberg","Bundoora","Mill Park","South Morang","Epping","Lalor","Thomastown","Craigieburn","Roxburgh Park","Campbellfield","Somerton","Glenroy","Pascoe Vale","Keilor","Keilor East","Keilor Downs","Sydenham","Taylors Lakes","Caroline Springs","Melton","Hoppers Crossing","Wyndham Vale","Point Cook","Laverton","Altona","Newport","Williamstown","Yarraville","Seddon","Kingsville","West Footscray"],
+  NSW: ["Parramatta","Sydney","Westmead","Blacktown","Penrith","Liverpool","Campbelltown","Bankstown","Hurstville","Chatswood","Hornsby","Manly","Bondi","Surry Hills","Newtown","Strathfield","Auburn","Merrylands","Granville","Seven Hills","Castle Hill","Kellyville","Mount Druitt","St Marys","Kingswood","Gosford","Newcastle","Wollongong","Baulkham Hills","Ryde","Eastwood","Epping","North Sydney","Neutral Bay","Mosman","Crows Nest","Lane Cove","Artarmon","Balmain","Rozelle","Leichhardt","Glebe","Pyrmont","Chippendale","Redfern","Waterloo","Zetland","Rosebery","Alexandria","Erskineville","Marrickville","Dulwich Hill","Canterbury","Campsie","Belmore","Lakemba","Punchbowl","Beverly Hills","Kingsgrove","Bexley","Rockdale","Kogarah","Arncliffe","Wolli Creek","Mascot","Botany","Maroubra","Randwick","Kensington","Kingsford","Lidcombe","Homebush","Concord","Rhodes","Meadowbank","West Ryde","Ermington","Rydalmere","Dundas","Carlingford","North Rocks","Northmead","Winston Hills","Toongabbie","Pendle Hill","Wentworthville","Guildford","Fairfield","Wetherill Park","Bossley Park","Cecil Hills","Green Valley","Casula","Moorebank","Sutherland","Kirrawee","Gymea","Miranda","Caringbah","Cronulla"],
+  VIC: ["Melbourne","St Kilda","Richmond","Fitzroy","Brunswick","Footscray","Sunshine","Werribee","Frankston","Dandenong","Clayton","Box Hill","Ringwood","Berwick","Cranbourne","Geelong","Ballarat","Bendigo","Moonee Ponds","Essendon","Broadmeadows","Coburg","Preston","Reservoir","Thornbury","Northcote","Fairfield","Ivanhoe","Heidelberg","Bundoora","Mill Park","South Morang","Epping","Lalor","Thomastown","Craigieburn","Roxburgh Park","Glenroy","Pascoe Vale","Keilor","Keilor East","Keilor Downs","Sydenham","Taylors Lakes","Caroline Springs","Melton","Hoppers Crossing","Wyndham Vale","Point Cook","Laverton","Altona","Newport","Williamstown","Yarraville","Seddon","West Footscray"],
   QLD: ["Brisbane","Fortitude Valley","South Brisbane","West End","Toowong","Chermside","Logan","Beenleigh","Ipswich","Gold Coast","Surfers Paradise","Robina","Sunshine Coast","Maroochydore","Townsville","Cairns","Toowoomba","Springfield","Ormeau","Coomera","Hope Island","Helensvale","Nerang","Mudgeeraba","Varsity Lakes","Burleigh Heads","Palm Beach","Currumbin","Coolangatta","Tweed Heads"],
   WA: ["Perth","Fremantle","Subiaco","Nedlands","Morley","Midland","Rockingham","Mandurah","Joondalup","Wanneroo","Armadale","Balga","Nollamara","Mirrabooka","Dianella","Yokine","Inglewood","Mount Lawley","Maylands","Bayswater","Bassendean","Guildford","Ellenbrook","Two Rocks","Yanchep","Alkimos","Clarkson","Merriwa","Quinns Rocks","Burns Beach","Currambine","Ocean Reef","Hillarys","Duncraig","Carine","Sorrento","Padbury","Craigie","Connolly","Edgewater"],
-  SA: ["Adelaide","North Adelaide","Glenelg","Norwood","Prospect","Campbelltown","Tea Tree Gully","Elizabeth","Salisbury","Gawler","Port Adelaide","Semaphore","Angle Park","Bowden","Brompton","Hindmarsh","Gepps Cross","Mawson Lakes","Pooraka","Walkley Heights","Davoren Park","Andrews Farm","Smithfield","Munno Para","Virginia","Salisbury East","Salisbury Heights","Greenwith","Golden Grove","Modbury","Redwood Park","Surrey Downs","Ridgehaven","St Agnes","Fairview Park","Gulfview Heights","Hahndorf","Woodside"],
+  SA: ["Adelaide","North Adelaide","Glenelg","Norwood","Prospect","Campbelltown","Tea Tree Gully","Elizabeth","Salisbury","Gawler","Port Adelaide","Semaphore","Angle Park","Bowden","Brompton","Hindmarsh","Gepps Cross","Mawson Lakes","Pooraka","Walkley Heights","Davoren Park","Andrews Farm","Smithfield","Munno Para","Virginia","Salisbury East","Salisbury Heights","Greenwith","Golden Grove","Modbury","Redwood Park","Surrey Downs","Ridgehaven","St Agnes","Fairview Park","Hahndorf","Woodside"],
   TAS: ["Hobart","Sandy Bay","Launceston","Devonport","Burnie","New Town","Moonah","Glenorchy","Berriedale","Claremont","Bridgewater","Risdon Vale","Rokeby","Lauderdale","Margate","Snug","Kettering","Huonville"],
-  ACT: ["Canberra","Braddon","Kingston","Manuka","Woden","Belconnen","Tuggeranong","Gungahlin","Fyshwick","Mitchell","Hume","Watson","Downer","Dickson","Ainslie","Hackett","Lyneham","O Connor","Turner","Acton","Parkes","Barton","Forrest","Griffith","Narrabundah","Red Hill","Deakin","Yarralumla","Curtin","Garran","Hughes","Phillip","Pearce","Torrens","Chifley","Mawson","Isaacs","Farrer","Fadden","Macarthur","Gilmore","Wanniassa","Kambah","Greenway","Calwell","Theodore","Gordon","Bonython","Chisholm","Richardson","Banks","Conder","Isabella Plains","Oxley","Monash"],
-  NT: ["Darwin","Palmerston","Casuarina","Alice Springs","Katherine","Nightcliff","Rapid Creek","Millner","Moil","Karama","Malak","Marrara","Berrimah","Winnellie","Stuart Park","Fannie Bay","Parap","Larrakeyah","Bayview","Ludmilla","Coconut Grove","Nakara","Wanguri","Leanyer","Muirhead","Lyons","Bakewell","Rosebery","Durack","Zuccoli","Marlow Lagoon","Gray","Driver","Woodroffe","Moulden","Farrar","Archer","Gunn","Noonamah","Humpty Doo","Berry Springs","Coolalinga","Virginia","Howard Springs"],
+  ACT: ["Canberra","Braddon","Kingston","Manuka","Woden","Belconnen","Tuggeranong","Gungahlin","Fyshwick","Mitchell","Hume","Watson","Downer","Dickson","Ainslie","Hackett","Lyneham","Turner","Acton","Parkes","Barton","Forrest","Griffith","Narrabundah","Red Hill","Deakin","Yarralumla","Curtin","Garran","Hughes","Phillip","Pearce","Torrens","Chifley","Mawson","Isaacs","Farrer","Fadden","Gilmore","Wanniassa","Kambah","Greenway","Calwell","Theodore","Gordon","Bonython","Chisholm","Richardson","Banks","Conder","Isabella Plains","Oxley","Monash"],
+  NT: ["Darwin","Palmerston","Casuarina","Alice Springs","Katherine","Nightcliff","Rapid Creek","Millner","Moil","Karama","Malak","Marrara","Berrimah","Winnellie","Stuart Park","Fannie Bay","Parap","Larrakeyah","Bayview","Ludmilla","Coconut Grove","Nakara","Wanguri","Leanyer","Muirhead","Lyons","Bakewell","Rosebery","Durack","Zuccoli","Gray","Driver","Woodroffe","Moulden","Farrar","Archer","Gunn","Noonamah","Humpty Doo","Berry Springs","Coolalinga","Virginia","Howard Springs"],
 };
 
 const trades = [
@@ -76,27 +75,25 @@ function PostJobPageInner() {
   const [error, setError] = useState("");
   const [aiEstimate, setAiEstimate] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
-  const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string; postcode: string}[]>([]);
+  const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string}[]>([]);
   const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
   const handleSuburbSearch = (value: string) => {
     setForm(prev => ({ ...prev, suburb: value }));
     setError('');
     if (value.length < 2) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
     const statesToSearch = form.state ? [form.state] : Object.keys(AU_SUBURBS);
-    const allSuburbs: {suburb: string; state: string; postcode: string}[] = [];
-    statesToSearch.forEach(state => {
-      (AU_SUBURBS[state] || []).forEach(suburb => {
-        if (suburb.toLowerCase().startsWith(value.toLowerCase())) {
-          allSuburbs.push({ suburb, state, postcode: '' });
-        }
+    const matches: {suburb: string; state: string}[] = [];
+    statesToSearch.forEach(st => {
+      (AU_SUBURBS[st] || []).forEach(sub => {
+        if (sub.toLowerCase().startsWith(value.toLowerCase())) matches.push({ suburb: sub, state: st });
       });
     });
-    allSuburbs.sort((a, b) => a.suburb.localeCompare(b.suburb));
-    setSuburbSuggestions(allSuburbs.slice(0, 8));
-    setShowSuburbDropdown(allSuburbs.length > 0);
+    matches.sort((a, b) => a.suburb.localeCompare(b.suburb));
+    setSuburbSuggestions(matches.slice(0, 8));
+    setShowSuburbDropdown(matches.length > 0);
   };
-  const selectSuburb = (s: {suburb: string; state: string; postcode: string}) => {
-    setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state, postcode: s.postcode }));
+  const selectSuburb = (s: {suburb: string; state: string}) => {
+    setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state }));
     setSuburbSuggestions([]);
     setShowSuburbDropdown(false);
   };
@@ -133,7 +130,7 @@ function PostJobPageInner() {
         }),
       });
       const data = await res.json();
-      if (data.estimate && !data.estimate.startsWith("❌")) {
+      if (data.estimate && !data.estimate.startsWith("âŒ")) {
         setAiEstimate(data.estimate);
       }
     } catch {
@@ -256,7 +253,7 @@ function PostJobPageInner() {
 
             <AnimatePresence mode="wait">
 
-              {/* STEP 1 — Job Details */}
+              {/* STEP 1 â€” Job Details */}
               {currentStep === 1 && (
                 <motion.div
                   key="step1"
@@ -322,7 +319,7 @@ function PostJobPageInner() {
                     </label>
                     <textarea
                       name="description"
-                      placeholder="Describe your job in detail — what needs to be done, any specific requirements, access details, etc."
+                      placeholder="Describe your job in detail â€” what needs to be done, any specific requirements, access details, etc."
                       value={form.description}
                       onChange={handleChange}
                       rows={4}
@@ -332,7 +329,7 @@ function PostJobPageInner() {
                 </motion.div>
               )}
 
-              {/* STEP 2 — Location */}
+              {/* STEP 2 â€” Location */}
               {currentStep === 2 && (
                 <motion.div
                   key="step2"
@@ -356,7 +353,9 @@ function PostJobPageInner() {
                           key={s}
                           type="button"
                           onClick={() => {
-                            setForm({ ...form, state: s, suburb: "" }); setSuburbSuggestions([]); setShowSuburbDropdown(false);
+                            setForm({ ...form, state: s, suburb: "" });
+                            setSuburbSuggestions([]);
+                            setShowSuburbDropdown(false);
                             setError("");
                           }}
                           className={`py-2 rounded-xl border text-sm font-medium transition-colors ${
@@ -371,18 +370,11 @@ function PostJobPageInner() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Postcode (Optional)
-                    </label>
-                    <input
-                      type="text"
-
                   <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Suburb *
                     </label>
-                    <div className="flex items-center border border-gray-200 focus-within:border-blue-400 rounded-xl px-4 py-3 gap-3 transition-colors">
+                    <div className={`flex items-center border rounded-xl px-4 py-3 gap-3 transition-colors ${form.state ? "border-gray-200 focus-within:border-blue-400" : "border-gray-100 bg-gray-50"}`}>
                       <MapPin size={17} className="text-gray-400" />
                       <input
                         type="text"
@@ -392,7 +384,8 @@ function PostJobPageInner() {
                         onChange={e => handleSuburbSearch(e.target.value)}
                         onBlur={() => setTimeout(() => setShowSuburbDropdown(false), 200)}
                         onFocus={() => suburbSuggestions.length > 0 && setShowSuburbDropdown(true)}
-                        className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
+                        disabled={!form.state}
+                        className="flex-1 text-sm text-gray-700 outline-none bg-transparent disabled:cursor-not-allowed"
                         autoComplete="off"
                       />
                     </div>
@@ -403,12 +396,19 @@ function PostJobPageInner() {
                             onMouseDown={() => selectSuburb(s)}
                             className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 flex items-center justify-between border-b border-gray-50 last:border-0">
                             <span className="font-medium text-gray-800">{s.suburb}</span>
-                            <span className="text-xs text-gray-400">{s.state} {s.postcode}</span>
+                            <span className="text-xs text-gray-400">{s.state}</span>
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Postcode (Optional)
+                    </label>
+                    <input
+                      type="text"
                       name="postcode"
                       placeholder="e.g. 2026"
                       value={form.postcode}
@@ -420,7 +420,7 @@ function PostJobPageInner() {
                 </motion.div>
               )}
 
-              {/* STEP 3 — Schedule & Budget */}
+              {/* STEP 3 â€” Schedule & Budget */}
               {currentStep === 3 && (
                 <motion.div
                   key="step3"
@@ -506,7 +506,7 @@ function PostJobPageInner() {
                 </motion.div>
               )}
 
-              {/* STEP 4 — Review */}
+              {/* STEP 4 â€” Review */}
               {currentStep === 4 && (
                 <motion.div
                   key="step4"
@@ -583,7 +583,7 @@ function PostJobPageInner() {
                         </button>
                       </div>
                       <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
-                        {aiEstimate.split("\n").filter((l) => !l.startsWith("🔧")).join("\n")}
+                        {aiEstimate.split("\n").filter((l) => !l.startsWith("ðŸ”§")).join("\n")}
                       </p>
                     </div>
                   )}
