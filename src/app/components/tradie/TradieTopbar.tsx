@@ -120,7 +120,7 @@ export function TradieTopbar() {
             <ChevronDown size={15} className="text-gray-400" />
           </div>
           <div className="hidden md:flex items-center">
-            {subscription.plan === "Free" ? (
+            {false && subscription.plan === "Free" ? (
               <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold ${
                 subscription.freeQuotesUsed >= 3
                   ? "bg-red-50 border border-red-300 text-red-700"
