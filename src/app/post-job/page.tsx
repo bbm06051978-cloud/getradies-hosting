@@ -20,6 +20,18 @@ import {
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
 
+
+const AU_SUBURBS: Record<string, string[]> = {
+  NSW: ["Parramatta","Sydney","Westmead","Blacktown","Penrith","Liverpool","Campbelltown","Bankstown","Hurstville","Chatswood","Hornsby","Manly","Bondi","Surry Hills","Newtown","Strathfield","Auburn","Merrylands","Granville","Seven Hills","Castle Hill","Kellyville","Mount Druitt","St Marys","Kingswood","Gosford","Newcastle","Wollongong","Baulkham Hills","Ryde","Eastwood","Epping","North Sydney","Neutral Bay","Mosman","Cremorne","Crows Nest","Lane Cove","Artarmon","Balmain","Rozelle","Leichhardt","Glebe","Pyrmont","Haymarket","Chippendale","Redfern","Waterloo","Zetland","Rosebery","Alexandria","Erskineville","Marrickville","Dulwich Hill","Canterbury","Campsie","Belmore","Lakemba","Punchbowl","Beverly Hills","Kingsgrove","Bexley","Rockdale","Kogarah","Arncliffe","Wolli Creek","Mascot","Botany","Maroubra","Randwick","Kensington","Kingsford","Lidcombe","Homebush","Concord","Rhodes","Meadowbank","West Ryde","Ermington","Rydalmere","Dundas","Carlingford","North Rocks","Northmead","Winston Hills","Toongabbie","Pendle Hill","Wentworthville","Guildford","Yennora","Fairfield","Wetherill Park","Bossley Park","Cecil Hills","Green Valley","Casula","Moorebank","Sutherland","Kirrawee","Gymea","Miranda","Caringbah","Cronulla"],
+  VIC: ["Melbourne","St Kilda","Richmond","Fitzroy","Brunswick","Footscray","Sunshine","Werribee","Frankston","Dandenong","Clayton","Box Hill","Ringwood","Berwick","Cranbourne","Geelong","Ballarat","Bendigo","Moonee Ponds","Essendon","Broadmeadows","Coburg","Preston","Reservoir","Thornbury","Northcote","Fairfield","Ivanhoe","Heidelberg","Bundoora","Mill Park","South Morang","Epping","Lalor","Thomastown","Craigieburn","Roxburgh Park","Campbellfield","Somerton","Glenroy","Pascoe Vale","Keilor","Keilor East","Keilor Downs","Sydenham","Taylors Lakes","Caroline Springs","Melton","Hoppers Crossing","Wyndham Vale","Point Cook","Laverton","Altona","Newport","Williamstown","Yarraville","Seddon","Kingsville","West Footscray"],
+  QLD: ["Brisbane","Fortitude Valley","South Brisbane","West End","Toowong","Chermside","Logan","Beenleigh","Ipswich","Gold Coast","Surfers Paradise","Robina","Sunshine Coast","Maroochydore","Townsville","Cairns","Toowoomba","Springfield","Ormeau","Coomera","Hope Island","Helensvale","Nerang","Mudgeeraba","Varsity Lakes","Burleigh Heads","Palm Beach","Currumbin","Coolangatta","Tweed Heads"],
+  WA: ["Perth","Fremantle","Subiaco","Nedlands","Morley","Midland","Rockingham","Mandurah","Joondalup","Wanneroo","Armadale","Balga","Nollamara","Mirrabooka","Dianella","Yokine","Inglewood","Mount Lawley","Maylands","Bayswater","Bassendean","Guildford","Ellenbrook","Two Rocks","Yanchep","Alkimos","Clarkson","Merriwa","Quinns Rocks","Burns Beach","Currambine","Ocean Reef","Hillarys","Duncraig","Carine","Sorrento","Padbury","Craigie","Connolly","Edgewater"],
+  SA: ["Adelaide","North Adelaide","Glenelg","Norwood","Prospect","Campbelltown","Tea Tree Gully","Elizabeth","Salisbury","Gawler","Port Adelaide","Semaphore","Angle Park","Bowden","Brompton","Hindmarsh","Gepps Cross","Mawson Lakes","Pooraka","Walkley Heights","Davoren Park","Andrews Farm","Smithfield","Munno Para","Virginia","Salisbury East","Salisbury Heights","Greenwith","Golden Grove","Modbury","Redwood Park","Surrey Downs","Ridgehaven","St Agnes","Fairview Park","Gulfview Heights","Hahndorf","Woodside"],
+  TAS: ["Hobart","Sandy Bay","Launceston","Devonport","Burnie","New Town","Moonah","Glenorchy","Berriedale","Claremont","Bridgewater","Risdon Vale","Rokeby","Lauderdale","Margate","Snug","Kettering","Huonville"],
+  ACT: ["Canberra","Braddon","Kingston","Manuka","Woden","Belconnen","Tuggeranong","Gungahlin","Fyshwick","Mitchell","Hume","Watson","Downer","Dickson","Ainslie","Hackett","Lyneham","O Connor","Turner","Acton","Parkes","Barton","Forrest","Griffith","Narrabundah","Red Hill","Deakin","Yarralumla","Curtin","Garran","Hughes","Phillip","Pearce","Torrens","Chifley","Mawson","Isaacs","Farrer","Fadden","Macarthur","Gilmore","Wanniassa","Kambah","Greenway","Calwell","Theodore","Gordon","Bonython","Chisholm","Richardson","Banks","Conder","Isabella Plains","Oxley","Monash"],
+  NT: ["Darwin","Palmerston","Casuarina","Alice Springs","Katherine","Nightcliff","Rapid Creek","Millner","Moil","Karama","Malak","Marrara","Berrimah","Winnellie","Stuart Park","Fannie Bay","Parap","Larrakeyah","Bayview","Ludmilla","Coconut Grove","Nakara","Wanguri","Leanyer","Muirhead","Lyons","Bakewell","Rosebery","Durack","Zuccoli","Marlow Lagoon","Gray","Driver","Woodroffe","Moulden","Farrar","Archer","Gunn","Noonamah","Humpty Doo","Berry Springs","Coolalinga","Virginia","Howard Springs"],
+};
+
 const trades = [
   { label: "Plumbing", emoji: "🔧" },
   { label: "Electrical", emoji: "⚡" },
@@ -65,30 +77,23 @@ function PostJobPageInner() {
   const [aiEstimate, setAiEstimate] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string; postcode: string}[]>([]);
-  const [suburbLoading, setSuburbLoading] = useState(false);
   const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
-  const handleSuburbSearch = async (value: string) => {
+  const handleSuburbSearch = (value: string) => {
     setForm(prev => ({ ...prev, suburb: value }));
     setError('');
-    if (value.length < 3) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
-    setSuburbLoading(true);
-    try {
-      const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(value) + '&format=json&addressdetails=1&limit=10&countrycodes=au', { headers: { 'Accept-Language': 'en', 'User-Agent': 'GeTradie/1.0' } });
-      const data = await res.json();
-      const seen = new Set<string>();
-      const suggestions = data
-        .map((d: any) => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || d.address?.hamlet || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' }))
-        .filter((s: {suburb: string; state: string; postcode: string}) => {
-          const key = s.suburb + s.state;
-          if (!s.suburb || seen.has(key)) return false;
-          if (!s.suburb.toLowerCase().startsWith(value.toLowerCase())) return false;
-          seen.add(key);
-          return true;
-        })
-        .sort((a: {suburb: string}, b: {suburb: string}) => a.suburb.localeCompare(b.suburb));
-      setSuburbSuggestions(suggestions);
-      setShowSuburbDropdown(suggestions.length > 0);
-    } catch(e) {} finally { setSuburbLoading(false); }
+    if (value.length < 2) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
+    const statesToSearch = form.state ? [form.state] : Object.keys(AU_SUBURBS);
+    const allSuburbs: {suburb: string; state: string; postcode: string}[] = [];
+    statesToSearch.forEach(state => {
+      (AU_SUBURBS[state] || []).forEach(suburb => {
+        if (suburb.toLowerCase().startsWith(value.toLowerCase())) {
+          allSuburbs.push({ suburb, state, postcode: '' });
+        }
+      });
+    });
+    allSuburbs.sort((a, b) => a.suburb.localeCompare(b.suburb));
+    setSuburbSuggestions(allSuburbs.slice(0, 8));
+    setShowSuburbDropdown(allSuburbs.length > 0);
   };
   const selectSuburb = (s: {suburb: string; state: string; postcode: string}) => {
     setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state, postcode: s.postcode }));
@@ -341,39 +346,6 @@ function PostJobPageInner() {
                     Job Location
                   </h2>
 
-                  <div className="relative">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Suburb *
-                    </label>
-                    <div className="flex items-center border border-gray-200 focus-within:border-blue-400 rounded-xl px-4 py-3 gap-3 transition-colors">
-                      <MapPin size={17} className="text-gray-400" />
-                      <input
-                        type="text"
-                        name="suburb"
-                        placeholder="Type suburb name (3+ letters)"
-                        value={form.suburb}
-                        onChange={e => handleSuburbSearch(e.target.value)}
-                        onBlur={() => setTimeout(() => setShowSuburbDropdown(false), 200)}
-                        onFocus={() => suburbSuggestions.length > 0 && setShowSuburbDropdown(true)}
-                        className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
-                        autoComplete="off"
-                      />
-                      {suburbLoading && <div style={{width:14,height:14,border:"2px solid #3B82F6",borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>}
-                    </div>
-                    {showSuburbDropdown && suburbSuggestions.length > 0 && (
-                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
-                        {suburbSuggestions.map((s, i) => (
-                          <button key={i} type="button"
-                            onMouseDown={() => selectSuburb(s)}
-                            className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 flex items-center justify-between border-b border-gray-50 last:border-0">
-                            <span className="font-medium text-gray-800">{s.suburb}</span>
-                            <span className="text-xs text-gray-400">{s.state} {s.postcode}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       State *
@@ -384,7 +356,7 @@ function PostJobPageInner() {
                           key={s}
                           type="button"
                           onClick={() => {
-                            setForm({ ...form, state: s });
+                            setForm({ ...form, state: s, suburb: "" }); setSuburbSuggestions([]); setShowSuburbDropdown(false);
                             setError("");
                           }}
                           className={`py-2 rounded-xl border text-sm font-medium transition-colors ${
@@ -405,6 +377,38 @@ function PostJobPageInner() {
                     </label>
                     <input
                       type="text"
+
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Suburb *
+                    </label>
+                    <div className="flex items-center border border-gray-200 focus-within:border-blue-400 rounded-xl px-4 py-3 gap-3 transition-colors">
+                      <MapPin size={17} className="text-gray-400" />
+                      <input
+                        type="text"
+                        name="suburb"
+                        placeholder={form.state ? "Type suburb name (2+ letters)" : "Select a state first"}
+                        value={form.suburb}
+                        onChange={e => handleSuburbSearch(e.target.value)}
+                        onBlur={() => setTimeout(() => setShowSuburbDropdown(false), 200)}
+                        onFocus={() => suburbSuggestions.length > 0 && setShowSuburbDropdown(true)}
+                        className="flex-1 text-sm text-gray-700 outline-none bg-transparent"
+                        autoComplete="off"
+                      />
+                    </div>
+                    {showSuburbDropdown && suburbSuggestions.length > 0 && (
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                        {suburbSuggestions.map((s, i) => (
+                          <button key={i} type="button"
+                            onMouseDown={() => selectSuburb(s)}
+                            className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 flex items-center justify-between border-b border-gray-50 last:border-0">
+                            <span className="font-medium text-gray-800">{s.suburb}</span>
+                            <span className="text-xs text-gray-400">{s.state} {s.postcode}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                       name="postcode"
                       placeholder="e.g. 2026"
                       value={form.postcode}
