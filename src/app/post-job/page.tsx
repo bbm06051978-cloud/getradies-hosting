@@ -73,10 +73,19 @@ function PostJobPageInner() {
     if (value.length < 3) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
     setSuburbLoading(true);
     try {
-      const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(value + ' Australia') + '&format=json&addressdetails=1&limit=8&countrycodes=au', { headers: { 'Accept-Language': 'en', 'User-Agent': 'GeTradie/1.0' } });
+      const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(value) + '&format=json&addressdetails=1&limit=10&countrycodes=au', { headers: { 'Accept-Language': 'en', 'User-Agent': 'GeTradie/1.0' } });
       const data = await res.json();
       const seen = new Set<string>();
-      const suggestions = data.map((d: any) => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' })).filter((s: {suburb: string; state: string; postcode: string}) => { const key = s.suburb + s.state; if (!s.suburb || seen.has(key)) return false; seen.add(key); return true; });
+      const suggestions = data
+        .map((d: any) => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || d.address?.hamlet || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' }))
+        .filter((s: {suburb: string; state: string; postcode: string}) => {
+          const key = s.suburb + s.state;
+          if (!s.suburb || seen.has(key)) return false;
+          if (!s.suburb.toLowerCase().startsWith(value.toLowerCase())) return false;
+          seen.add(key);
+          return true;
+        })
+        .sort((a: {suburb: string}, b: {suburb: string}) => a.suburb.localeCompare(b.suburb));
       setSuburbSuggestions(suggestions);
       setShowSuburbDropdown(suggestions.length > 0);
     } catch(e) {} finally { setSuburbLoading(false); }
