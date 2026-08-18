@@ -64,7 +64,7 @@ function PostJobPageInner() {
   const [error, setError] = useState("");
   const [aiEstimate, setAiEstimate] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
-  const [suburbSuggestions, setSuburbSuggestions] = useState([]);
+  const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string; postcode: string}[]>([]);
   const [suburbLoading, setSuburbLoading] = useState(false);
   const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
   const handleSuburbSearch = async (value: string) => {
@@ -75,8 +75,8 @@ function PostJobPageInner() {
     try {
       const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(value + ' Australia') + '&format=json&addressdetails=1&limit=8&countrycodes=au', { headers: { 'Accept-Language': 'en', 'User-Agent': 'GeTradie/1.0' } });
       const data = await res.json();
-      const seen = new Set();
-      const suggestions = data.map((d: any) => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' })).filter(s => { const key = s.suburb + s.state; if (!s.suburb || seen.has(key)) return false; seen.add(key); return true; });
+      const seen = new Set<string>();
+      const suggestions = data.map((d: any) => ({ suburb: d.address?.suburb || d.address?.town || d.address?.village || d.address?.city_district || '', state: d.address?.state_code || '', postcode: d.address?.postcode || '' })).filter((s: {suburb: string; state: string; postcode: string}) => { const key = s.suburb + s.state; if (!s.suburb || seen.has(key)) return false; seen.add(key); return true; });
       setSuburbSuggestions(suggestions);
       setShowSuburbDropdown(suggestions.length > 0);
     } catch(e) {} finally { setSuburbLoading(false); }
