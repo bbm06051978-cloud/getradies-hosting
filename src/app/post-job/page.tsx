@@ -67,7 +67,7 @@ function PostJobPageInner() {
   const [suburbSuggestions, setSuburbSuggestions] = useState([]);
   const [suburbLoading, setSuburbLoading] = useState(false);
   const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
-  const handleSuburbSearch = async (value) => {
+  const handleSuburbSearch = async (value: string) => {
     setForm(prev => ({ ...prev, suburb: value }));
     setError('');
     if (value.length < 3) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
@@ -81,7 +81,7 @@ function PostJobPageInner() {
       setShowSuburbDropdown(suggestions.length > 0);
     } catch(e) {} finally { setSuburbLoading(false); }
   };
-  const selectSuburb = (s) => {
+  const selectSuburb = (s: {suburb: string; state: string; postcode: string}) => {
     setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state, postcode: s.postcode }));
     setSuburbSuggestions([]);
     setShowSuburbDropdown(false);
