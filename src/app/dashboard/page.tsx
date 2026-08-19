@@ -62,8 +62,8 @@ export default function Dashboard() {
   const statCards = [
     { title: "Active Jobs",        value: stats.activeJobs,        subtitle: "In progress",        icon: Briefcase,     color: "blue",   href: "/my-jobs"   },
     { title: "Quotes Received",    value: stats.quotesReceived,     subtitle: "Awaiting review",    icon: MessageCircle, color: "green",  href: "/my-quotes" },
-    { title: "Upcoming Bookings",  value: stats.upcomingBookings,   subtitle: "This week",          icon: Calendar,      color: "orange", href: "/bookings"  },
-    { title: "Jobs Completed",     value: stats.completedJobs,      subtitle: "All time",           icon: CheckCircle,   color: "purple", href: "/my-jobs"   },
+    { title: "Upcoming Bookings",  value: stats.upcomingBookings,   subtitle: "This week",          icon: Calendar,      color: "orange", href: "/my-jobs?tab=inprogress"  },
+    { title: "Jobs Completed",     value: stats.completedJobs,      subtitle: "All time",           icon: CheckCircle,   color: "purple", href: "/my-jobs?tab=closed"   },
   ];
 
   const colorMap: Record<string, { icon: string; bg: string; border: string; val: string }> = {
