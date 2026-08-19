@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
       ...(state ? { state } : {}),
     },
     orderBy: { name: "asc" },
-    take: 8,
+    take: 15,
     select: { name: true, state: true, postcode: true },
   });
   return NextResponse.json({ suburbs });

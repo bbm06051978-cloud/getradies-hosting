@@ -230,7 +230,7 @@ function PostJobPageInner() {
          {/* <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"> */}
 
 {/* Card */}
-<div className="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+<div className="relative bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
   
 
 
