@@ -155,7 +155,7 @@ export default function Dashboard() {
               ) : (
                 <div className="divide-y divide-gray-50">
                   {jobs.slice(0, 6).map((job) => (
-                    <Link key={job.id} href={`/my-jobs?jobId=${job.id}`}>
+                    <Link key={job.id} href={`/my-jobs?jobId=${job.id}&tab=${job.status === "COMPLETED" || job.status === "CANCELLED" || job.status === "DISPUTED" ? "closed" : job.status === "BOOKED" || job.status === "IN_PROGRESS" ? "inprogress" : "open"}`}>
                       <div className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors cursor-pointer">
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
