@@ -16,7 +16,7 @@ type BookingRef = {
   id: string; status: string; scheduledAt: string; totalAmount: number;
   tradieProfile: {
     businessName: string; specialty: string;
-    user: { id: string; phone: string };
+    user: { id: string; name: string; phone: string };
   };
 };
 type Job = {
@@ -332,7 +332,7 @@ function MyJobsPageInner() {
 
                           {/* Chat with Tradie */}
                           {showChat && (
-                            <Link href={`/chats?jobId=${job.id}&receiverId=${booking.tradieProfile.user.id}&jobTitle=${encodeURIComponent(job.title)}&trade=${encodeURIComponent(job.trade)}`}>
+                            <Link href={`/chats?jobId=${job.id}&receiverId=${booking.tradieProfile.user.id}&receiverName=${encodeURIComponent(booking.tradieProfile.businessName)}&jobTitle=${encodeURIComponent(job.title)}&trade=${encodeURIComponent(job.trade)}`}>
                               <button className="flex items-center gap-1 text-xs font-semibold text-gray-600 border border-gray-200 hover:border-gray-400 px-4 py-2 rounded-xl transition-colors">
                                 <MessageSquare size={12}/> Chat with Tradie
                               </button>
