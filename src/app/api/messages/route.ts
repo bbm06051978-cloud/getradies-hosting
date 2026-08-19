@@ -14,14 +14,15 @@ export async function GET(req: NextRequest) {
   const jobId = searchParams.get("jobId");
   const receiverId = searchParams.get("receiverId");
   if (jobId) {
+    const whereClause = receiverId ? {
+      jobId,
+      OR: [
+        { senderId: decoded.id, receiverId },
+        { senderId: receiverId, receiverId: decoded.id },
+      ],
+    } : { jobId, OR: [{ senderId: decoded.id }, { receiverId: decoded.id }] };
     const messages = await prisma.message.findMany({
-      where: {
-        jobId,
-        OR: [
-          { senderId: decoded.id, receiverId: receiverId || undefined },
-          { senderId: receiverId || undefined, receiverId: decoded.id },
-        ],
-      },
+      where: whereClause,
       include: {
         sender: {
           select: {
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
       where: {
         jobId,
         receiverId: decoded.id,
-        senderId: receiverId || undefined,
+        ...(receiverId ? { senderId: receiverId } : {}),
         isRead: false,
       },
       data: { isRead: true },
@@ -105,7 +106,8 @@ export async function GET(req: NextRequest) {
     unreadCount: number;
   }>);
 
-  return NextResponse.json({ conversations: Object.values(conversations) });
+  const sorted = Object.values(conversations).sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
+  return NextResponse.json({ conversations: sorted });
 }
 
 // POST — send a message

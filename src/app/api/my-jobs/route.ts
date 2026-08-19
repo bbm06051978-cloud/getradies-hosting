@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
               userId: true,
               businessName: true,
               specialty: true,
-              user: { select: { phone: true } },
+              user: { select: { id: true, name: true, phone: true } },
             },
           },
         },

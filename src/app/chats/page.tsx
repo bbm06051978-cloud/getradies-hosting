@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft, Send, MessageSquare, Briefcase,
   User, Clock, Search, X, Minus,
@@ -27,6 +27,7 @@ type Message = {
 type CurrentUser = { id: string; name: string; role: string };
 
 function ChatsPageInner() {
+  const router = useRouter();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -53,6 +54,8 @@ function ChatsPageInner() {
         otherUser: { id: receiverId, name: receiverName, role: "TRADIE", profilePhoto: null },
         lastMessage: "", lastMessageAt: new Date().toISOString(), unreadCount: 0,
       });
+      setChatMinimized(false);
+      setListMinimized(true);
     }
   }, [searchParams]);
 
@@ -105,7 +108,7 @@ function ChatsPageInner() {
       const res = await fetch(`/api/messages?jobId=${jobId}&receiverId=${receiverId}`);
       const data = await res.json();
       // Only update messages if this conversation is still active
-      if (data.messages && activeConvRef.current === convKey) {
+      if (data.messages) {
         setMessages(data.messages);
       }
     } catch {}
@@ -125,11 +128,14 @@ function ChatsPageInner() {
       const data = await res.json();
       if (data.message) {
         setMessages(prev => [...prev, data.message]);
-        setConversations(prev => prev.map(c =>
-          c.jobId === selectedConv.jobId && c.otherUser.id === selectedConv.otherUser.id
-            ? { ...c, lastMessage: content, lastMessageAt: new Date().toISOString() }
-            : c
-        ));
+        setConversations(prev => {
+          const updated = prev.map(c =>
+            c.jobId === selectedConv.jobId && c.otherUser.id === selectedConv.otherUser.id
+              ? { ...c, lastMessage: content, lastMessageAt: new Date().toISOString() }
+              : c
+          );
+          return updated.sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
+        });
       }
     } catch {} finally { setSending(false); }
   };
@@ -160,9 +166,7 @@ function ChatsPageInner() {
         {/* Main page background */}
         <div className="flex-1 p-8 overflow-y-auto">
           <div className="flex items-center gap-4 mb-6">
-            <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
-              <ArrowLeft size={20} />
-            </Link>
+            <button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600"><ArrowLeft size={20}/></button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
               <p className="text-gray-500 text-sm mt-0.5">Your conversations with tradies</p>

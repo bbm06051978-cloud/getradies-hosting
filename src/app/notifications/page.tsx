@@ -123,9 +123,7 @@ export default function NotificationsPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
-                <ArrowLeft size={20} />
-              </Link>
+              <button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600"><ArrowLeft size={20}/></button>
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>

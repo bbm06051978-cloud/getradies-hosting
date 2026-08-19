@@ -74,9 +74,7 @@ const router = useRouter();
         <div className="p-8 flex-1">
 
           <div className="flex items-center gap-4 mb-8">
-	<Link href="/my-jobs?filter=ALL" className="text-gray-400 hover:text-gray-600">
-              <ArrowLeft size={20} />
-            </Link>            
+	<button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600"><ArrowLeft size={20}/></button>            
           <div>
               <h1 className="text-2xl font-bold text-gray-900">Quotes Received</h1>
               <p className="text-gray-500 text-sm mt-0.5">Review and accept quotes from verified tradies</p>

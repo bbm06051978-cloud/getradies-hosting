@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {
   ArrowLeft, Briefcase, MapPin, Calendar, ChevronRight,
@@ -52,6 +52,7 @@ const getJobTab = (job: Job): "open" | "inprogress" | "closed" => {
 };
 
 function MyJobsPageInner() {
+  const router = useRouter();
   const [jobs, setJobs]             = useState<Job[]>([]);
   const [loading, setLoading]       = useState(true);
   const [tab, setTab]               = useState<"open" | "inprogress" | "closed">("open");
@@ -136,9 +137,7 @@ function MyJobsPageInner() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
-                <ArrowLeft size={20}/>
-              </Link>
+              <button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600"><ArrowLeft size={20}/></button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">My Jobs</h1>
                 <p className="text-gray-500 text-sm mt-0.5">All your jobs and bookings in one place</p>

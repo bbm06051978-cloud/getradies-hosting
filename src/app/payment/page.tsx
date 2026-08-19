@@ -112,6 +112,7 @@ function PaymentForm({
 }
 
 function PaymentPageInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const router       = useRouter();
   const quoteId      = searchParams.get("quoteId") || "";

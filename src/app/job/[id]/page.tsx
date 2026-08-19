@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams , useRouter} from "next/navigation";
 import {
   ArrowLeft, Briefcase, MapPin, Calendar,
   Zap, Clock, User,
@@ -18,6 +18,7 @@ type Job = {
 };
 
 export default function JobDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,9 +39,7 @@ export default function JobDetailPage() {
         <div className="p-8 flex-1 max-w-3xl mx-auto w-full">
 
           <div className="flex items-center gap-4 mb-8">
-            <Link href="/tradie-jobs" className="text-gray-400 hover:text-gray-600">
-              <ArrowLeft size={20} />
-            </Link>
+            <button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600"><ArrowLeft size={20}/></button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Job Details</h1>
               <p className="text-gray-500 text-sm mt-0.5">Review the job before sending a quote</p>
