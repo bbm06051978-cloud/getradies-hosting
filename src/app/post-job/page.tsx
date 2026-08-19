@@ -77,20 +77,17 @@ function PostJobPageInner() {
   const [aiLoading, setAiLoading] = useState(false);
   const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string}[]>([]);
   const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
-  const handleSuburbSearch = (value: string) => {
+  const handleSuburbSearch = async (value: string) => {
     setForm(prev => ({ ...prev, suburb: value }));
     setError('');
     if (value.length < 2) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
-    const statesToSearch = form.state ? [form.state] : Object.keys(AU_SUBURBS);
-    const matches: {suburb: string; state: string}[] = [];
-    statesToSearch.forEach(st => {
-      (AU_SUBURBS[st] || []).forEach(sub => {
-        if (sub.toLowerCase().startsWith(value.toLowerCase())) matches.push({ suburb: sub, state: st });
-      });
-    });
-    matches.sort((a, b) => a.suburb.localeCompare(b.suburb));
-    setSuburbSuggestions(matches.slice(0, 8));
-    setShowSuburbDropdown(matches.length > 0);
+    try {
+      const state = form.state ? `&state=${form.state}` : '';
+      const res = await fetch(`/api/suburbs?q=${encodeURIComponent(value)}${state}`);
+      const data = await res.json();
+      setSuburbSuggestions(data.suburbs || []);
+      setShowSuburbDropdown((data.suburbs || []).length > 0);
+    } catch { setSuburbSuggestions([]); setShowSuburbDropdown(false); }
   };
   const selectSuburb = (s: {suburb: string; state: string}) => {
     setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state }));

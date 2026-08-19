@@ -208,3 +208,15 @@ enum QuoteStatus {
   ACCEPTED
   REJECTED
 }
+model Suburb {
+  id       String @id @default(cuid())
+  name     String
+  state    String
+  postcode String
+  lat      Float?
+  lng      Float?
+  lga      String?
+  @@index([name, state])
+  @@index([state])
+  @@index([postcode])
+}
