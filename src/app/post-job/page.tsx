@@ -385,7 +385,7 @@ function PostJobPageInner() {
                       />
                     </div>
                     {showSuburbDropdown && suburbSuggestions.length > 0 && (
-                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-y-auto" style={{ maxHeight: "240px" }}>
                         {suburbSuggestions.map((s, i) => (
                           <button key={i} type="button"
                             onMouseDown={() => selectSuburb(s)}
