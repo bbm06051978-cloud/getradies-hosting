@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowLeft, Bell, CheckCircle, Trash2,
@@ -42,6 +43,7 @@ const formatTime = (dateStr: string) => {
 };
 
 export default function NotificationsPage() {
+  const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"ALL" | "UNREAD">("ALL");
