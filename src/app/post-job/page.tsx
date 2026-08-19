@@ -75,7 +75,7 @@ function PostJobPageInner() {
   const [error, setError] = useState("");
   const [aiEstimate, setAiEstimate] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
-  const [suburbSuggestions, setSuburbSuggestions] = useState<{suburb: string; state: string}[]>([]);
+  const [suburbSuggestions, setSuburbSuggestions] = useState<{name: string; state: string; postcode: string}[]>([]);
   const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
   const handleSuburbSearch = async (value: string) => {
     setForm(prev => ({ ...prev, suburb: value }));
@@ -89,8 +89,8 @@ function PostJobPageInner() {
       setShowSuburbDropdown((data.suburbs || []).length > 0);
     } catch { setSuburbSuggestions([]); setShowSuburbDropdown(false); }
   };
-  const selectSuburb = (s: {suburb: string; state: string}) => {
-    setForm(prev => ({ ...prev, suburb: s.suburb, state: s.state }));
+  const selectSuburb = (s: {name: string; state: string; postcode: string}) => {
+    setForm(prev => ({ ...prev, suburb: s.name, state: s.state, postcode: s.postcode || prev.postcode }));
     setSuburbSuggestions([]);
     setShowSuburbDropdown(false);
   };
@@ -390,7 +390,7 @@ function PostJobPageInner() {
                           <button key={i} type="button"
                             onMouseDown={() => selectSuburb(s)}
                             className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 flex items-center justify-between border-b border-gray-50 last:border-0">
-                            <span className="font-medium text-gray-800">{s.suburb}</span>
+                            <span className="font-medium text-gray-800">{s.name}</span>
                             <span className="text-xs text-gray-400">{s.state}</span>
                           </button>
                         ))}
