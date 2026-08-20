@@ -28,6 +28,9 @@ model User {
   tradieProfile    TradieProfile?
   resetToken        String?
   resetTokenExpiry  DateTime?
+  isVerified        Boolean   @default(false)
+  otpCode           String?
+  otpExpiry         DateTime?
 }
 
 model TradieProfile {
