@@ -41,8 +41,15 @@ type ScheduleItem = {
 type Stats = {
   newJobLeads: number;
   quotesSent: number;
+  quotesAccepted: number;
+  quotesRejected: number;
+  quotesPending: number;
   bookingsConfirmed: number;
+  bookingsCompleted: number;
+  bookingsPending: number;
+  bookingsDisputed: number;
   earnings: number;
+  winRate: number;
 };
 
 type GetradiePoints = {
@@ -70,10 +77,9 @@ export default function TradieDashboard() {
   const [jobLeads, setJobLeads] = useState<JobLead[]>([]);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [stats, setStats] = useState<Stats>({
-    newJobLeads: 0,
-    quotesSent: 0,
-    bookingsConfirmed: 0,
-    earnings: 0,
+    newJobLeads: 0, quotesSent: 0, quotesAccepted: 0, quotesRejected: 0,
+    quotesPending: 0, bookingsConfirmed: 0, bookingsCompleted: 0,
+    bookingsPending: 0, bookingsDisputed: 0, earnings: 0, winRate: 0,
   });
 
 const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0, badge: "Bronze" });

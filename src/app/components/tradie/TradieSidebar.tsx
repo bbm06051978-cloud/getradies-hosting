@@ -53,7 +53,7 @@ export function TradieSidebar() {
               <span className="text-white font-black text-sm">G</span>
             </div>
           ) : (
-            <div className="relative h-14 w-44">
+            <div className="relative h-14 w-44 bg-[#0047AB] rounded-lg">
               <img src="/imports/GeTradie_Logo.webp" alt="GeTradie" style={{ objectFit: "contain", height: "100%", width: "100%" }}/>
             </div>
           )}
