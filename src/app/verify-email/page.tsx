@@ -70,7 +70,7 @@ function VerifyEmailPageInner() {
         setSuccess("Email verified! Redirecting...");
         if (data.token) localStorage.setItem("token", data.token);
         setTimeout(() => {
-          if (data.user?.role === "TRADIE") router.push("/tradie-dashboard");
+          if (data.user?.role === "TRADIE") router.push("/tradie-jobs");
           else router.push("/dashboard");
         }, 1500);
       } else {
