@@ -418,6 +418,52 @@ if (data.subscription) setSubscription(data.subscription);
               </div>
             </div>
           </div>
+        {/* My Performance */}
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-base text-gray-900">📊 My Performance - {new Date().toLocaleString("en-AU", { month: "long", year: "numeric" })}</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-widest pb-2 w-1/2">Metric</th>
+                    <th className="text-right text-xs font-bold text-gray-500 uppercase tracking-widest pb-2">Count</th>
+                    <th className="text-right text-xs font-bold text-gray-500 uppercase tracking-widest pb-2 pl-4">Insight</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block"/>Jobs Available (Leads)</span></td><td className="py-2.5 text-right font-bold text-blue-600">{stats.newJobLeads}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">Leads in your area</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-indigo-500 inline-block"/>Quotes Sent</span></td><td className="py-2.5 text-right font-bold text-indigo-600">{stats.quotesSent}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">You responded</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-400 inline-block"/>Jobs Missed (Not Quoted)</span></td><td className="py-2.5 text-right font-bold text-red-500">{Math.max((stats.newJobLeads - stats.quotesSent), 0)}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">You ignored</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500 inline-block"/>Quotes Accepted (Won)</span></td><td className="py-2.5 text-right font-bold text-green-600">{stats.quotesAccepted}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">Converted to jobs</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500 inline-block"/>Quotes Rejected (Lost)</span></td><td className="py-2.5 text-right font-bold text-red-600">{stats.quotesRejected}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">Homeowner chose another</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-yellow-500 inline-block"/>Quotes Pending</span></td><td className="py-2.5 text-right font-bold text-yellow-600">{stats.quotesPending}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">Awaiting decision</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-600 inline-block"/>Jobs Confirmed</span></td><td className="py-2.5 text-right font-bold text-blue-700">{stats.bookingsConfirmed}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">Active bookings</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-600 inline-block"/>Jobs Completed</span></td><td className="py-2.5 text-right font-bold text-green-700">{stats.bookingsCompleted}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">Successfully done</td></tr>
+                  <tr><td className="py-2.5 text-gray-600"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-orange-500 inline-block"/>Jobs Pending</span></td><td className="py-2.5 text-right font-bold text-orange-600">{stats.bookingsPending}</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">In progress</td></tr>
+                  <tr className="border-t-2 border-gray-200"><td className="py-2.5 text-gray-700 font-semibold"><span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-purple-500 inline-block"/>Earnings This Month</span></td><td className="py-2.5 text-right font-bold text-purple-600">${stats.earnings.toLocaleString()} AUD</td><td className="py-2.5 text-right text-xs text-gray-400 pl-4">Lock amount released</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 pt-3 border-t border-gray-100 grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-xs font-bold text-gray-600">Quote Win Rate</span>
+                  <span className="text-xs font-bold text-green-600">{stats.winRate}%</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="bg-green-500 rounded-full h-2 transition-all" style={{ width: `${stats.winRate}%` }}/>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500 space-y-1">
+                {stats.winRate < 30 && stats.quotesSent > 0 && <p className="text-red-500">⚠️ Low win rate. Review your pricing or quote quality.</p>}
+                {stats.newJobLeads > 0 && stats.quotesSent < stats.newJobLeads && <p className="text-orange-500">⚠️ Missing leads. Quote more available jobs.</p>}
+                {stats.winRate >= 60 && <p className="text-green-600">✅ Excellent win rate! Keep it up.</p>}
+                {stats.winRate >= 30 && stats.winRate < 60 && stats.quotesSent > 0 && <p className="text-blue-600">💡 Good performance. Keep improving your quotes.</p>}
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
