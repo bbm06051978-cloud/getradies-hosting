@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
   monthStart.setDate(1);
   monthStart.setHours(0, 0, 0, 0);
 
-  const [jobLeads, quotesSent, bookingsConfirmed, schedule, earnings] =
+  const [jobLeads, quotesSent, quotesAccepted, quotesRejected, bookingsConfirmed, bookingsCompleted, bookingsPending, bookingsDisputed, schedule, earnings] =
     await Promise.all([
       prisma.job.findMany({
         where: {
@@ -60,12 +60,23 @@ export async function GET(req: NextRequest) {
       prisma.quote.count({
         where: { tradieProfileId },
       }),
+      prisma.quote.count({
+        where: { tradieProfileId, status: "ACCEPTED" },
+      }),
+      prisma.quote.count({
+        where: { tradieProfileId, status: "REJECTED" },
+      }),
       prisma.booking.count({
-        where: {
-          tradieProfileId,
-          status: "CONFIRMED",
-          createdAt: { gte: weekAgo },
-        },
+        where: { tradieProfileId, status: "CONFIRMED" },
+      }),
+      prisma.booking.count({
+        where: { tradieProfileId, status: "COMPLETED" },
+      }),
+      prisma.booking.count({
+        where: { tradieProfileId, status: { in: ["PENDING", "PENDING_CONFIRMATION"] } },
+      }),
+      prisma.booking.count({
+        where: { tradieProfileId, status: "DISPUTED" },
       }),
       prisma.booking.findMany({
         where: {
@@ -101,8 +112,15 @@ export async function GET(req: NextRequest) {
     stats: {
       newJobLeads: jobLeads.length ?? 0,
       quotesSent: quotesSent ?? 0,
+      quotesAccepted: quotesAccepted ?? 0,
+      quotesRejected: quotesRejected ?? 0,
+      quotesPending: Math.max((quotesSent - quotesAccepted - quotesRejected), 0),
       bookingsConfirmed: bookingsConfirmed ?? 0,
+      bookingsCompleted: bookingsCompleted ?? 0,
+      bookingsPending: bookingsPending ?? 0,
+      bookingsDisputed: bookingsDisputed ?? 0,
       earnings: earnings._sum.totalAmount ?? 0,
+      winRate: quotesSent > 0 ? Math.round((quotesAccepted / quotesSent) * 100) : 0,
     },
     getradiePoints: {
       points: tradieProfile.getradiePoints ?? 0,
