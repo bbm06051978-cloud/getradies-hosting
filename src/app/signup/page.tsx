@@ -158,6 +158,8 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setServerError("");
+    if (!agreedToTerms) { setTermsError("You must agree to the Terms of Service and Privacy Policy to continue."); return; }
+    setTermsError("");
     if (!validate()) return;
     setLoading(true);
     try {
