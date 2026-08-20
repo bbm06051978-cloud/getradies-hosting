@@ -54,7 +54,7 @@ export function TradieSidebar() {
             </div>
           ) : (
             <div className="relative h-14 w-44">
-              <img src="/imports/GeTradie_Logo1111.png" alt="GeTradie" style={{ objectFit: "contain", height: "100%", width: "100%" }}/>
+              <img src="/imports/GeTradie_Logo.webp" alt="GeTradie" style={{ objectFit: "contain", height: "100%", width: "100%" }}/>
             </div>
           )}
         </Link>
@@ -66,16 +66,15 @@ export function TradieSidebar() {
       </div>
 
       {/* Tradie profile card */}
-      {(!collapsed || isMobile) && user && (
+      {(!collapsed || isMobile) && profile && (
         <div className="mx-3 mt-4 bg-blue-50 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-sm">
-              {user.name?.charAt(0).toUpperCase()}
+              {user?.name?.charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="min-w-0">
-            <p className="font-bold text-gray-900 text-sm truncate">{user.name}</p>
-            <p className="text-xs text-gray-500 truncate">{profile?.specialty || "Tradie"}</p>
+            <p className="font-bold text-gray-900 text-sm truncate">{profile?.specialty || "Tradie"}</p>
             {profile?.isVerified && (
               <span className="text-xs text-green-600 font-semibold">✓ Verified</span>
             )}
