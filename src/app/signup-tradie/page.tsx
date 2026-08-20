@@ -466,6 +466,24 @@ export default function RegisterPage() {
               />
             </Field>
 
+            {/* Terms Checkbox */}
+            <div className="mt-3">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" checked={agreedToTerms}
+                  onChange={e => { setAgreedToTerms(e.target.checked); setTermsError(""); }}
+                  className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer flex-shrink-0"
+                />
+                <span className="text-xs text-gray-500 leading-relaxed">
+                  I agree to GeTradie&apos;s{" "}
+                  <Link href="/terms" target="_blank" className="text-[#0047AB] font-semibold hover:underline">Terms of Service</Link>
+                  {" "}and{" "}
+                  <Link href="/privacy" target="_blank" className="text-[#0047AB] font-semibold hover:underline">Privacy Policy</Link>
+                  . I confirm I am at least 18 years of age and located in Australia.
+                </span>
+              </label>
+              {termsError && <p className="text-red-500 text-xs mt-1.5 ml-7">{termsError}</p>}
+            </div>
+
             {/* Submit */}
             <button
               type="submit"
@@ -486,24 +504,6 @@ export default function RegisterPage() {
                 </span>
               ) : "Create Account →"}
             </button>
-
-            {/* Terms Checkbox */}
-            <div className="mt-3">
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" checked={agreedToTerms}
-                  onChange={e => { setAgreedToTerms(e.target.checked); setTermsError(""); }}
-                  className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer flex-shrink-0"
-                />
-                <span className="text-xs text-gray-500 leading-relaxed">
-                  I agree to GeTradie&apos;s{" "}
-                  <Link href="/terms" target="_blank" className="text-[#0047AB] font-semibold hover:underline">Terms of Service</Link>
-                  {" "}and{" "}
-                  <Link href="/privacy" target="_blank" className="text-[#0047AB] font-semibold hover:underline">Privacy Policy</Link>
-                  . I confirm I am at least 18 years of age and located in Australia.
-                </span>
-              </label>
-              {termsError && <p className="text-red-500 text-xs mt-1.5 ml-7">{termsError}</p>}
-            </div>
 
           </form>
         </div>
