@@ -172,8 +172,12 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess(true);
-        window.location.href = tab === "tradie" ? "/dashboard-tradie" : "/dashboard";
+        if (data.requiresVerification) {
+          window.location.href = `/verify-email?email=${encodeURIComponent(email)}`;
+        } else {
+          setSuccess(true);
+          window.location.href = tab === "tradie" ? "/dashboard-tradie" : "/dashboard";
+        }
       } else {
         setServerError(data.error || "Registration failed. Please try again.");
       }
