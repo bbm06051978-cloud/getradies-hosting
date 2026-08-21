@@ -184,7 +184,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Making Home Maintenance <span className="text-orange-500">Stress-Free</span>
           </h2>
-          <div className="bg-[#1a2744] rounded-2xl p-8 lg:p-12 text-left">
+          <div className="bg-[#1a2744] rounded-2xl p-8 lg:p-12 text-center">
             <p className="text-2xl font-bold text-white leading-relaxed mb-4">
               &ldquo;To make hiring a tradie as simple, transparent and trustworthy as possible for every Australian homeowner — while helping local tradies build sustainable businesses.&rdquo;
             </p>
@@ -294,14 +294,7 @@ export default function AboutPage() {
                 That means you can quote on as many jobs as you like, build your reputation through reviews, and grow your business without worrying about escalating costs.
               </p>
             </div>
-            <div className="mt-6 space-y-3">
-              {["No per-lead fees", "Unlimited quotes per month", "Build your reputation with reviews", "Get matched to jobs in your area"].map(p => (
-                <div key={p} className="flex items-center gap-2">
-                  <CheckCircle size={16} className="text-orange-500" />
-                  <p className="text-sm font-medium text-gray-700">{p}</p>
-                </div>
-              ))}
-            </div>
+
             <Link href="/signup-tradie">
               <button className="mt-8 bg-orange-500 hover:bg-orange-600 text-white px-8 py-3.5 rounded-xl font-bold text-sm transition-colors shadow-lg inline-flex items-center gap-2">
                 Join as a Tradie <ArrowRight size={16} />
@@ -311,17 +304,12 @@ export default function AboutPage() {
 
           <div className="bg-[#1a2744] rounded-2xl p-8 text-white">
             <Users size={36} className="text-orange-400 mb-4" />
-            <h3 className="text-2xl font-bold mb-4">Join 2,500+ Tradies</h3>
+            <h3 className="text-2xl font-bold mb-6">Why Tradies Love GeTradie</h3>
             <div className="space-y-4">
-              {[
-                { label: "Average new jobs per month", value: "8–12" },
-                { label: "Average review rating", value: "4.8 / 5" },
-                { label: "Quote acceptance rate", value: "32%" },
-                { label: "Time to first job lead", value: "24 hrs" },
-              ].map(s => (
-                <div key={s.label} className="flex items-center justify-between border-b border-blue-800 pb-3">
-                  <p className="text-blue-200 text-sm">{s.label}</p>
-                  <p className="text-orange-400 font-bold">{s.value}</p>
+              {["No per-lead fees", "Unlimited quotes per month", "Build your reputation with reviews", "Get matched to jobs in your area"].map(p => (
+                <div key={p} className="flex items-center gap-3 border-b border-blue-800 pb-4">
+                  <CheckCircle size={18} className="text-orange-400 flex-shrink-0" />
+                  <p className="text-blue-100 text-sm font-medium">{p}</p>
                 </div>
               ))}
             </div>
