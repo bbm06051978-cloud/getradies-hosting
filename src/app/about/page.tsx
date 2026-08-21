@@ -329,6 +329,46 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Meet the Team */}
+      <section className="py-24 px-4 bg-gradient-to-br from-[#060d4a] via-[#0a1a6e] to-[#0047AB] relative overflow-hidden">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20"/>
+        <div className="absolute bottom-10 right-10 w-72 h-72 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20"/>
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <span className="inline-block bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">Our Team</span>
+            <h2 className="text-4xl font-black text-white mb-4">The people behind <span className="text-orange-400">GeTradie</span></h2>
+            <p className="text-blue-200 text-lg max-w-2xl mx-auto leading-relaxed">A passionate group of professionals on a mission to transform how Australians find and hire trusted tradies.</p>
+          </div>
+          <div className="flex flex-col gap-5">
+            {[
+              { name: "Bibhu", role: "Lead of Onboarding", bio: "A graduate in Hotel Management from Switzerland with extensive experience in the hospitality industry. Bibhu brings exceptional people skills and sharp negotiation expertise to ensure every tradie and homeowner joins GeTradie with confidence and ease.", initial: "B", color: "#3B82F6", photo: null, reverse: false },
+              { name: "Simi", role: "Lead of Marketing & Campaigns", bio: "A dynamic force in marketing with extensive experience in event campaigns and brand management. Simi drives GeTradie's growth strategy with creativity, energy and a proven track record of making brands come alive.", initial: "S", color: "#F97316", photo: null, reverse: true },
+              { name: "Shruti", role: "Customer Communication Lead", bio: "A certified yoga teacher and seasoned customer communication professional with experience across India, Dubai and Australia. Shruti brings calm, clarity and warmth to every customer interaction - ensuring GeTradie users always feel heard.", initial: "S", color: "#A855F7", photo: null, reverse: false },
+              { name: "Sathish", role: "Quality & Test Lead", bio: "Meticulous, methodical and deeply experienced, Sathish leads quality and testing at GeTradie with a sharp eye for detail. Our users never see a bug - because Sathish found it first.", initial: "S", color: "#10B981", photo: null, reverse: true },
+              { name: "Shriyansh", role: "Platform Operations", bio: "Shriyansh brings the energy, curiosity and innovation of a new generation to GeTradie's platform operations. Fresh brain, best brain - the future of GeTradie is in good hands.", initial: "S", color: "#EF4444", photo: "/imports/omm.jpeg", reverse: false },
+            ].map((member) => (
+              <div key={member.name} className={`flex ${member.reverse ? "flex-row-reverse" : "flex-row"} items-center gap-6`}>
+                <div className="flex-shrink-0">
+                  {member.photo ? (
+                    <img src={member.photo} alt={member.name} className="w-32 h-32 rounded-2xl object-cover shadow-xl border-2 border-white/20"/>
+                  ) : (
+                    <div className="w-32 h-32 rounded-2xl flex items-center justify-center shadow-xl border-2 border-white/20" style={{ backgroundColor: member.color }}>
+                      <span className="text-white font-black text-4xl">{member.initial}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl px-6 py-4 shadow-lg hover:bg-white/15 transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+                    <h3 className="font-black text-white text-lg">{member.name}</h3>
+                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full text-white" style={{ backgroundColor: `${member.color}90` }}>{member.role}</span>
+                  </div>
+                  <p className="text-blue-100 text-sm leading-relaxed">{member.bio}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       {/* Final CTA */}
       <section className="bg-[#1a2744] py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
