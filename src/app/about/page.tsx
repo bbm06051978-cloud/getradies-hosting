@@ -111,17 +111,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="bg-[#1a2744] py-10 px-4">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-          {stats.map(s => (
-            <div key={s.label}>
-              <p className="text-3xl font-bold text-orange-400">{s.value}</p>
-              <p className="text-blue-200 text-sm mt-1">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Our Story */}
       <section className="py-16 lg:py-20 px-4 bg-white">
