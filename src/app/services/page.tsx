@@ -114,8 +114,8 @@ export default function ServicesPage() {
       <section className="bg-[#1a2744] py-10 px-4">
         <div className="max-w-5xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
           {[
-            { value: "2,500+", label: "Verified Tradies" },
-            { value: "7",      label: "Trade Categories" },
+            { value: "All", label: "Verified Tradies" },
+            { value: "5",      label: "Trade Categories" },
             { value: "80%",    label: "AI Estimate Accuracy" },
             { value: "Free",   label: "For Homeowners" },
           ].map(s => (
