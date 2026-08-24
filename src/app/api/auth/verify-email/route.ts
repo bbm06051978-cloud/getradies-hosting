@@ -33,8 +33,8 @@ const sendWelcomeEmail = async (name: string, email: string, role: string) => {
           <tr>
             <td style="padding:10px 12px;background:#EFF6FF;border-radius:10px;margin-bottom:8px;vertical-align:top;width:40px;">📋</td>
             <td style="padding:10px 12px;background:#EFF6FF;border-radius:10px;">
-              <strong style="color:#1D4ED8;">Browse Job Leads</strong><br>
-              <span style="color:#6B7280;font-size:13px;">See available jobs in your area matching your trade and suburb</span>
+              <strong style="color:#1D4ED8;">Get Job Leads Instantly</strong><br>
+              <span style="color:#6B7280;font-size:13px;">Job leads matching your trade and suburb are sent to you automatically — no searching required</span>
             </td>
           </tr>
           <tr><td colspan="2" style="height:8px;"></td></tr>
