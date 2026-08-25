@@ -1,9 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Search, Zap } from "lucide-react";
 import { motion } from "motion/react";
 
 export function Hero() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const sentences = [
     "Australia's Smarter Tradie Marketplace",
     "Where Trusted Tradies Meet Genuine Customers",
@@ -19,36 +28,19 @@ export function Hero() {
     <section
       className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500"
     >
-      {/* Desktop background */}
+            {/* Dynamic background */}
       <div
-        className="hidden md:block absolute inset-0"
+        className="absolute inset-0"
         style={{
-          backgroundImage: "url(/imports/hero_baground.webp)",
+          backgroundImage: isMobile
+            ? "url(/imports/getradie-mobile-background.png)"
+            : "url(/imports/hero_baground.webp)",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: isMobile ? "center top" : "center",
           backgroundRepeat: "no-repeat",
           zIndex: 0,
         }}
       />
-      {/* Mobile background */}
-      <div
-        className="block md:hidden absolute inset-0"
-        style={{
-          backgroundImage: "url(/imports/getradie-mobile-background.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center top",
-          backgroundRepeat: "no-repeat",
-          zIndex: 0,
-        }}
-      >
-        <img
-          src="/imports/getradie-mobile-background.png"
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          style={{ position: "absolute", width: "1px", height: "1px", opacity: 0, pointerEvents: "none" }}
-        />
-      </div>
       <style>{`
         @keyframes slideLeft {
           0% { transform: translate3d(0, 0, 0); }
