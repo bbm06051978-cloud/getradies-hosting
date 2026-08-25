@@ -40,7 +40,15 @@ export function Hero() {
           backgroundRepeat: "no-repeat",
           zIndex: 0,
         }}
-      />
+      >
+        <img
+          src="/imports/getradie-mobile-background.png"
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          style={{ position: "absolute", width: "1px", height: "1px", opacity: 0, pointerEvents: "none" }}
+        />
+      </div>
       <style>{`
         @keyframes slideLeft {
           0% { transform: translate3d(0, 0, 0); }

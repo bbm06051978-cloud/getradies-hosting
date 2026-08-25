@@ -24,6 +24,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="GeTradie" />
         <link rel="apple-touch-icon" href="/imports/GeTradie_shortcut.png" />
         <link rel="preload" as="image" href="/imports/hero_baground.webp" fetchPriority="high"/>
+        <link rel="preload" as="image" href="/imports/getradie-mobile-background.png" fetchPriority="high"/>
         <link rel="preload" as="image" href="/imports/GeTradie_Logo.webp" fetchPriority="high"/>
         
         <link rel="preconnect" href="https://fonts.googleapis.com"/>
