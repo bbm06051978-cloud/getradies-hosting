@@ -28,10 +28,11 @@ export function Hero() {
         }
         @media (max-width: 768px) {
           .hero-bg {
-            background-image: url(/imports/getradie-mobile-background.webp);
+            background-image: url(/imports/hero_baground.webp);
             background-size: cover;
-            background-position: center top;
+            background-position: left top;
             background-repeat: no-repeat;
+            min-height: 100vh;
           }
         }
         @keyframes slideLeft {
