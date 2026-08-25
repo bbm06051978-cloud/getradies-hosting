@@ -17,7 +17,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500 hero-bg"
+      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500"
       style={{
         backgroundImage: "url(/imports/hero_baground.webp)",
         backgroundSize: "cover",
@@ -25,6 +25,17 @@ export function Hero() {
         backgroundRepeat: "no-repeat",
       }}
     >
+      {/* Mobile background overlay */}
+      <div
+        className="block md:hidden absolute inset-0"
+        style={{
+          backgroundImage: "url(/imports/getradie-mobile-background.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center top",
+          backgroundRepeat: "no-repeat",
+          zIndex: 0,
+        }}
+      />
       <style>{`
         @keyframes slideLeft {
           0% { transform: translate3d(0, 0, 0); }
