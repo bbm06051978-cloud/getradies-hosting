@@ -17,15 +17,23 @@ export function Hero() {
 
   return (
     <section
-      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500"
-      style={{
-        backgroundImage: "url(/imports/hero_baground.png)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
+      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500 hero-bg"
     >
       <style>{`
+        .hero-bg {
+          background-image: url(/imports/hero_baground.png);
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+        @media (max-width: 768px) {
+          .hero-bg {
+            background-image: url(/imports/getradie-mobile-background.webp);
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+          }
+        }
         @keyframes slideLeft {
           0% { transform: translate3d(0, 0, 0); }
           100% { transform: translate3d(-50%, 0, 0); }
