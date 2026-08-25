@@ -18,14 +18,19 @@ export function Hero() {
   return (
     <section
       className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500"
-      style={{
-        backgroundImage: "url(/imports/hero_baground.webp)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
     >
-      {/* Mobile background overlay */}
+      {/* Desktop background */}
+      <div
+        className="hidden md:block absolute inset-0"
+        style={{
+          backgroundImage: "url(/imports/hero_baground.webp)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          zIndex: 0,
+        }}
+      />
+      {/* Mobile background */}
       <div
         className="block md:hidden absolute inset-0"
         style={{
@@ -49,7 +54,7 @@ export function Hero() {
       `}</style>
 
       {/* Infinite marquee */}
-      <div className="w-full bg-blue-900/10 backdrop-blur-sm border-y border-blue-900/10 py-2.5 mb-6 overflow-hidden whitespace-nowrap flex select-none">
+      <div className="relative z-10 w-full bg-blue-900/10 backdrop-blur-sm border-y border-blue-900/10 py-2.5 mb-6 overflow-hidden whitespace-nowrap flex select-none">
         <div className="animate-marquee-track text-s font-bold text-blue-300 tracking-wider uppercase pr-4">
           {singleTrackText}
         </div>
@@ -61,7 +66,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative">
           <div className="space-y-6 max-w-2xl">
 
