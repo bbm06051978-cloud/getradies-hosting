@@ -17,24 +17,17 @@ export function Hero() {
 
   return (
     <section
-      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500 hero-bg"
+      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500"
+      style={{
+        backgroundImage: typeof window !== "undefined" && window.innerWidth <= 768
+          ? "url(/imports/hero_baground.webp)"
+          : "url(/imports/hero_baground.webp)",
+        backgroundSize: "cover",
+        backgroundPosition: typeof window !== "undefined" && window.innerWidth <= 768 ? "left top" : "center",
+        backgroundRepeat: "no-repeat",
+      }}
     >
       <style>{`
-        .hero-bg {
-          background-image: url(/imports/hero_baground.png);
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-        }
-        @media (max-width: 768px) {
-          .hero-bg {
-            background-image: url(/imports/hero_baground.webp);
-            background-size: cover;
-            background-position: left top;
-            background-repeat: no-repeat;
-            min-height: 100vh;
-          }
-        }
         @keyframes slideLeft {
           0% { transform: translate3d(0, 0, 0); }
           100% { transform: translate3d(-50%, 0, 0); }
