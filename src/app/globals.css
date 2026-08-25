@@ -253,3 +253,11 @@ html {
 }
 
 
+
+/* Hero mobile background */
+@media (max-width: 768px) {
+  .hero-bg {
+    background-image: url('/imports/hero_baground.webp') !important;
+    background-position: left top !important;
+  }
+}

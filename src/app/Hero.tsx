@@ -17,13 +17,11 @@ export function Hero() {
 
   return (
     <section
-      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500"
+      className="relative overflow-hidden bg-white-50 pb-8 pt-4 lg:pb-10 border border-dotted border-gray-500 hero-bg"
       style={{
-        backgroundImage: typeof window !== "undefined" && window.innerWidth <= 768
-          ? "url(/imports/hero_baground.webp)"
-          : "url(/imports/hero_baground.webp)",
+        backgroundImage: "url(/imports/hero_baground.webp)",
         backgroundSize: "cover",
-        backgroundPosition: typeof window !== "undefined" && window.innerWidth <= 768 ? "left top" : "center",
+        backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
     >
