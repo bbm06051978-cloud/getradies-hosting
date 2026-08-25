@@ -14,6 +14,7 @@ export function Hero() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const checkWidth = () => setIsMobile(window.innerWidth < 768);
     checkWidth();
     window.addEventListener("resize", checkWidth);
