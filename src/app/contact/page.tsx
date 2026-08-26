@@ -370,7 +370,7 @@ export default function ContactPage() {
                 Post a Job Free <ArrowRight size={16} />
               </button>
             </Link>
-            <Link href="/signup-tradie">
+            <Link href="/signup?tab=tradie">
               <button className="border-2 border-blue-400 hover:border-white text-white px-8 py-4 rounded-xl font-bold text-sm transition-colors">
                 Join as a Tradie
               </button>

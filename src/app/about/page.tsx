@@ -284,7 +284,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <Link href="/signup-tradie">
+            <Link href="/signup?tab=tradie">
               <button className="mt-8 bg-orange-500 hover:bg-orange-600 text-white px-8 py-3.5 rounded-xl font-bold text-sm transition-colors shadow-lg inline-flex items-center gap-2">
                 Join as a Tradie <ArrowRight size={16} />
               </button>
