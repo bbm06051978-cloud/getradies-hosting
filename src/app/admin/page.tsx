@@ -486,7 +486,7 @@ export default function AdminPage() {
                             {t.documents.map((doc: any) => (
                               <a key={doc.id} href={doc.url} target="_blank" rel="noopener noreferrer"
                                 className="flex items-center gap-2 bg-blue-600/20 border border-blue-600/30 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-600/30">
-                                {doc.documentType === "LICENCE" ? "Licence" : "Insurance"} &rarr; View
+                                {doc.documentType === "LICENCE" ? "Licence" : "Insurance"} View
                               </a>
                             ))}
                           </div>
