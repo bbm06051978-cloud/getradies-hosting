@@ -98,6 +98,8 @@ export default function RegisterPage() {
   const [phone, setPhone]           = useState("");
   const [password, setPassword]     = useState("");
   const [confirm, setConfirm]       = useState("");
+  const [unitNo, setUnitNo]           = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
   const [suburb, setSuburb]         = useState("");
   const [state, setState]           = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -354,6 +356,29 @@ export default function RegisterPage() {
 
             {/* Homeowner-specific */}
             {tab === "homeowner" && (
+              <>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Unit No */}
+                <Field label="Unit / Apartment No" hint="Optional — e.g. Unit 4, Apt 12">
+                  <Input
+                    type="text"
+                    placeholder="e.g. Unit 4"
+                    value={unitNo}
+                    maxLength={20}
+                    onChange={(e) => setUnitNo(e.target.value)}
+                  />
+                </Field>
+                {/* Street Address */}
+                <Field label="Street Address" hint="Optional — e.g. 12 Smith Street">
+                  <Input
+                    type="text"
+                    placeholder="e.g. 12 Smith Street"
+                    value={streetAddress}
+                    maxLength={100}
+                    onChange={(e) => setStreetAddress(e.target.value)}
+                  />
+                </Field>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 {/* State */}
                 <Field label="State" required error={errors.state}>
@@ -412,6 +437,7 @@ export default function RegisterPage() {
                   </div>
                 </Field>
               </div>
+              </>
             )}
 
             {/* Password */}
