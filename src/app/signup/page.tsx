@@ -100,13 +100,16 @@ export default function RegisterPage() {
   const [confirm, setConfirm]       = useState("");
   const [unitNo, setUnitNo]           = useState("");
   const [streetAddress, setStreetAddress] = useState("");
+  const [postcode, setPostcode]         = useState("");
+  const [postcode, setPostcode]         = useState("");
   const [suburb, setSuburb]         = useState("");
   const [state, setState]           = useState("");
   const [businessName, setBusinessName] = useState("");
   const [specialty, setSpecialty]   = useState("");
   const [abn, setAbn]               = useState("");
   const [showPw, setShowPw]         = useState(false);
-  const [suburbSuggestions, setSuburbSuggestions] = useState<string[]>([]);
+  const [suburbSuggestions, setSuburbSuggestions] = useState<{name: string; state: string; postcode: string}[]>([]);
+  const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
 
   // Errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -119,18 +122,27 @@ export default function RegisterPage() {
     { label: "Number",        pass: /[0-9]/.test(password) },
   ];
 
-  // Suburb autocomplete
-  const handleSuburbChange = (val: string) => {
+  // Suburb autocomplete using API
+  const handleSuburbChange = async (val: string) => {
     setSuburb(val);
     if (errors.suburb) setErrors((p) => ({ ...p, suburb: "" }));
-    if (val.length >= 2 && state) {
-      const matches = (AU_SUBURBS[state] || [])
-        .filter((s) => s.toLowerCase().startsWith(val.toLowerCase()))
-        .slice(0, 6);
-      setSuburbSuggestions(matches);
-    } else {
-      setSuburbSuggestions([]);
-    }
+    if (val.length < 2) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
+    try {
+      const stateParam = state ? `&state=${state}` : "";
+      const res = await fetch(`/api/suburbs?q=${encodeURIComponent(val)}${stateParam}`);
+      const data = await res.json();
+      setSuburbSuggestions(data.suburbs || []);
+      setShowSuburbDropdown((data.suburbs || []).length > 0);
+    } catch { setSuburbSuggestions([]); setShowSuburbDropdown(false); }
+  };
+
+  const selectSuburb = (s: {name: string; state: string; postcode: string}) => {
+    setSuburb(s.name);
+    if (!state) setState(s.state);
+    setPostcode(s.postcode || "");
+    setSuburbSuggestions([]);
+    setShowSuburbDropdown(false);
+    setErrors((p) => ({ ...p, suburb: "" }));
   };
 
   // Validate
@@ -380,6 +392,45 @@ export default function RegisterPage() {
                 </Field>
               </div>
               <div className="grid grid-cols-2 gap-4">
+                {/* Postcode */}
+                <Field label="Postcode" hint="Optional — e.g. 2150">
+                  <Input
+                    type="text"
+                    placeholder="e.g. 2150"
+                    value={postcode}
+                    maxLength={4}
+                    onChange={(e) => setPostcode(e.target.value.replace(/[^\d]/g, ""))}
+                  />
+                </Field>
+                <div/>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Postcode */}
+                <Field label="Postcode" hint="Optional — e.g. 2150">
+                  <Input
+                    type="text"
+                    placeholder="e.g. 2150"
+                    value={postcode}
+                    maxLength={4}
+                    onChange={(e) => setPostcode(e.target.value.replace(/[^\d]/g, ""))}
+                  />
+                </Field>
+                <div/>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Postcode */}
+                <Field label="Postcode" hint="Optional — e.g. 2150">
+                  <Input
+                    type="text"
+                    placeholder="e.g. 2150"
+                    value={postcode}
+                    maxLength={4}
+                    onChange={(e) => setPostcode(e.target.value.replace(/[^\d]/g, ""))}
+                  />
+                </Field>
+                <div/>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 {/* State */}
                 <Field label="State" required error={errors.state}>
                   <select
@@ -412,9 +463,9 @@ export default function RegisterPage() {
                       disabled={!state}
                       error={errors.suburb}
                       onChange={(e) => handleSuburbChange(e.target.value)}
-                      onBlur={() => setTimeout(() => setSuburbSuggestions([]), 200)}
+                      onBlur={() => setTimeout(() => setShowSuburbDropdown(false), 200)}
                     />
-                    {suburbSuggestions.length > 0 && (
+                    {showSuburbDropdown && suburbSuggestions.length > 0 && (
                       <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white rounded-xl
                         border-2 border-blue-200 shadow-lg overflow-hidden">
                         {suburbSuggestions.map((s) => (

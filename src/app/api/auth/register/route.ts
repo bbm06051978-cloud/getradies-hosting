@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, phone, password, role, unitNo, streetAddress, suburb, state, businessName, specialty, abn } = await req.json();
+    const { name, email, phone, password, role, unitNo, streetAddress, suburb, state, postcode, businessName, specialty, abn } = await req.json();
     if (!name || !email || !password || !role) {
       return NextResponse.json({ error: "Name, email, password and role are required." }, { status: 400 });
     }
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       // Update existing unverified user
       user = await prisma.user.update({
         where: { email: email.toLowerCase().trim() },
-        data: { name, phone, passwordHash, otpCode: otp, otpExpiry, unitNo: unitNo || null, streetAddress: streetAddress || null, suburb: suburb || null, state: state || "NSW" },
+        data: { name, phone, passwordHash, otpCode: otp, otpExpiry, unitNo: unitNo || null, streetAddress: streetAddress || null, suburb: suburb || null, state: state || "NSW", postcode: postcode || null },
       });
     } else {
       user = await prisma.user.create({
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
           name, email: email.toLowerCase().trim(), phone, passwordHash,
           role: role === "TRADIE" ? "TRADIE" : "HOMEOWNER",
           unitNo: unitNo || null, streetAddress: streetAddress || null,
-          suburb: suburb || null, state: state || "NSW",
+          suburb: suburb || null, state: state || "NSW", postcode: postcode || null,
           isVerified: false, otpCode: otp, otpExpiry,
         },
       });
