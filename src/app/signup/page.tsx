@@ -1,399 +1,538 @@
-import Logo from "../components/Logo";
+"use client";
+import { useState } from "react";
 import Link from "next/link";
 
-export const metadata = {
-  title: "What Is IVF? Step-by-Step Beginner's Guide to IVF Treatment | HealthcareAnswer.com",
-  description:
-    "Learn how IVF works, IVF success rates, risks, costs, and treatment steps in this complete beginner-friendly guide.",
-};
+// ── CONSTANTS ──────────────────────────────────────────────────────
+const TRADES = ["Electrical","Plumbing","Cleaning","Painting","Handyman","Carpentry","Removalists"];
+const AU_STATES = [
+  { code: "NSW", name: "New South Wales" },
+  { code: "VIC", name: "Victoria" },
+  { code: "QLD", name: "Queensland" },
+  { code: "WA",  name: "Western Australia" },
+  { code: "SA",  name: "South Australia" },
+  { code: "TAS", name: "Tasmania" },
+  { code: "ACT", name: "Australian Capital Territory" },
+  { code: "NT",  name: "Northern Territory" },
+];
 
-/* ─────────────────────────────────────────────
-   Small reusable components
-───────────────────────────────────────────── */
-
-function SectionHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="text-2xl font-bold text-[#1B2A6B] mt-10 mb-3 pb-2 border-b-2 border-[#2E8FD8]">
-      {children}
-    </h2>
-  );
+// ── VALIDATION ─────────────────────────────────────────────────────
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+function validatePhone(phone: string) {
+  const digits = phone.replace(/[\s\-()]/g, "");
+  return /^[2-9]\d{8}$/.test(digits);
+}
+function validatePassword(pw: string) {
+  if (pw.length < 8)       return "Password must be at least 8 characters";
+  if (!/[A-Z]/.test(pw))   return "Must include at least one uppercase letter";
+  if (!/[a-z]/.test(pw))   return "Must include at least one lowercase letter";
+  if (!/[0-9]/.test(pw))   return "Must include at least one number";
+  return "";
 }
 
-function BulletList({ items }: { items: string[] }) {
-  return (
-    <ul className="mt-3 space-y-2">
-      {items.map((item, i) => (
-        <li key={i} className="flex items-start gap-2 text-gray-700 text-[15px] leading-relaxed">
-          <span className="mt-1.5 w-2 h-2 rounded-full bg-[#7B2D8E] flex-shrink-0" />
-          {item}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function StepCard({
-  number,
-  title,
-  description,
-}: {
-  number: number;
-  title: string;
-  description: string;
+// ── FIELD WRAPPER ──────────────────────────────────────────────────
+function Field({ label, children, error, hint, required }: {
+  label: string; children: React.ReactNode;
+  error?: string; hint?: string; required?: boolean;
 }) {
   return (
-    <div className="flex gap-4 p-4 rounded-lg border border-gray-100 bg-gray-50 hover:border-[#2E8FD8] transition-colors">
-      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#1B2A6B] text-white flex items-center justify-center font-bold text-lg">
-        {number}
-      </div>
-      <div>
-        <p className="font-semibold text-[#1B2A6B] text-[15px]">{title}</p>
-        <p className="text-gray-600 text-sm mt-0.5">{description}</p>
-      </div>
+    <div className="flex flex-col gap-1">
+      <label style={{ color: "#17324D", fontSize: "12px", fontWeight: 600, letterSpacing: "0.02em" }}>
+        {label}{required && <span style={{ color: "#D92D20" }}> *</span>}
+      </label>
+      {children}
+      {error && <p style={{ color: "#D92D20", fontSize: "11px", marginTop: "2px" }}>{error}</p>}
+      {!error && hint && <p style={{ color: "#98A2B3", fontSize: "11px", marginTop: "2px" }}>{hint}</p>}
     </div>
   );
 }
 
-function InfoBox({
-  title,
-  children,
-  color = "blue",
-}: {
-  title: string;
-  children: React.ReactNode;
-  color?: "blue" | "purple" | "red";
-}) {
-  const styles = {
-    blue:   "border-[#2E8FD8] bg-blue-50",
-    purple: "border-[#7B2D8E] bg-purple-50",
-    red:    "border-[#C82030] bg-red-50",
-  };
+// ── INPUT ──────────────────────────────────────────────────────────
+function Input({ error, style={}, className="", ...props }: React.InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
   return (
-    <div className={`border-l-4 rounded-r-lg p-4 my-4 ${styles[color]}`}>
-      <p className="font-bold text-sm uppercase tracking-wide text-gray-500 mb-1">{title}</p>
-      {children}
+    <input
+      {...props}
+      style={{
+        width: "100%",
+        borderRadius: "8px",
+        border: `1px solid ${error ? "#D92D20" : "#D0D5DD"}`,
+        padding: "8px 12px",
+        fontSize: "13px",
+        color: "#172B4D",
+        background: "#FFFFFF",
+        outline: "none",
+        transition: "border-color 0.15s",
+        ...style,
+      }}
+      onFocus={e => { e.currentTarget.style.borderColor = error ? "#D92D20" : "#0047AB"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,71,171,0.08)"; }}
+      onBlur={e => { e.currentTarget.style.borderColor = error ? "#D92D20" : "#D0D5DD"; e.currentTarget.style.boxShadow = "none"; }}
+      className={className}
+    />
+  );
+}
+
+// ── SECTION HEADER ─────────────────────────────────────────────────
+function SectionHeader({ icon, title }: { icon: string; title: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px", marginBottom: "4px" }}>
+      <span style={{ fontSize: "16px" }}>{icon}</span>
+      <span style={{ color: "#17324D", fontSize: "13px", fontWeight: 700, letterSpacing: "0.03em", textTransform: "uppercase" }}>{title}</span>
+      <div style={{ flex: 1, height: "1px", background: "#E4E7EC", marginLeft: "4px" }} />
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────
-   Main Page
-───────────────────────────────────────────── */
+// ── MAIN PAGE ──────────────────────────────────────────────────────
+export default function RegisterPage() {
+  const [tab, setTab] = useState<"homeowner" | "tradie">("homeowner");
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [termsError, setTermsError] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-export default function IVFPage() {
-  const ivfSteps = [
-    { title: "Ovarian Stimulation",  description: "Fertility medicines stimulate the ovaries to produce multiple eggs." },
-    { title: "Egg Retrieval",        description: "Doctors collect mature eggs from the ovaries via a minor surgical procedure." },
-    { title: "Sperm Collection",     description: "A sperm sample is collected from the male partner or a donor." },
-    { title: "Fertilization",        description: "Eggs and sperm are combined in a laboratory dish." },
-    { title: "Embryo Development",   description: "Fertilized embryos are monitored and cultured for 3–5 days." },
-    { title: "Embryo Transfer",      description: "Healthy embryos are transferred into the uterus." },
-    { title: "Pregnancy Test",       description: "A blood test confirms pregnancy approximately two weeks later." },
+  // Fields
+  const [name, setName]                   = useState("");
+  const [email, setEmail]                 = useState("");
+  const [phone, setPhone]                 = useState("");
+  const [password, setPassword]           = useState("");
+  const [confirm, setConfirm]             = useState("");
+  const [showPw, setShowPw]               = useState(false);
+  const [unitNo, setUnitNo]               = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [suburb, setSuburb]               = useState("");
+  const [state, setState]                 = useState("");
+  const [postcode, setPostcode]           = useState("");
+  const [businessName, setBusinessName]   = useState("");
+  const [specialty, setSpecialty]         = useState("");
+  const [abn, setAbn]                     = useState("");
+  const [suburbSuggestions, setSuburbSuggestions] = useState<{name: string; state: string; postcode: string}[]>([]);
+  const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
+  const [errors, setErrors]               = useState<Record<string, string>>({});
+
+  // Password checks
+  const pwChecks = [
+    { label: "8+ characters", pass: password.length >= 8 },
+    { label: "Uppercase",     pass: /[A-Z]/.test(password) },
+    { label: "Lowercase",     pass: /[a-z]/.test(password) },
+    { label: "Number",        pass: /[0-9]/.test(password) },
   ];
+  const pwStrength = pwChecks.filter(c => c.pass).length;
+  const pwStrengthColor = pwStrength <= 1 ? "#D92D20" : pwStrength <= 2 ? "#F97316" : pwStrength === 3 ? "#F59E0B" : "#16803C";
+  const pwStrengthLabel = ["", "Weak", "Fair", "Good", "Strong"][pwStrength];
+
+  // Suburb search
+  const handleSuburbChange = async (val: string) => {
+    setSuburb(val);
+    if (errors.suburb) setErrors(p => ({ ...p, suburb: "" }));
+    if (val.length < 2) { setSuburbSuggestions([]); setShowSuburbDropdown(false); return; }
+    try {
+      const stateParam = state ? `&state=${state}` : "";
+      const res = await fetch(`/api/suburbs?q=${encodeURIComponent(val)}${stateParam}`);
+      const data = await res.json();
+      setSuburbSuggestions(data.suburbs || []);
+      setShowSuburbDropdown((data.suburbs || []).length > 0);
+    } catch { setSuburbSuggestions([]); setShowSuburbDropdown(false); }
+  };
+
+  const selectSuburb = (s: { name: string; state: string; postcode: string }) => {
+    setSuburb(s.name);
+    if (!state) setState(s.state);
+    setPostcode(s.postcode || "");
+    setSuburbSuggestions([]);
+    setShowSuburbDropdown(false);
+    setErrors(p => ({ ...p, suburb: "" }));
+  };
+
+  // Validate
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!name.trim())           e.name = "Full name is required";
+    else if (name.trim().length > 30) e.name = "Name must be 30 characters or less";
+    if (!email.trim())          e.email = "Email address is required";
+    else if (!validateEmail(email)) e.email = "Please enter a valid email address";
+    if (phone && !validatePhone(phone)) e.phone = "Enter a valid Australian number (9 digits, no leading 0)";
+    const pwErr = validatePassword(password);
+    if (!password)              e.password = "Password is required";
+    else if (pwErr)             e.password = pwErr;
+    if (!confirm)               e.confirm = "Please confirm your password";
+    else if (password !== confirm) e.confirm = "Passwords do not match";
+    if (tab === "tradie" && !specialty) e.specialty = "Please select your trade specialty";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  // Submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setServerError("");
+    if (!agreedToTerms) { setTermsError("You must agree to the Terms of Service and Privacy Policy to continue."); return; }
+    setTermsError("");
+    if (!validate()) return;
+    setLoading(true);
+    try {
+      const fullPhone = phone ? `+61${phone.replace(/[\s\-()]/g, "")}` : "";
+      const body = tab === "homeowner"
+        ? { name: name.trim(), email: email.trim().toLowerCase(), phone: fullPhone, password, role: "HOMEOWNER", unitNo, streetAddress, suburb: suburb.trim(), state, postcode, businessName: "", specialty: "", abn: "" }
+        : { name: name.trim(), email: email.trim().toLowerCase(), phone: fullPhone, password, role: "TRADIE", businessName: businessName.trim() || name.trim(), specialty, abn };
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.requiresVerification) {
+          window.location.href = `/verify-email?email=${encodeURIComponent(email)}`;
+        } else {
+          window.location.href = tab === "tradie" ? "/dashboard-tradie" : "/dashboard";
+        }
+      } else {
+        setServerError(data.error || "Registration failed. Please try again.");
+      }
+    } catch {
+      setServerError("Something went wrong. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div style={{ minHeight: "100vh", background: "#F5F8FC" }}>
 
-      {/* ── HEADER (matches main page) ── */}
-      <header className="border-b bg-white sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex flex-col">
-            <Logo />
-            <p className="text-sm text-gray-500 mt-1">Trusted Health Knowledge Platform</p>
-          </Link>
-
-          {/* Nav */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-            <Link href="/" className="hover:text-[#1B2A6B] transition-colors">Home</Link>
-            <Link href="/ivf" className="text-[#7B2D8E] font-semibold border-b-2 border-[#7B2D8E] pb-0.5">IVF</Link>
-            <Link href="#" className="hover:text-[#1B2A6B] transition-colors">Fertility</Link>
-            <Link href="#" className="hover:text-[#1B2A6B] transition-colors">Find Clinics</Link>
-            <Link href="#" className="hover:text-[#1B2A6B] transition-colors">Compare Costs</Link>
-          </nav>
-
-          <Link
-            href="#"
-            className="hidden md:inline-flex items-center gap-2 bg-[#1B2A6B] text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#7B2D8E] transition-colors"
-          >
-            Get Free Quote
-          </Link>
-        </div>
-      </header>
-
-      {/* ── BREADCRUMB ── */}
-      <div className="max-w-7xl mx-auto px-6 pt-4">
-        <p className="text-sm text-gray-400">
-          <Link href="/" className="hover:text-[#1B2A6B]">Home</Link>
-          {" / "}
-          <Link href="#" className="hover:text-[#1B2A6B]">IVF & Fertility</Link>
-          {" / "}
-          <span className="text-gray-600">What Is IVF?</span>
-        </p>
+      {/* Top bar */}
+      <div style={{ background: "#0047AB", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Link href="/">
+          <img src="/imports/GeTradie_Logo.webp" alt="GeTradie" style={{ height: "36px", objectFit: "contain" }} />
+        </Link>
+        <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "13px" }}>
+          Already have an account?{" "}
+          <Link href="/login" style={{ color: "#fff", fontWeight: 700, textDecoration: "underline" }}>Sign in</Link>
+        </span>
       </div>
 
-      {/* ── MAIN LAYOUT ── */}
-      <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
+      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "32px 16px 64px" }}>
 
-        {/* ── LEFT: Article ── */}
-        <article>
-
-          {/* Category tag */}
-          <span className="inline-block bg-purple-100 text-[#7B2D8E] text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
-            IVF &amp; Fertility
-          </span>
-
-          {/* Article title */}
-          <h1 className="text-4xl font-extrabold text-[#1B2A6B] leading-tight mb-4">
-            What Is IVF?<br />
-            <span className="text-[#7B2D8E]">Complete Beginner&apos;s Guide</span> to In Vitro Fertilization
-          </h1>
-
-          {/* Meta bar */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 border-y border-gray-100 py-3 mb-6">
-            <span>📋 Medically Reviewed</span>
-            <span>·</span>
-            <span>🕒 8 min read</span>
-            <span>·</span>
-            <span>Last updated: May 2025</span>
-            <span>·</span>
-            <span className="text-[#C82030] font-medium">Sources: WHO · Mayo Clinic · NHS</span>
-          </div>
-
-          {/* Introduction */}
-          <InfoBox title="Quick Summary" color="blue">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              IVF (In Vitro Fertilization) combines eggs and sperm outside the body. Once fertilization
-              occurs, the embryo is transferred into the uterus. It is one of the most effective
-              fertility treatments for couples facing infertility.
-            </p>
-          </InfoBox>
-
-          <p className="text-gray-700 leading-relaxed mt-4">
-            In Vitro Fertilization (IVF) is one of the most effective fertility treatments available
-            today. Millions of couples worldwide use IVF to overcome infertility challenges and achieve
-            pregnancy. IVF has helped many couples dealing with infertility due to age, blocked fallopian
-            tubes, low sperm count, hormonal disorders, or unexplained fertility problems.
-          </p>
-
-          {/* Who needs IVF */}
-          <SectionHeading>Who May Need IVF?</SectionHeading>
-          <p className="text-gray-700 text-sm leading-relaxed">
-            Doctors may recommend IVF for patients with any of the following conditions:
-          </p>
-          <BulletList
-            items={[
-              "Blocked fallopian tubes",
-              "Low sperm count",
-              "Endometriosis",
-              "Ovulation disorders",
-              "Polycystic Ovary Syndrome (PCOS)",
-              "Unexplained infertility",
-              "Age-related fertility decline",
-              "Genetic disorders requiring preimplantation genetic testing",
-            ]}
-          />
-
-          {/* Step by step */}
-          <SectionHeading>Step-by-Step IVF Process</SectionHeading>
-          <p className="text-gray-700 text-sm leading-relaxed mb-4">
-            A typical IVF cycle takes 4–6 weeks from start to pregnancy test. Here is what each step involves:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {ivfSteps.map((step, i) => (
-              <StepCard
-                key={i}
-                number={i + 1}
-                title={step.title}
-                description={step.description}
-              />
-            ))}
-          </div>
-
-          {/* Success rates */}
-          <SectionHeading>IVF Success Rate</SectionHeading>
-          <InfoBox title="Key Insight" color="purple">
-            <p className="text-sm text-gray-700">
-              Women under 35 generally have the highest IVF success rates — typically 40–50% per cycle
-              at accredited clinics.
-            </p>
-          </InfoBox>
-          <p className="text-gray-700 text-sm leading-relaxed mt-2">
-            IVF success depends on multiple factors:
-          </p>
-          <BulletList
-            items={[
-              "Age of the patient",
-              "Egg quality and ovarian reserve",
-              "Sperm quality and motility",
-              "Overall health and BMI",
-              "Lifestyle habits (smoking, alcohol, stress)",
-            ]}
-          />
-
-          {/* Risks */}
-          <SectionHeading>Risks and Side Effects</SectionHeading>
-          <InfoBox title="Important" color="red">
-            <p className="text-sm text-gray-700">
-              Always discuss potential risks with your fertility specialist before beginning an IVF cycle.
-              Most side effects are mild and temporary.
-            </p>
-          </InfoBox>
-          <BulletList
-            items={[
-              "Multiple pregnancy (twins or more)",
-              "Ovarian Hyperstimulation Syndrome (OHSS)",
-              "Emotional stress and anxiety",
-              "Mild abdominal pain or bloating",
-              "Rare complications during egg retrieval",
-            ]}
-          />
-
-          {/* Cost */}
-          <SectionHeading>IVF Cost in India</SectionHeading>
-          <div className="bg-gradient-to-r from-[#1B2A6B] to-[#7B2D8E] rounded-xl p-6 my-4 text-white">
-            <p className="text-sm uppercase tracking-widest font-semibold opacity-80 mb-2">Estimated Cost Range</p>
-            <p className="text-4xl font-extrabold">₹1.5L – ₹3L</p>
-            <p className="text-sm opacity-80 mt-1">per IVF cycle in India (2025)</p>
-          </div>
-          <p className="text-gray-700 text-sm leading-relaxed">Cost varies depending on:</p>
-          <BulletList
-            items={[
-              "Clinic reputation and accreditation",
-              "City (metro cities tend to cost more)",
-              "Medication protocols used",
-              "Additional procedures (PGT, donor eggs, ICSI)",
-            ]}
-          />
-
-          {/* Tips */}
-          <SectionHeading>Tips to Improve IVF Success</SectionHeading>
-          <BulletList
-            items={[
-              "Maintain a healthy weight (BMI 18.5–24.9)",
-              "Avoid smoking and alcohol completely",
-              "Eat a balanced, nutrient-rich diet",
-              "Reduce stress through yoga, meditation, or counselling",
-              "Follow your doctor's medication schedule carefully",
-            ]}
-          />
-
-          {/* Conclusion */}
-          <SectionHeading>Conclusion</SectionHeading>
-          <p className="text-gray-700 leading-relaxed">
-            IVF has transformed fertility treatment and provided hope to millions of couples across the
-            world. Understanding the IVF process helps patients make informed decisions and prepare
-            emotionally and financially for treatment. If you are considering IVF, use
-            HealthcareAnswer.com to compare clinics, understand costs, and connect with verified
-            fertility specialists near you.
-          </p>
-
-          {/* Sources */}
-          <div className="mt-10 pt-6 border-t border-gray-200">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">
-              Sources &amp; Medical References
-            </p>
-            <ul className="space-y-1 text-sm text-gray-500">
-              {[
-                "World Health Organization (WHO) — Infertility Guidelines",
-                "Mayo Clinic Fertility Resources",
-                "Cleveland Clinic Fertility Guidelines",
-                "NHS Fertility Information",
-              ].map((src, i) => (
-                <li key={i} className="flex items-center gap-2">
-                  <span className="text-[#2E8FD8]">↗</span>
-                  {src}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </article>
-
-        {/* ── RIGHT: Sidebar ── */}
-        <aside className="space-y-6">
-
-          {/* CTA card */}
-          <div className="bg-gradient-to-br from-[#1B2A6B] to-[#7B2D8E] rounded-2xl p-6 text-white">
-            <p className="text-xs font-bold uppercase tracking-widest opacity-70 mb-1">Free Service</p>
-            <h3 className="text-xl font-extrabold leading-snug mb-3">
-              Compare IVF Clinics &amp; Get Cost Quotes
-            </h3>
-            <p className="text-sm opacity-80 mb-4">
-              Get cost estimates from top fertility clinics near you — completely free.
-            </p>
-            <Link
-              href="#"
-              className="block text-center bg-white text-[#7B2D8E] font-bold text-sm py-3 rounded-xl hover:bg-gray-100 transition-colors"
-            >
-              Get Free IVF Quote →
-            </Link>
-          </div>
-
-          {/* Quick facts */}
-          <div className="border border-gray-200 rounded-2xl p-5">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">
-              IVF Quick Facts
-            </h3>
-            <div className="space-y-3">
-              {[
-                { label: "Cycle Duration",   value: "4–6 weeks" },
-                { label: "Success Rate",     value: "40–50% (under 35)" },
-                { label: "Cost in India",    value: "₹1.5L – ₹3L" },
-                { label: "Clinics in India", value: "3,000+" },
-                { label: "Couples Affected", value: "27.5 million" },
-              ].map((fact, i) => (
-                <div key={i} className="flex justify-between items-center text-sm border-b border-gray-50 pb-2 last:border-0">
-                  <span className="text-gray-500">{fact.label}</span>
-                  <span className="font-bold text-[#1B2A6B]">{fact.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Related articles */}
-          <div className="border border-gray-200 rounded-2xl p-5">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">
-              Related Articles
-            </h3>
-            <ul className="space-y-3 text-sm">
-              {[
-                "IUI vs IVF — Which is Right for You?",
-                "ICSI Treatment Explained",
-                "IVF with Donor Eggs in India",
-                "How to Choose an IVF Clinic",
-                "PCOS and Fertility Treatment Options",
-              ].map((article, i) => (
-                <li key={i}>
-                  <Link href="#" className="text-[#1B2A6B] hover:text-[#7B2D8E] hover:underline leading-snug">
-                    {article}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Disclaimer */}
-          <div className="bg-gray-50 rounded-xl p-4 text-xs text-gray-400 leading-relaxed border border-gray-100">
-            <span className="font-bold text-gray-500">Medical Disclaimer:</span> This article is for
-            informational purposes only. It is not a substitute for professional medical advice,
-            diagnosis, or treatment. Always consult a qualified fertility specialist.
-          </div>
-        </aside>
-      </main>
-
-      {/* ── FOOTER ── */}
-      <footer className="border-t bg-gray-50 mt-16">
-        <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <Logo />
-            <p className="text-xs text-gray-400 mt-2">© 2025 HealthcareAnswer.com · All rights reserved</p>
-          </div>
-          <p className="text-xs text-gray-400 text-center md:text-right max-w-sm">
-            HealthcareAnswer.com is a health information and lead generation platform.
-            We do not provide medical diagnosis or treatment advice.
-          </p>
+        {/* Heading */}
+        <div style={{ textAlign: "center", marginBottom: "24px" }}>
+          <h1 style={{ color: "#17324D", fontSize: "26px", fontWeight: 800, margin: 0 }}>Create your GeTradie account</h1>
+          <p style={{ color: "#667085", fontSize: "14px", marginTop: "6px" }}>Join Australia's smarter tradie marketplace</p>
         </div>
-      </footer>
 
+        {/* Tab toggle */}
+        <div style={{ display: "flex", background: "#E4E7EC", borderRadius: "12px", padding: "4px", marginBottom: "24px" }}>
+          {(["homeowner", "tradie"] as const).map(t => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => { setTab(t); setErrors({}); }}
+              style={{
+                flex: 1, padding: "10px", border: "none", cursor: "pointer",
+                borderRadius: "9px", fontSize: "13px", fontWeight: 700,
+                transition: "all 0.2s",
+                background: tab === t ? "#FFFFFF" : "transparent",
+                color: tab === t ? (t === "homeowner" ? "#0047AB" : "#F97316") : "#667085",
+                boxShadow: tab === t ? "0 1px 4px rgba(0,0,0,0.12)" : "none",
+              }}
+            >
+              {t === "homeowner" ? "🏠  Homeowner" : "🔧  Tradie"}
+            </button>
+          ))}
+        </div>
+
+        {/* Form card */}
+        <div style={{ background: "#FFFFFF", borderRadius: "16px", boxShadow: "0 4px 24px rgba(0,0,0,0.07)", border: "1px solid #E4E7EC", padding: "28px 28px 32px" }}>
+
+          {serverError && (
+            <div style={{ background: "#FEF3F2", border: "1px solid #FEE4E2", borderRadius: "8px", padding: "12px 16px", marginBottom: "20px", color: "#D92D20", fontSize: "13px" }}>
+              {serverError}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+
+            {/* ── PERSONAL DETAILS ── */}
+            <SectionHeader icon="👤" title="Personal details" />
+
+            {/* Name */}
+            <Field label="Full Name" required error={errors.name}>
+              <div style={{ position: "relative" }}>
+                <Input
+                  type="text"
+                  placeholder="John Smith"
+                  value={name}
+                  maxLength={30}
+                  error={errors.name}
+                  onChange={e => { setName(e.target.value); if (errors.name) setErrors(p => ({ ...p, name: "" })); }}
+                />
+                <span style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", fontSize: "11px", color: name.length > 25 ? "#F97316" : "#D0D5DD" }}>
+                  {name.length}/30
+                </span>
+              </div>
+            </Field>
+
+            {/* Email */}
+            <Field label="Email Address" required error={errors.email}>
+              <Input
+                type="email"
+                placeholder="john@example.com"
+                value={email}
+                error={errors.email}
+                onChange={e => { setEmail(e.target.value); if (errors.email) setErrors(p => ({ ...p, email: "" })); }}
+              />
+            </Field>
+
+            {/* Phone */}
+            <Field label="Phone Number" error={errors.phone} hint="Australian mobile or landline — digits after +61, no leading 0">
+              <div style={{
+                display: "flex", alignItems: "center", borderRadius: "8px",
+                border: `1px solid ${errors.phone ? "#D92D20" : "#D0D5DD"}`,
+                background: "#FFFFFF", overflow: "hidden", transition: "border-color 0.15s",
+              }}
+                onFocusCapture={e => (e.currentTarget.style.borderColor = "#0047AB")}
+                onBlurCapture={e => (e.currentTarget.style.borderColor = errors.phone ? "#D92D20" : "#D0D5DD")}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", background: "#F5F8FC", borderRight: "1px solid #D0D5DD", flexShrink: 0 }}>
+                  <span>🇦🇺</span>
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: "#0047AB" }}>+61</span>
+                </div>
+                <input
+                  type="tel"
+                  placeholder="4XX XXX XXX"
+                  value={phone}
+                  maxLength={11}
+                  onChange={e => { setPhone(e.target.value.replace(/[^\d\s\-]/g, "")); if (errors.phone) setErrors(p => ({ ...p, phone: "" })); }}
+                  style={{ flex: 1, border: "none", outline: "none", padding: "8px 12px", fontSize: "13px", color: "#172B4D", background: "transparent" }}
+                />
+              </div>
+            </Field>
+
+            {/* ── TRADIE SPECIFIC ── */}
+            {tab === "tradie" && (
+              <>
+                <SectionHeader icon="🔧" title="Business details" />
+
+                <Field label="Business Name">
+                  <Input type="text" placeholder="e.g. Smith Electrical" value={businessName} maxLength={50} onChange={e => setBusinessName(e.target.value)} />
+                </Field>
+
+                <Field label="Trade Specialty" required error={errors.specialty}>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "4px" }}>
+                    {TRADES.map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => { setSpecialty(t); if (errors.specialty) setErrors(p => ({ ...p, specialty: "" })); }}
+                        style={{
+                          padding: "6px 14px", borderRadius: "20px", fontSize: "12px", fontWeight: 600,
+                          cursor: "pointer", transition: "all 0.15s",
+                          border: `1.5px solid ${specialty === t ? "#F97316" : "#D0D5DD"}`,
+                          background: specialty === t ? "#FFF7ED" : "#F9FAFB",
+                          color: specialty === t ? "#F97316" : "#667085",
+                        }}
+                      >{t}</button>
+                    ))}
+                  </div>
+                  {errors.specialty && <p style={{ color: "#D92D20", fontSize: "11px", marginTop: "4px" }}>{errors.specialty}</p>}
+                </Field>
+
+                <Field label="ABN (Optional)">
+                  <Input type="text" placeholder="12 345 678 901" value={abn} maxLength={14} onChange={e => setAbn(e.target.value.replace(/[^\d\s]/g, ""))} />
+                </Field>
+              </>
+            )}
+
+            {/* ── HOMEOWNER ADDRESS ── */}
+            {tab === "homeowner" && (
+              <>
+                <SectionHeader icon="🏠" title="Your address" />
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "12px" }}>
+                  <Field label="Unit / Apt No" hint="Optional">
+                    <Input type="text" placeholder="Unit 4" value={unitNo} maxLength={20} onChange={e => setUnitNo(e.target.value)} />
+                  </Field>
+                  <Field label="Street Address" hint="Optional">
+                    <Input type="text" placeholder="12 Smith Street" value={streetAddress} maxLength={100} onChange={e => setStreetAddress(e.target.value)} />
+                  </Field>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  {/* State */}
+                  <Field label="State" required error={errors.state}>
+                    <select
+                      value={state}
+                      onChange={e => { setState(e.target.value); setSuburb(""); setSuburbSuggestions([]); if (errors.state) setErrors(p => ({ ...p, state: "", suburb: "" })); }}
+                      style={{
+                        width: "100%", borderRadius: "8px", border: `1px solid ${errors.state ? "#D92D20" : "#D0D5DD"}`,
+                        padding: "8px 12px", fontSize: "13px", color: state ? "#172B4D" : "#98A2B3",
+                        background: "#FFFFFF", outline: "none", cursor: "pointer",
+                      }}
+                    >
+                      <option value="">Select state</option>
+                      {AU_STATES.map(s => (
+                        <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
+                      ))}
+                    </select>
+                  </Field>
+
+                  {/* Suburb */}
+                  <Field label="Suburb" error={errors.suburb}>
+                    <div style={{ position: "relative" }}>
+                      <Input
+                        type="text"
+                        placeholder={state ? `Search suburb...` : "Select state first"}
+                        value={suburb}
+                        disabled={!state}
+                        error={errors.suburb}
+                        onChange={e => handleSuburbChange(e.target.value)}
+                        onBlur={() => setTimeout(() => setShowSuburbDropdown(false), 200)}
+                        style={{ background: !state ? "#F9FAFB" : "#FFFFFF" }}
+                      />
+                      {showSuburbDropdown && suburbSuggestions.length > 0 && (
+                        <div style={{
+                          position: "absolute", zIndex: 20, top: "100%", left: 0, right: 0, marginTop: "4px",
+                          background: "#FFFFFF", borderRadius: "8px", border: "1px solid #D0D5DD",
+                          boxShadow: "0 8px 24px rgba(0,0,0,0.12)", overflow: "hidden",
+                        }}>
+                          {suburbSuggestions.map(s => (
+                            <button
+                              key={s.name + s.postcode}
+                              type="button"
+                              onClick={() => selectSuburb(s)}
+                              style={{
+                                width: "100%", textAlign: "left", padding: "9px 14px", border: "none",
+                                background: "transparent", cursor: "pointer", fontSize: "13px",
+                                color: "#172B4D", borderBottom: "1px solid #F2F4F7",
+                                display: "flex", justifyContent: "space-between", alignItems: "center",
+                              }}
+                              onMouseEnter={e => (e.currentTarget.style.background = "#F5F8FC")}
+                              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                            >
+                              <span>📍 {s.name}</span>
+                              <span style={{ color: "#98A2B3", fontSize: "12px" }}>{s.state} {s.postcode}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </Field>
+                </div>
+
+                {/* Postcode */}
+                <Field label="Postcode" hint="Automatically filled when you select a suburb">
+                  <Input
+                    type="text"
+                    placeholder="e.g. 2150"
+                    value={postcode}
+                    maxLength={4}
+                    onChange={e => setPostcode(e.target.value.replace(/[^\d]/g, ""))}
+                    style={{ maxWidth: "140px" }}
+                  />
+                </Field>
+              </>
+            )}
+
+            {/* ── SECURITY ── */}
+            <SectionHeader icon="🔒" title="Secure your account" />
+
+            {/* Password */}
+            <Field label="Password" required error={errors.password}>
+              <div style={{ position: "relative" }}>
+                <Input
+                  type={showPw ? "text" : "password"}
+                  placeholder="Min 8 characters"
+                  value={password}
+                  error={errors.password}
+                  onChange={e => { setPassword(e.target.value); if (errors.password) setErrors(p => ({ ...p, password: "" })); }}
+                  style={{ paddingRight: "56px" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", border: "none", background: "transparent", cursor: "pointer", fontSize: "12px", color: "#667085", fontWeight: 600 }}
+                >{showPw ? "Hide" : "Show"}</button>
+              </div>
+              {/* Strength bar */}
+              {password && (
+                <div style={{ marginTop: "8px" }}>
+                  <div style={{ display: "flex", gap: "4px", marginBottom: "4px" }}>
+                    {[1,2,3,4].map(i => (
+                      <div key={i} style={{ flex: 1, height: "3px", borderRadius: "2px", background: i <= pwStrength ? pwStrengthColor : "#E4E7EC", transition: "background 0.2s" }} />
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ display: "flex", gap: "12px" }}>
+                      {pwChecks.map(c => (
+                        <span key={c.label} style={{ fontSize: "11px", color: c.pass ? "#16803C" : "#98A2B3", display: "flex", alignItems: "center", gap: "3px" }}>
+                          {c.pass ? "✓" : "○"} {c.label}
+                        </span>
+                      ))}
+                    </div>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: pwStrengthColor }}>{pwStrengthLabel}</span>
+                  </div>
+                </div>
+              )}
+            </Field>
+
+            {/* Confirm password */}
+            <Field label="Confirm Password" required error={errors.confirm}>
+              <Input
+                type={showPw ? "text" : "password"}
+                placeholder="Repeat your password"
+                value={confirm}
+                error={errors.confirm}
+                onChange={e => { setConfirm(e.target.value); if (errors.confirm) setErrors(p => ({ ...p, confirm: "" })); }}
+              />
+            </Field>
+
+            {/* Terms */}
+            <div style={{ marginTop: "4px" }}>
+              <label style={{ display: "flex", gap: "10px", alignItems: "flex-start", cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={e => { setAgreedToTerms(e.target.checked); if (e.target.checked) setTermsError(""); }}
+                  style={{ marginTop: "2px", width: "16px", height: "16px", accentColor: "#0047AB", flexShrink: 0 }}
+                />
+                <span style={{ fontSize: "12px", color: "#667085", lineHeight: "1.6" }}>
+                  I agree to GeTradie's{" "}
+                  <Link href="/terms" style={{ color: "#0047AB", fontWeight: 600 }}>Terms of Service</Link>
+                  {" "}and{" "}
+                  <Link href="/privacy" style={{ color: "#0047AB", fontWeight: 600 }}>Privacy Policy</Link>.
+                  {" "}I confirm I am at least 18 years of age and located in Australia.
+                </span>
+              </label>
+              {termsError && <p style={{ color: "#D92D20", fontSize: "11px", marginTop: "6px" }}>{termsError}</p>}
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                marginTop: "8px", width: "100%", padding: "13px",
+                background: loading ? "#93AECF" : "#0047AB",
+                color: "#FFFFFF", border: "none", borderRadius: "10px",
+                fontSize: "14px", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
+                boxShadow: loading ? "none" : "0 4px 14px rgba(0,71,171,0.35)",
+                transition: "all 0.2s", letterSpacing: "0.02em",
+              }}
+              onMouseEnter={e => { if (!loading) e.currentTarget.style.background = "#003d94"; }}
+              onMouseLeave={e => { if (!loading) e.currentTarget.style.background = "#0047AB"; }}
+            >
+              {loading ? "Creating your account…" : `Create Account →`}
+            </button>
+
+          </form>
+        </div>
+
+        {/* Footer */}
+        <p style={{ textAlign: "center", marginTop: "20px", fontSize: "12px", color: "#98A2B3" }}>
+          Already have an account?{" "}
+          <Link href="/login" style={{ color: "#0047AB", fontWeight: 600 }}>Sign in here</Link>
+        </p>
+
+      </div>
     </div>
   );
 }
