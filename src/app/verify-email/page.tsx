@@ -69,8 +69,9 @@ function VerifyEmailPageInner() {
       if (data.success) {
         setSuccess("Email verified! Redirecting...");
         if (data.token) localStorage.setItem("token", data.token);
+        if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
         setTimeout(() => {
-          if (data.user?.role === "TRADIE") router.push("/tradie-jobs");
+          if (data.user?.role === "TRADIE") router.push("/dashboard-tradie");
           else router.push("/dashboard");
         }, 1500);
       } else {

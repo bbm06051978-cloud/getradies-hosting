@@ -64,11 +64,11 @@ export default function AdminPage() {
       if (data.users)    setUsers(data.users);
       if (data.jobs)     setJobs(data.jobs);
       if (data.disputes) setDisputes(data.disputes);
-      try { const vRes = await fetch("/api/admin/verify-tradie?status=DOCS_SUBMITTED"); const vData = await vRes.json(); if (vData.tradies) setVerificationQueue(vData.tradies); } catch {}
+      try { const vRes = await fetch("/api/admin/verify-tradie?status=DOCS_SUBMITTED"); const vData = await vRes.json(); console.log("Verification queue:", vData); if (vData.tradies) setVerificationQueue(vData.tradies); } catch {}
       // Fetch verification queue
       const vRes = await fetch("/api/admin/verify-tradie?status=DOCS_SUBMITTED");
       const vData = await vRes.json();
-      if (vData.tradies) setVerificationQueue(vData.tradies);
+      console.log("Verification queue:", vData); if (vData.tradies) setVerificationQueue(vData.tradies);
     } catch {}
     finally { setLoading(false); }
   };

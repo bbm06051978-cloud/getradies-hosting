@@ -84,6 +84,7 @@ export default function TradieDashboard() {
 
 const [getradiePoints, setGetradiePoints] = useState<GetradiePoints>({ points: 0, badge: "Bronze" });
 const [subscription, setSubscription] = useState({ plan: "Free", expiry: null as string | null, freeQuotesUsed: 0 });
+  const [verificationStatus, setVerificationStatus] = useState<string>("EMAIL_VERIFIED");
   const [profile, setProfile] = useState<ProfileCompletion>({
     businessDetails: false,
     servicesPricing: false,
@@ -173,7 +174,7 @@ if (data.subscription) setSubscription(data.subscription);
         <div className="p-6 flex-1">
 
           {/* Verification Banner */}
-          {profile && !profile.licenseInsurance && (
+          {verificationStatus !== "APPROVED" && (
             <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🛡️</span>
@@ -189,7 +190,7 @@ if (data.subscription) setSubscription(data.subscription);
           )}
 
           {/* Verified Badge Banner */}
-          {profile && profile.licenseInsurance && (
+          {verificationStatus === "APPROVED" && (
             <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
               <span className="text-2xl">✅</span>
               <p className="font-bold text-green-800 text-sm">Your account is verified — you can quote on all available jobs!</p>
