@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   if (!decoded || decoded.role !== "TRADIE") return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
 
   const {
-    licenceNumber, licenceState, licenceExpiry, abn,
+    licenseNumber: licenceNumber, licenseState: licenceState, licenceExpiry, abn,
     licenceDocUrl, insuranceDocUrl, insurancePolicyNo, insuranceExpiry,
   } = await req.json();
 
@@ -42,8 +42,8 @@ export async function POST(req: NextRequest) {
   await prisma.tradieProfile.update({
     where: { userId: decoded.id },
     data: {
-      licenceNumber,
-      licenceState,
+      licenseNumber: licenceNumber,
+      licenceState: licenceState,
       licenceExpiry: licenceExpiry ? new Date(licenceExpiry) : null,
       abn: abn || null,
       insurancePolicyNo: insurancePolicyNo || null,
