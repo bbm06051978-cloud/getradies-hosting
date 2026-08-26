@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+export const config = {
+  api: { bodyParser: { sizeLimit: "20mb" } },
+};
+
 // GET — get current verification status
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
@@ -31,8 +35,11 @@ export async function POST(req: NextRequest) {
     licenceDocUrl, insuranceDocUrl, insurancePolicyNo, insuranceExpiry,
   } = await req.json();
 
-  if (!licenceNumber || !licenceState || !licenceDocUrl) {
-    return NextResponse.json({ error: "Licence number, state and document are required." }, { status: 400 });
+  if (!licenceNumber || !licenceState) {
+    return NextResponse.json({ error: "Licence number and state are required." }, { status: 400 });
+  }
+  if (!licenceDocUrl || licenceDocUrl.length < 10) {
+    return NextResponse.json({ error: "Please upload a licence document." }, { status: 400 });
   }
 
   const tradieProfile = await prisma.tradieProfile.findUnique({ where: { userId: decoded.id } });
