@@ -172,6 +172,30 @@ if (data.subscription) setSubscription(data.subscription);
 
         <div className="p-6 flex-1">
 
+          {/* Verification Banner */}
+          {profile && !profile.licenseInsurance && (
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🛡️</span>
+                <div>
+                  <p className="font-bold text-amber-800 text-sm">Complete your verification to start quoting</p>
+                  <p className="text-amber-600 text-xs mt-0.5">Upload your trade licence to get your Verified Tradie badge and access job leads.</p>
+                </div>
+              </div>
+              <Link href="/tradie-verification" className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors">
+                Verify Now →
+              </Link>
+            </div>
+          )}
+
+          {/* Verified Badge Banner */}
+          {profile && profile.licenseInsurance && (
+            <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
+              <span className="text-2xl">✅</span>
+              <p className="font-bold text-green-800 text-sm">Your account is verified — you can quote on all available jobs!</p>
+            </div>
+          )}
+
           
 
 

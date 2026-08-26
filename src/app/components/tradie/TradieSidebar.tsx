@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Briefcase, MessageSquare, Clock, User,
-  Settings, Home, CreditCard,
+  Settings, Home, CreditCard, ShieldCheck,
   ChevronLeft, ChevronRight, Menu, X,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -15,6 +15,7 @@ const navItems = [
   { label: "My Schedule",  icon: Clock,         href: "/tradie-schedule"     },
   { label: "Profile",      icon: User,          href: "/tradie-profile"      },
   { label: "Subscription", icon: CreditCard,    href: "/tradie-subscription" },
+  { label: "Verification", icon: ShieldCheck,   href: "/tradie-verification" },
   { label: "Settings",    icon: Settings,       href: "/tradie-settings"     },
 ];
 

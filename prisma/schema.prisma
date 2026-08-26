@@ -8,6 +8,29 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum VerificationStatus {
+  EMAIL_VERIFIED
+  DOCS_SUBMITTED
+  UNDER_REVIEW
+  MORE_INFO_REQUIRED
+  APPROVED
+  REJECTED
+  EXPIRED
+  SUSPENDED
+}
+
+enum DocumentType {
+  LICENCE
+  INSURANCE
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id               String         @id @default(cuid())
   email            String         @unique
@@ -50,6 +73,15 @@ model TradieProfile {
   profilePhoto       String?
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
+  verificationStatus VerificationStatus @default(EMAIL_VERIFIED)
+  verificationDate   DateTime?
+  verificationNotes  String?
+  verificationTier   String?          @default("BASIC")
+  licenceExpiry      DateTime?
+  licenceState       String?
+  insuranceExpiry    DateTime?
+  insurancePolicyNo  String?
+  abn                String?
   getradiePoints     Int?             @default(0)
   pointsBadge        String?          @default("Bronze")
   subscriptionPlan   String?          @default("Free")
@@ -152,12 +184,17 @@ model TradiePhoto {
 }
 
 model TradieDocument {
-  id              String        @id @default(cuid())
+  id              String         @id @default(cuid())
   tradieProfileId String
   url             String
-  type            String
-  createdAt       DateTime      @default(now())
-  tradieProfile   TradieProfile @relation(fields: [tradieProfileId], references: [id])
+  documentType    DocumentType   @default(LICENCE)
+  status          DocumentStatus @default(PENDING)
+  expiryDate      DateTime?
+  verifiedAt      DateTime?
+  rejectedAt      DateTime?
+  rejectionNote   String?
+  createdAt       DateTime       @default(now())
+  tradieProfile   TradieProfile  @relation(fields: [tradieProfileId], references: [id])
 }
 
 model Notification {
