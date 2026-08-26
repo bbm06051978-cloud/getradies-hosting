@@ -158,6 +158,8 @@ export default function RegisterPage() {
     if (!confirm)               e.confirm = "Please confirm your password";
     else if (password !== confirm) e.confirm = "Passwords do not match";
     if (tab === "tradie" && !specialty) e.specialty = "Please select your trade specialty";
+    if (tab === "tradie" && !state) e.state = "Please select your base state";
+    if (tab === "tradie" && !suburb.trim()) e.suburb = "Please enter your base suburb";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -338,6 +340,79 @@ export default function RegisterPage() {
 
                 <Field label="ABN (Optional)">
                   <Input type="text" placeholder="12 345 678 901" value={abn} maxLength={14} onChange={e => setAbn(e.target.value.replace(/[^\d\s]/g, ""))} />
+                </Field>
+
+                <SectionHeader icon="📍" title="Base location" />
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <Field label="State" required error={errors.state}>
+                    <select
+                      value={state}
+                      onChange={e => { setState(e.target.value); setSuburb(""); setSuburbSuggestions([]); if (errors.state) setErrors(p => ({ ...p, state: "", suburb: "" })); }}
+                      style={{
+                        width: "100%", borderRadius: "8px", border: `1px solid ${errors.state ? "#D92D20" : "#D0D5DD"}`,
+                        padding: "8px 12px", fontSize: "13px", color: state ? "#172B4D" : "#98A2B3",
+                        background: "#FFFFFF", outline: "none", cursor: "pointer",
+                      }}
+                    >
+                      <option value="">Select state</option>
+                      {AU_STATES.map(s => (
+                        <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
+                      ))}
+                    </select>
+                  </Field>
+
+                  <Field label="Suburb" required error={errors.suburb}>
+                    <div style={{ position: "relative" }}>
+                      <Input
+                        type="text"
+                        placeholder={state ? "Search suburb..." : "Select state first"}
+                        value={suburb}
+                        disabled={!state}
+                        error={errors.suburb}
+                        onChange={e => handleSuburbChange(e.target.value)}
+                        onBlur={() => setTimeout(() => setShowSuburbDropdown(false), 200)}
+                        style={{ background: !state ? "#F9FAFB" : "#FFFFFF" }}
+                      />
+                      {showSuburbDropdown && suburbSuggestions.length > 0 && (
+                        <div style={{
+                          position: "absolute", zIndex: 20, top: "100%", left: 0, right: 0, marginTop: "4px",
+                          background: "#FFFFFF", borderRadius: "8px", border: "1px solid #D0D5DD",
+                          boxShadow: "0 8px 24px rgba(0,0,0,0.12)", overflow: "hidden",
+                        }}>
+                          {suburbSuggestions.map(s => (
+                            <button
+                              key={s.name + s.postcode}
+                              type="button"
+                              onClick={() => selectSuburb(s)}
+                              style={{
+                                width: "100%", textAlign: "left", padding: "9px 14px", border: "none",
+                                background: "transparent", cursor: "pointer", fontSize: "13px",
+                                color: "#172B4D", borderBottom: "1px solid #F2F4F7",
+                                display: "flex", justifyContent: "space-between", alignItems: "center",
+                              }}
+                              onMouseEnter={e => (e.currentTarget.style.background = "#F5F8FC")}
+                              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                            >
+                              <span>📍 {s.name}</span>
+                              <span style={{ color: "#98A2B3", fontSize: "12px" }}>{s.state} {s.postcode}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </Field>
+                </div>
+
+                <Field label="Postcode" hint="Auto-filled when you select a suburb">
+                  <Input
+                    type="text"
+                    placeholder="e.g. 2150"
+                    value={postcode}
+                    maxLength={4}
+                    onChange={e => setPostcode(e.target.value.replace(/[^\d]/g, ""))}
+                    style={{ maxWidth: "140px" }}
+                  />
                 </Field>
               </>
             )}
