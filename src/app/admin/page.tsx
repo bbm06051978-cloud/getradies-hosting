@@ -64,8 +64,40 @@ export default function AdminPage() {
       if (data.users)    setUsers(data.users);
       if (data.jobs)     setJobs(data.jobs);
       if (data.disputes) setDisputes(data.disputes);
+      try { const vRes = await fetch("/api/admin/verify-tradie?status=DOCS_SUBMITTED"); const vData = await vRes.json(); if (vData.tradies) setVerificationQueue(vData.tradies); } catch {}
+      // Fetch verification queue
+      const vRes = await fetch("/api/admin/verify-tradie?status=DOCS_SUBMITTED");
+      const vData = await vRes.json();
+      if (vData.tradies) setVerificationQueue(vData.tradies);
     } catch {}
     finally { setLoading(false); }
+  };
+
+  const handleVerification = async (tradieProfileId: string, action: string, notes: string) => {
+    setVerifyLoading(true);
+    try {
+      const res = await fetch("/api/admin/verify-tradie", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tradieProfileId, action, notes }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setVerifyAction(null);
+        setVerifyNotes("");
+        await fetchData();
+      }
+    } catch {}
+    finally { setVerifyLoading(false); }
+  };
+
+  const handleVerification = async (tradieProfileId: string, action: string, notes: string) => {
+    setVerifyLoading(true);
+    try {
+      const res = await fetch("/api/admin/verify-tradie", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tradieProfileId, action, notes }) });
+      const data = await res.json();
+      if (data.success) { setVerifyAction(null); setVerifyNotes(""); await fetchData(); }
+    } catch {} finally { setVerifyLoading(false); }
   };
 
   const handleVerify = async (tradieProfileId: string, verified: boolean) => {
@@ -417,24 +449,71 @@ export default function AdminPage() {
               {/* ── VERIFICATION ── */}
               {tab === "verification" && (
                 <div className="space-y-4">
-                  {unverifiedTradies.length === 0 ? (
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-white font-bold text-lg">Verification Queue</h2>
+                    <span className="bg-yellow-500/20 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full">{verificationQueue.length} pending</span>
+                  </div>
+                  {verificationQueue.length === 0 ? (
                     <div className="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center">
                       <ShieldCheck size={48} className="text-gray-700 mx-auto mb-4"/>
-                      <p className="text-gray-400">All tradies are verified</p>
+                      <p className="text-gray-400">No pending verifications</p>
                     </div>
-                  ) : unverifiedTradies.map(u => (
-                    <div key={u.id} className="bg-gray-900 rounded-2xl border border-yellow-900 p-5">
-                      <div className="flex items-start justify-between gap-4">
+                  ) : verificationQueue.map((t: any) => (
+                    <div key={t.id} className="bg-gray-900 rounded-2xl border border-yellow-900/50 p-5">
+                      <div className="flex items-start justify-between gap-4 mb-4">
                         <div>
-                          <h3 className="font-bold text-white">{u.tradieProfile?.businessName}</h3>
-                          <p className="text-sm text-gray-400">{u.name} · {u.email}</p>
-                          <p className="text-sm text-orange-400 font-semibold">{u.tradieProfile?.specialty}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Joined: {new Date(u.createdAt).toLocaleDateString("en-AU")}
-                          </p>
+                          <h3 className="font-bold text-white text-base">{t.businessName}</h3>
+                          <p className="text-sm text-gray-400">{t.user.name} &middot; {t.user.email}</p>
+                          <div className="flex gap-2 mt-1">
+                            <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">{t.specialty}</span>
+                            {t.licenceState && <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">{t.licenceState}</span>}
+                          </div>
                         </div>
-                        <button
-                          onClick={() => u.tradieProfile && handleVerify(u.id, true)}
+                        <span className="text-xs text-gray-500">{new Date(t.user.createdAt).toLocaleDateString("en-AU")}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 mb-4">
+                        {[{label:"Licence No",value:t.licenceNumber||"Not provided"},{label:"State",value:t.licenceState||"Not provided"},{label:"ABN",value:t.abn||"Not provided"}].map((item,i) => (
+                          <div key={i} className="bg-gray-800 rounded-lg p-3">
+                            <p className="text-xs text-gray-500 mb-1">{item.label}</p>
+                            <p className="text-sm text-white font-semibold">{item.value}</p>
+                          </div>
+                        ))}
+                      </div>
+                      {t.documents?.length > 0 && (
+                        <div className="mb-4">
+                          <p className="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-wider">Documents:</p>
+                          <div className="flex gap-2 flex-wrap">
+                            {t.documents.map((doc: any) => (
+                              <a key={doc.id} href={doc.url} target="_blank" rel="noopener noreferrer"
+                                className="flex items-center gap-2 bg-blue-600/20 border border-blue-600/30 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-600/30">
+                                {doc.documentType === "LICENCE" ? "Licence" : "Insurance"} &rarr; View
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {verifyAction?.id === t.id ? (
+                        <div className="bg-gray-800 rounded-xl p-4">
+                          <p className="text-sm text-white font-semibold mb-2">{verifyAction.action === "REJECT" ? "Rejection reason:" : verifyAction.action === "MORE_INFO" ? "What info is needed?" : "Approval note (optional):"}</p>
+                          <textarea value={verifyNotes} onChange={e => setVerifyNotes(e.target.value)} placeholder={verifyAction.action === "APPROVE" ? "Optional note..." : "Required — explain clearly..."} rows={3}
+                            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white outline-none resize-none mb-3"/>
+                          <div className="flex gap-2">
+                            <button onClick={() => handleVerification(t.id, verifyAction.action, verifyNotes)} disabled={verifyLoading || (verifyAction.action !== "APPROVE" && !verifyNotes.trim())}
+                              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white px-4 py-2 rounded-lg text-xs font-bold">{verifyLoading ? "Processing..." : "Confirm"}</button>
+                            <button onClick={() => { setVerifyAction(null); setVerifyNotes(""); }} className="bg-gray-700 hover:bg-gray-600 text-gray-300 px-4 py-2 rounded-lg text-xs font-bold">Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2 flex-wrap">
+                          <button onClick={() => setVerifyAction({ id: t.id, action: "APPROVE" })} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5"><ShieldCheck size={13}/> Approve</button>
+                          <button onClick={() => setVerifyAction({ id: t.id, action: "MORE_INFO" })} className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-xs font-bold">Request More Info</button>
+                          <button onClick={() => setVerifyAction({ id: t.id, action: "REJECT" })} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold">Reject</button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
                           disabled={busy === u.id}
                           className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2">
                           <ShieldCheck size={13}/>
