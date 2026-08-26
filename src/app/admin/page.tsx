@@ -91,14 +91,7 @@ export default function AdminPage() {
     finally { setVerifyLoading(false); }
   };
 
-  const handleVerification = async (tradieProfileId: string, action: string, notes: string) => {
-    setVerifyLoading(true);
-    try {
-      const res = await fetch("/api/admin/verify-tradie", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tradieProfileId, action, notes }) });
-      const data = await res.json();
-      if (data.success) { setVerifyAction(null); setVerifyNotes(""); await fetchData(); }
-    } catch {} finally { setVerifyLoading(false); }
-  };
+  
 
   const handleVerify = async (tradieProfileId: string, verified: boolean) => {
     setBusy(tradieProfileId);
