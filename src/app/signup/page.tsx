@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 // ── CONSTANTS ──────────────────────────────────────────────────────
@@ -84,8 +85,14 @@ function SectionHeader({ icon, title }: { icon: string; title: string }) {
 }
 
 // ── MAIN PAGE ──────────────────────────────────────────────────────
-export default function RegisterPage() {
+function RegisterPageInner() {
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<"homeowner" | "tradie">("homeowner");
+
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    if (t === "tradie") setTab("tradie");
+  }, [searchParams]);
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
   const [termsError, setTermsError] = useState("");
@@ -609,5 +616,13 @@ export default function RegisterPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", background: "#F5F8FC" }} />}>
+      <RegisterPageInner />
+    </Suspense>
   );
 }

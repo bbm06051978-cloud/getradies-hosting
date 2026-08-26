@@ -173,7 +173,7 @@ function TradieLoginInner() {
             <div className="mt-5 pt-5 border-t border-gray-100 text-center space-y-2">
               <p className="text-sm text-gray-500">
                 New to GeTradie?{" "}
-                <Link href="/signup-tradie" className="text-orange-500 font-semibold hover:underline">Create tradie account</Link>
+                <Link href="/signup?tab=tradie" className="text-orange-500 font-semibold hover:underline">Create tradie account</Link>
               </p>
               <p className="text-xs text-gray-400">
                 Are you a homeowner?{" "}
