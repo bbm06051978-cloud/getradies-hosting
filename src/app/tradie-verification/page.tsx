@@ -116,6 +116,39 @@ export default function TradieVerificationPage() {
     }
   };
 
+  const handleMoreInfoSubmit = async () => {
+    setError("");
+    if (!licenceDocUrl) { setError("Please upload a document first."); return; }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          licenceNumber: profile?.licenseNumber || "ADDITIONAL_DOC",
+          licenceState: profile?.licenceState || "NSW",
+          licenceExpiry: profile?.licenceExpiry || null,
+          abn: profile?.abn || null,
+          licenceDocUrl,
+          insuranceDocUrl: null,
+          insurancePolicyNo: null,
+          insuranceExpiry: null,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+        await fetchProfile();
+      } else {
+        setError(data.error || "Submission failed. Please try again.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -299,7 +332,7 @@ export default function TradieVerificationPage() {
               />
               {error && <p style={{ color: "#D92D20", fontSize: "12px", marginTop: "8px" }}>{error}</p>}
               <button
-                onClick={handleSubmit}
+                onClick={handleMoreInfoSubmit}
                 disabled={submitting || !licenceFile}
                 style={{
                   marginTop: "16px", width: "100%", padding: "12px",
