@@ -112,6 +112,15 @@ const [subscription, setSubscription] = useState({ plan: "Free", expiry: null as
 if (data.subscription) setSubscription(data.subscription);
       })
       .catch(() => {});
+
+    // Fetch verification status
+    fetch("/api/verification")
+      .then(r => r.json())
+      .then(d => {
+        console.log("vStatus:", d.tradieProfile?.verificationStatus);
+        if (d.tradieProfile?.verificationStatus) setVerificationStatus(d.tradieProfile.verificationStatus);
+      })
+      .catch(() => {});
   }, []);
 
   const statCards = [
