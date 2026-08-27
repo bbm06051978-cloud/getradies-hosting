@@ -183,7 +183,44 @@ if (data.subscription) setSubscription(data.subscription);
         <div className="p-6 flex-1">
 
           {/* Verification Banner */}
-          {verificationStatus !== "APPROVED" && (
+          {verificationStatus === "MORE_INFO_REQUIRED" && (
+            <div className="mb-6 bg-orange-50 border border-orange-300 rounded-xl p-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">⚠️</span>
+                <div>
+                  <p className="font-bold text-orange-800 text-sm">Additional documents required</p>
+                  <p className="text-orange-600 text-xs mt-0.5">GeTradie has requested more information. Please check your verification page.</p>
+                </div>
+              </div>
+              <Link href="/tradie-verification" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors">
+                Upload Documents →
+              </Link>
+            </div>
+          )}
+          {verificationStatus === "REJECTED" && (
+            <div className="mb-6 bg-red-50 border border-red-300 rounded-xl p-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">❌</span>
+                <div>
+                  <p className="font-bold text-red-800 text-sm">Verification unsuccessful — please resubmit</p>
+                  <p className="text-red-600 text-xs mt-0.5">Your documents were not approved. Check your email for details.</p>
+                </div>
+              </div>
+              <Link href="/tradie-verification" className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors">
+                Resubmit →
+              </Link>
+            </div>
+          )}
+          {verificationStatus === "DOCS_SUBMITTED" && (
+            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3">
+              <span className="text-2xl">🔍</span>
+              <div>
+                <p className="font-bold text-blue-800 text-sm">Documents under review</p>
+                <p className="text-blue-600 text-xs mt-0.5">Our team is reviewing your documents. You will hear back within 24-48 hours.</p>
+              </div>
+            </div>
+          )}
+          {verificationStatus === "EMAIL_VERIFIED" && (
             <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🛡️</span>

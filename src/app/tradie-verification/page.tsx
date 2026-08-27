@@ -182,7 +182,8 @@ export default function TradieVerificationPage() {
 
   const status = profile?.verificationStatus || "EMAIL_VERIFIED";
   const badge = getStatusBadge(status);
-  const canSubmit = ["EMAIL_VERIFIED", "REJECTED", "MORE_INFO_REQUIRED"].includes(status);
+  const canSubmit = ["EMAIL_VERIFIED", "REJECTED"].includes(status);
+  const needsMoreInfo = status === "MORE_INFO_REQUIRED";
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#F8FAFF" }}>
@@ -253,6 +254,63 @@ export default function TradieVerificationPage() {
               <p style={{ color: "#15803D", fontSize: "13px", margin: 0 }}>
                 Our team will review your documents within 24-48 hours. You'll receive an email once verified.
               </p>
+            </div>
+          )}
+
+          {/* More Info Required — simplified upload */}
+          {needsMoreInfo && !submitted && (
+            <div style={{ background: "#fff", border: "1px solid #E4E7EC", borderRadius: "12px", padding: "24px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px", paddingBottom: "12px", borderBottom: "1px solid #F2F4F7" }}>
+                <span style={{ fontSize: "18px" }}>📎</span>
+                <span style={{ color: "#17324D", fontWeight: 700, fontSize: "15px" }}>Upload Additional Document</span>
+              </div>
+              <p style={{ color: "#667085", fontSize: "13px", marginBottom: "16px" }}>
+                Please upload the document requested by our team and resubmit.
+              </p>
+              <div
+                style={{
+                  border: `2px dashed ${licenceFile ? "#16803C" : "#D0D5DD"}`,
+                  borderRadius: "10px", padding: "24px",
+                  textAlign: "center", cursor: "pointer",
+                  background: licenceFile ? "#F0FDF4" : "#F9FAFB",
+                }}
+                onClick={() => document.getElementById("additionalUpload")?.click()}
+              >
+                {licenceFile ? (
+                  <div>
+                    <span style={{ fontSize: "24px" }}>✅</span>
+                    <p style={{ color: "#16803C", fontWeight: 600, fontSize: "13px", margin: "6px 0 0" }}>{licenceFile.name}</p>
+                    <p style={{ color: "#16803C", fontSize: "11px", margin: "4px 0 0" }}>Click to replace</p>
+                  </div>
+                ) : (
+                  <div>
+                    <span style={{ fontSize: "32px" }}>📎</span>
+                    <p style={{ color: "#374151", fontWeight: 600, fontSize: "13px", margin: "8px 0 4px" }}>Click to upload document</p>
+                    <p style={{ color: "#98A2B3", fontSize: "12px", margin: 0 }}>JPG, PNG or PDF — max 10MB</p>
+                  </div>
+                )}
+              </div>
+              <input
+                id="additionalUpload"
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                style={{ display: "none" }}
+                onChange={e => { if (e.target.files?.[0]) handleFileUpload(e.target.files[0], "licence"); }}
+              />
+              {error && <p style={{ color: "#D92D20", fontSize: "12px", marginTop: "8px" }}>{error}</p>}
+              <button
+                onClick={handleSubmit}
+                disabled={submitting || !licenceFile}
+                style={{
+                  marginTop: "16px", width: "100%", padding: "12px",
+                  background: submitting || !licenceFile ? "#93AECF" : "#0047AB",
+                  color: "#fff", border: "none", borderRadius: "10px",
+                  fontSize: "14px", fontWeight: 700,
+                  cursor: submitting || !licenceFile ? "not-allowed" : "pointer",
+                }}
+              >
+                {submitting ? "Uploading..." : "Submit Additional Document →"}
+              </button>
             </div>
           )}
 
