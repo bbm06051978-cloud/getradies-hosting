@@ -481,10 +481,22 @@ export default function AdminPage() {
                           <p className="text-xs text-gray-400 font-semibold mb-2 uppercase tracking-wider">Documents:</p>
                           <div className="flex gap-2 flex-wrap">
                             {t.documents.map((doc: any) => (
-                              <a key={doc.id} href={doc.url} target="_blank" rel="noopener noreferrer"
-                                className="flex items-center gap-2 bg-blue-600/20 border border-blue-600/30 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-600/30">
-                                {doc.documentType === "LICENCE" ? "Licence" : "Insurance"} View
-                              </a>
+                              <button key={doc.id}
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch("/api/upload/signed-url", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ key: doc.url }),
+                                    });
+                                    const data = await res.json();
+                                    if (data.signedUrl) window.open(data.signedUrl, "_blank");
+                                    else alert("Could not load document.");
+                                  } catch { alert("Failed to load document."); }
+                                }}
+                                className="flex items-center gap-2 bg-blue-600/20 border border-blue-600/30 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-600/30 cursor-pointer">
+                                {doc.documentType === "LICENCE" ? "📄 Licence" : "🛡️ Insurance"} View
+                              </button>
                             ))}
                           </div>
                         </div>
