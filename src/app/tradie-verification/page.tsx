@@ -72,15 +72,47 @@ export default function TradieVerificationPage() {
     setLoading(false);
   };
 
-  const handleFileUpload = (file: File, type: "licence" | "insurance") => {
-    // Store filename as placeholder URL (S3 upload integration post-launch)
-    const placeholderUrl = `pending-upload/${file.name}`;
-    if (type === "licence") {
-      setLicenceFile(file);
-      setLicenceDocUrl(placeholderUrl);
-    } else {
-      setInsuranceFile(file);
-      setInsuranceDocUrl(placeholderUrl);
+  const handleFileUpload = async (file: File, type: "licence" | "insurance") => {
+    try {
+      // Get pre-signed URL from API
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          documentType: type === "licence" ? "LICENCE" : "INSURANCE",
+        }),
+      });
+      const data = await res.json();
+      if (!data.uploadUrl) {
+        setError(data.error || "Failed to prepare upload. Please try again.");
+        return;
+      }
+
+      // Upload directly to S3
+      const uploadRes = await fetch(data.uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+
+      if (!uploadRes.ok) {
+        setError("Upload failed. Please try again.");
+        return;
+      }
+
+      // Save public URL
+      if (type === "licence") {
+        setLicenceFile(file);
+        setLicenceDocUrl(data.publicUrl);
+      } else {
+        setInsuranceFile(file);
+        setInsuranceDocUrl(data.publicUrl);
+      }
+    } catch (e) {
+      setError("Upload failed. Please check your connection.");
     }
   };
 
