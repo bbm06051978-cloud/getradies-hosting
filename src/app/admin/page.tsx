@@ -52,6 +52,10 @@ export default function AdminPage() {
   const [userFilter, setUserFilter] = useState("ALL");
   const [jobFilter, setJobFilter]   = useState("ALL");
   const [busy, setBusy]       = useState<string | null>(null);
+  const [verificationQueue, setVerificationQueue] = useState<any[]>([]);
+  const [verifyAction, setVerifyAction] = useState<{id: string; action: string} | null>(null);
+  const [verifyNotes, setVerifyNotes] = useState("");
+  const [verifyLoading, setVerifyLoading] = useState(false);
 
   useEffect(() => { fetchData(); }, []);
 
