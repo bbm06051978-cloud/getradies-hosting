@@ -468,7 +468,7 @@ export default function TradieVerificationPage() {
               <h3 style={{ color: "#17324D", margin: "0 0 16px" }}>Your Verification Details</h3>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 {[
-                  { label: "Licence Number", value: profile?.licenceNumber },
+                  { label: "Licence Number", value: profile?.licenseNumber },
                   { label: "Issuing State", value: profile?.licenceState },
                   { label: "ABN", value: profile?.abn || "Not provided" },
                   { label: "Verification Tier", value: profile?.verificationTier || "Basic" },
