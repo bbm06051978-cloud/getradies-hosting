@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log("S3 config:", { region: process.env.GETRADIE_S3_REGION, bucket: BUCKET, keyIdExists: !!process.env.GETRADIE_S3_KEY_ID, secretExists: !!process.env.GETRADIE_S3_SECRET });
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
 
     // The public URL after upload
