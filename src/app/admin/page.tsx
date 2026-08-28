@@ -503,11 +503,11 @@ export default function AdminPage() {
                       )}
                       {verifyAction?.id === t.id ? (
                         <div className="bg-gray-800 rounded-xl p-4">
-                          <p className="text-sm text-white font-semibold mb-2">{verifyAction?.action === "REJECT" ? "Rejection reason:" : verifyAction?.action === "MORE_INFO" ? "What info is needed?" : "Approval note (optional):"}</p>
-                          <textarea value={verifyNotes} onChange={e => setVerifyNotes(e.target.value)} placeholder={verifyAction?.action === "APPROVE" ? "Optional note..." : "Required — explain clearly..."} rows={3}
+                          <p className="text-sm text-white font-semibold mb-2">{(verifyAction?.action ?? "") === "REJECT" ? "Rejection reason:" : (verifyAction?.action ?? "") === "MORE_INFO" ? "What info is needed?" : "Approval note (optional):"}</p>
+                          <textarea value={verifyNotes} onChange={e => setVerifyNotes(e.target.value)} placeholder={(verifyAction?.action ?? "") === "APPROVE" ? "Optional note..." : "Required - explain clearly..."} rows={3}
                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white outline-none resize-none mb-3"/>
                           <div className="flex gap-2">
-                            <button onClick={() => verifyAction && handleVerification(t.id, verifyAction.action, verifyNotes)} disabled={verifyLoading || (verifyAction?.action !== "APPROVE" && !verifyNotes.trim())}
+                            <button onClick={() => { if (verifyAction) handleVerification(t.id, verifyAction.action, verifyNotes); }} disabled={verifyLoading || ((verifyAction?.action ?? "") !== "APPROVE" && !verifyNotes.trim())}
                               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white px-4 py-2 rounded-lg text-xs font-bold">{verifyLoading ? "Processing..." : "Confirm"}</button>
                             <button onClick={() => { setVerifyAction(null); setVerifyNotes(""); }} className="bg-gray-700 hover:bg-gray-600 text-gray-300 px-4 py-2 rounded-lg text-xs font-bold">Cancel</button>
                           </div>
