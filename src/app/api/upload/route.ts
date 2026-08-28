@@ -3,15 +3,6 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { verifyToken } from "@/lib/auth";
 
-const s3 = new S3Client({
-  region: process.env.GETRADIE_S3_REGION || "ap-southeast-2",
-  credentials: {
-    accessKeyId: process.env.GETRADIE_S3_KEY_ID!,
-    secretAccessKey: process.env.GETRADIE_S3_SECRET!,
-  },
-});
-
-const BUCKET = process.env.GETRADIE_S3_BUCKET || "getradie-documents";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // POST — get a pre-signed URL for direct S3 upload
@@ -55,6 +46,14 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const BUCKET = process.env.GETRADIE_S3_BUCKET || "getradie-documents";
+    const s3 = new S3Client({
+      region: process.env.GETRADIE_S3_REGION || "ap-southeast-2",
+      credentials: {
+        accessKeyId: process.env.GETRADIE_S3_KEY_ID || "",
+        secretAccessKey: process.env.GETRADIE_S3_SECRET || "",
+      },
+    });
     console.log("S3 config:", { region: process.env.GETRADIE_S3_REGION, bucket: BUCKET, keyIdExists: !!process.env.GETRADIE_S3_KEY_ID, secretExists: !!process.env.GETRADIE_S3_SECRET });
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
 
