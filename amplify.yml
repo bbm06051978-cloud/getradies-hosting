@@ -17,6 +17,10 @@ frontend:
         - echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY" >> .env.production
         - echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" >> .env.production
         - echo "JWT_SECRET=$JWT_SECRET" >> .env.production
+        - echo "GETRADIE_S3_KEY_ID=$GETRADIE_S3_KEY_ID" >> .env.production
+        - echo "GETRADIE_S3_SECRET=$GETRADIE_S3_SECRET" >> .env.production
+        - echo "GETRADIE_S3_REGION=$GETRADIE_S3_REGION" >> .env.production
+        - echo "GETRADIE_S3_BUCKET=$GETRADIE_S3_BUCKET" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
