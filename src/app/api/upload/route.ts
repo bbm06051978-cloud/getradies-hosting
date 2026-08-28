@@ -17,7 +17,9 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 // POST — get a pre-signed URL for direct S3 upload
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const cookieToken = req.cookies.get("token")?.value;
+    const bearerToken = req.headers.get("authorization")?.replace("Bearer ", "");
+    const token = cookieToken || bearerToken;
     if (!token) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
     const decoded = verifyToken(token);
     if (!decoded) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });

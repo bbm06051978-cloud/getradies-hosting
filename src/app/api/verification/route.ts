@@ -4,7 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 // GET - get current verification status
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const cookieToken = req.cookies.get("token")?.value;
+  const bearerToken = req.headers.get("authorization")?.replace("Bearer ", "");
+  const token = cookieToken || bearerToken;
   if (!token) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const decoded = verifyToken(token);
   if (!decoded || decoded.role !== "TRADIE") return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
@@ -21,7 +23,9 @@ export async function GET(req: NextRequest) {
 // POST - submit verification documents
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const cookieToken = req.cookies.get("token")?.value;
+    const bearerToken = req.headers.get("authorization")?.replace("Bearer ", "");
+    const token = cookieToken || bearerToken;
     if (!token) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
     const decoded = verifyToken(token);
     if (!decoded || decoded.role !== "TRADIE") return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
