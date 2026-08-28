@@ -31,6 +31,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Only JPG, PNG and PDF files are allowed." }, { status: 400 });
     }
 
+    // Initialize S3 client with env vars
+    const BUCKET = process.env.GETRADIE_S3_BUCKET || "getradie-documents";
+    const s3 = new S3Client({
+      region: process.env.GETRADIE_S3_REGION || "ap-southeast-2",
+      credentials: {
+        accessKeyId: process.env.GETRADIE_S3_KEY_ID || "",
+        secretAccessKey: process.env.GETRADIE_S3_SECRET || "",
+      },
+    });
+    console.log("S3 config:", { region: process.env.GETRADIE_S3_REGION, bucket: BUCKET, keyIdExists: !!process.env.GETRADIE_S3_KEY_ID, secretExists: !!process.env.GETRADIE_S3_SECRET });
+
     // Generate unique key
     const ext = fileName.split(".").pop();
     const key = `verification/${decoded.id}/${documentType || "doc"}_${Date.now()}.${ext}`;
@@ -46,15 +57,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const BUCKET = process.env.GETRADIE_S3_BUCKET || "getradie-documents";
-    const s3 = new S3Client({
-      region: process.env.GETRADIE_S3_REGION || "ap-southeast-2",
-      credentials: {
-        accessKeyId: process.env.GETRADIE_S3_KEY_ID || "",
-        secretAccessKey: process.env.GETRADIE_S3_SECRET || "",
-      },
-    });
-    console.log("S3 config:", { region: process.env.GETRADIE_S3_REGION, bucket: BUCKET, keyIdExists: !!process.env.GETRADIE_S3_KEY_ID, secretExists: !!process.env.GETRADIE_S3_SECRET });
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
 
     // The public URL after upload
