@@ -98,7 +98,11 @@ const handleConfirmBooking = async () => {
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "Failed to send quote."); return; }
+      if (data.error === "verification_required") {
+        setError("Your account must be verified before sending quotes. Go to your dashboard to complete verification.");
+        return;
+      }
+      if (!res.ok) { setError(data.message || data.error || "Failed to send quote."); return; }
       setSent(true);
     } catch { setError("Something went wrong."); }
     finally { setSending(false); }

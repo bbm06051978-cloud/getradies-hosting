@@ -31,6 +31,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Tradie profile not found." }, { status: 404 });
   }
 
+// Check verification status
+  if (tradieProfile.verificationStatus !== "APPROVED") {
+    return NextResponse.json({
+      error: "verification_required",
+      message: "You must complete identity verification before sending quotes. Please go to your dashboard to verify your account.",
+    }, { status: 403 });
+  }
+
 // Check subscription
   const now = new Date();
   const hasActiveSubscription = tradieProfile.subscriptionPlan !== "Free" && 
