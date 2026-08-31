@@ -115,7 +115,16 @@ export default function ComingSoonPage() {
 
       </div>
 
-      <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px", marginTop: "24px" }}>
+      <div style={{ marginTop: "20px", display: "flex", gap: "16px", alignItems: "center" }}>
+        <Link href="/dashboard" style={{ color: "rgba(255,255,255,0.8)", fontSize: "13px", fontWeight: 600 }}>
+          ← Go to Dashboard
+        </Link>
+        <span style={{ color: "rgba(255,255,255,0.3)" }}>|</span>
+        <Link href="/" style={{ color: "rgba(255,255,255,0.8)", fontSize: "13px", fontWeight: 600 }}>
+          Go to Home →
+        </Link>
+      </div>
+      <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px", marginTop: "16px" }}>
         © 2026 GeTradie Pty Ltd · <Link href="/privacy" style={{ color: "rgba(255,255,255,0.5)" }}>Privacy</Link> · <Link href="/terms" style={{ color: "rgba(255,255,255,0.5)" }}>Terms</Link>
       </p>
 
