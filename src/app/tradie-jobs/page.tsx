@@ -15,7 +15,7 @@ type UserRef = { id: string; name: string; suburb: string | null; state: string 
 type AvailableJob = {
   id: string; title: string; description: string; trade: string;
   suburb: string; state: string; status: string; aiEstimate: string | null;
-  createdAt: string; user: UserRef; _count: { quotes: number };
+  createdAt: string; user: UserRef; _count: { quotes: number }; distanceKm?: number | null;
 };
 type MyQuote = {
   id: string; amount: number; description: string; status: string; createdAt: string;
@@ -176,6 +176,7 @@ function TradieJobsPageInner() {
                                   <div className="flex items-center gap-2 flex-wrap mt-1">
                                     <span className="bg-orange-100 text-orange-700 text-xs font-semibold px-2 py-0.5 rounded-full">{job.trade}</span>
                                     <span className="flex items-center gap-1 text-xs text-gray-500"><MapPin size={11}/>{job.suburb}, {job.state}</span>
+                                    {job.distanceKm != null && <span className="flex items-center gap-1 text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">🚗 {job.distanceKm}km away</span>}
                                     <span className="flex items-center gap-1 text-xs text-gray-400"><Calendar size={11}/>{new Date(job.createdAt).toLocaleDateString("en-AU", { day:"numeric", month:"short" })}</span>
                                     <span className="text-xs text-gray-400">{job._count.quotes} quote{job._count.quotes !== 1 ? "s" : ""} sent</span>
                                   </div>
