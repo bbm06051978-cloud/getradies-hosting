@@ -30,6 +30,10 @@ export default function ComingSoonPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0047AB 0%, #003d94 50%, #172B4D 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <style>{`
+        .waitlist-input::placeholder { color: #98A2B3 !important; opacity: 1; }
+        .waitlist-input { color: #172B4D !important; }
+      `}</style>
 
       {/* Logo */}
       <Link href="/">
@@ -68,14 +72,16 @@ export default function ComingSoonPage() {
               placeholder="your@email.com"
               value={email}
               onChange={e => { setEmail(e.target.value); setError(""); }}
-              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", background: "#FFFFFF", outline: "none" }}
+              className="waitlist-input"
+              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", background: "#FFFFFF", outline: "none", width: "100%", boxSizing: "border-box" } as any}
             />
             <input
               type="text"
               placeholder="Your suburb (optional)"
               value={suburb}
               onChange={e => setSuburb(e.target.value)}
-              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", background: "#FFFFFF", outline: "none" }}
+              className="waitlist-input"
+              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", background: "#FFFFFF", outline: "none", width: "100%", boxSizing: "border-box" } as any}
             />
             {error && <p style={{ color: "#D92D20", fontSize: "12px", margin: 0 }}>{error}</p>}
             <button
