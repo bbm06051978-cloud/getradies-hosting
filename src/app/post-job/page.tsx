@@ -395,7 +395,7 @@ function PostJobPageInner() {
                             onMouseDown={() => selectSuburb(s)}
                             className="w-full text-left px-4 py-3 text-sm hover:bg-blue-50 flex items-center justify-between border-b border-gray-50 last:border-0">
                             <span className="font-medium text-gray-800">{s.name}</span>
-                            <span className="text-xs text-gray-400">{s.state}</span>
+                            <span className="text-xs text-gray-400">{s.state} {s.postcode}</span>
                           </button>
                         ))}
                       </div>
