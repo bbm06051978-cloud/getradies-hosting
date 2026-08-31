@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isInPilotArea, PILOT_REGION_NAME } from "@/lib/pilot";
 
 // Nearby suburbs map
 const nearbySuburbs: Record<string, string[]> = {
@@ -51,6 +52,14 @@ export async function POST(req: NextRequest) {
 
   if (!title || !description || !trade || !suburb || !state) {
     return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
+  }
+
+  // Pilot area check
+  if (postcode && !isInPilotArea(postcode)) {
+    return NextResponse.json({
+      error: "outside_pilot_area",
+      message: `GeTradie is currently available in ${PILOT_REGION_NAME} only. We are expanding soon — join our waitlist to be notified when we launch in your area.`,
+    }, { status: 403 });
   }
 
   const job = await prisma.job.create({

@@ -178,6 +178,10 @@ function PostJobPageInner() {
 
       const data = await res.json();
       if (!res.ok) {
+        if (data.error === "outside_pilot_area") {
+          router.push("/coming-soon");
+          return;
+        }
         setError(data.error || "Failed to post job.");
         setLoading(false);
         return;

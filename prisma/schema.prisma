@@ -82,6 +82,7 @@ model TradieProfile {
   insuranceExpiry    DateTime?
   insurancePolicyNo  String?
   abn                String?
+  serviceRadius      Int?             @default(30)
   getradiePoints     Int?             @default(0)
   pointsBadge        String?          @default("Bronze")
   subscriptionPlan   String?          @default("Free")
