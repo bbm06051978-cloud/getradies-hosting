@@ -15,22 +15,13 @@ export default function ComingSoonPage() {
     setLoading(true);
     setError("");
     try {
-      await fetch("https://api.resend.com/emails", {
+      await fetch("/api/waitlist", {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_RESEND_API_KEY || ""}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "GeTradie <noreply@getradie.com.au>",
-          to: "admin@getradie.au",
-          subject: `Waitlist signup: ${email} — ${suburb || "suburb not provided"}`,
-          html: `<p>New waitlist signup:<br/>Email: ${email}<br/>Suburb: ${suburb || "not provided"}</p>`,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), suburb: suburb.trim() }),
       });
       setSubmitted(true);
     } catch {
-      // Still show success — store locally at minimum
       setSubmitted(true);
     } finally {
       setLoading(false);
@@ -77,14 +68,14 @@ export default function ComingSoonPage() {
               placeholder="your@email.com"
               value={email}
               onChange={e => { setEmail(e.target.value); setError(""); }}
-              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", outline: "none" }}
+              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", background: "#FFFFFF", outline: "none" }}
             />
             <input
               type="text"
               placeholder="Your suburb (optional)"
               value={suburb}
               onChange={e => setSuburb(e.target.value)}
-              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", outline: "none" }}
+              style={{ borderRadius: "10px", border: "1.5px solid #D0D5DD", padding: "12px 16px", fontSize: "14px", color: "#172B4D", background: "#FFFFFF", outline: "none" }}
             />
             {error && <p style={{ color: "#D92D20", fontSize: "12px", margin: 0 }}>{error}</p>}
             <button
