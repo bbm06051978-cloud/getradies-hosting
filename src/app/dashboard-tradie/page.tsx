@@ -73,7 +73,6 @@ const quickActions = [
 
 export default function TradieDashboard() {
   const router = useRouter();
-  const router = useRouter();
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [jobLeads, setJobLeads] = useState<JobLead[]>([]);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
