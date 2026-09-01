@@ -105,6 +105,15 @@ function GSTCalculator({ onClose }: { onClose: () => void }) {
         style={{ background: "linear-gradient(135deg,#F97316,#EA580C)", color: "white" }}>
         {copied ? <><Check size={15}/>Copied!</> : <><Copy size={15}/>Copy Total (${total.toFixed(2)})</>}
       </button>)}
+      {invoicePreviewHtml && (
+        <div style={{ position: "fixed", inset: 0, background: "#fff", zIndex: 9999, overflow: "auto", padding: "20px" }}>
+          <button onClick={() => setInvoicePreviewHtml("")}
+            style={{ position: "fixed", top: 16, right: 16, background: "#EF4444", color: "#fff", border: "none", borderRadius: "50%", width: 36, height: 36, fontSize: 18, cursor: "pointer", zIndex: 10000, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            ✕
+          </button>
+          <div dangerouslySetInnerHTML={{ __html: invoicePreviewHtml }} />
+        </div>
+      )}
     </Modal>
   );
 }
@@ -197,6 +206,15 @@ function MaterialCalculator({ onClose }: { onClose: () => void }) {
         style={{ background: "linear-gradient(135deg,#3B82F6,#2563EB)", color: "white" }}>
         {copied ? <><Check size={15}/>Copied!</> : <><Copy size={15}/>Copy Total (${withMarkup.toFixed(2)})</>}
       </button>)}
+      {invoicePreviewHtml && (
+        <div style={{ position: "fixed", inset: 0, background: "#fff", zIndex: 9999, overflow: "auto", padding: "20px" }}>
+          <button onClick={() => setInvoicePreviewHtml("")}
+            style={{ position: "fixed", top: 16, right: 16, background: "#EF4444", color: "#fff", border: "none", borderRadius: "50%", width: 36, height: 36, fontSize: 18, cursor: "pointer", zIndex: 10000, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            ✕
+          </button>
+          <div dangerouslySetInnerHTML={{ __html: invoicePreviewHtml }} />
+        </div>
+      )}
     </Modal>
   );
 }
@@ -396,6 +414,15 @@ function TravelCalculator({ onClose }: { onClose: () => void }) {
         style={{ background: "linear-gradient(135deg,#22C55E,#16A34A)", color: "white" }}>
         {copied ? <><Check size={15}/>Copied!</> : <><Copy size={15}/>Copy (${total.toFixed(2)})</>}
       </button>)}
+      {invoicePreviewHtml && (
+        <div style={{ position: "fixed", inset: 0, background: "#fff", zIndex: 9999, overflow: "auto", padding: "20px" }}>
+          <button onClick={() => setInvoicePreviewHtml("")}
+            style={{ position: "fixed", top: 16, right: 16, background: "#EF4444", color: "#fff", border: "none", borderRadius: "50%", width: 36, height: 36, fontSize: 18, cursor: "pointer", zIndex: 10000, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            ✕
+          </button>
+          <div dangerouslySetInnerHTML={{ __html: invoicePreviewHtml }} />
+        </div>
+      )}
     </Modal>
   );
 }
@@ -414,6 +441,7 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
   const [addGST, setAddGST]       = useState(true);
   const [notes, setNotes]         = useState("Payment due within 7 days. Thank you for your business.");
   const [preview, setPreview]     = useState(false);
+  const [invoicePreviewHtml, setInvoicePreviewHtml] = useState<string>("");
   const [sending, setSending]     = useState(false);
   const [sent, setSent]           = useState(false);
   const [sendError, setSendError] = useState("");
@@ -444,9 +472,7 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
   };
 
   const printInvoice = () => {
-    const w = window.open("", "_blank");
-    if (!w) return;
-    w.document.write(`<!DOCTYPE html><html><head><title>${invoiceNo}</title>
+    const html = `<!DOCTYPE html><html><head><title>${invoiceNo}</title>
     <style>
       body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;color:#111;font-size:14px}
       h1{color:#F97316;margin:0}.header{display:flex;justify-content:space-between;margin-bottom:32px}
@@ -474,9 +500,8 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
       <p style="font-size:20px;font-weight:bold;color:#F97316">Total: $${total.toFixed(2)}</p>
     </div>
     ${notes?`<div class="notes"><strong>Notes:</strong><br/>${notes}</div>`:""}
-    </body></html>`);
-    w.document.close();
-    w.print();
+    </body></html>`;
+    setInvoicePreviewHtml(html);
   };
 
   return (
@@ -587,6 +612,15 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
         style={{ background: "linear-gradient(135deg,#EF4444,#DC2626)" }}>
         <Download size={15}/> Generate &amp; Print Invoice
       </button>)}
+      {invoicePreviewHtml && (
+        <div style={{ position: "fixed", inset: 0, background: "#fff", zIndex: 9999, overflow: "auto", padding: "20px" }}>
+          <button onClick={() => setInvoicePreviewHtml("")}
+            style={{ position: "fixed", top: 16, right: 16, background: "#EF4444", color: "#fff", border: "none", borderRadius: "50%", width: 36, height: 36, fontSize: 18, cursor: "pointer", zIndex: 10000, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            ✕
+          </button>
+          <div dangerouslySetInnerHTML={{ __html: invoicePreviewHtml }} />
+        </div>
+      )}
     </Modal>
   );
 }
