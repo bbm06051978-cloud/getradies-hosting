@@ -95,7 +95,7 @@ export default function PrivacyPage() {
                 <li>Opt out of direct marketing communications</li>
                 <li>Lodge a complaint with the Office of the Australian Information Commissioner (OAIC)</li>
               </ul>
-              <p className="mt-2">To exercise these rights, contact us at privacy@getradie.com.au</p>
+              <p className="mt-2">To exercise these rights, contact us at support@getradie.com.au</p>
             </div>
 
             <div>
@@ -134,7 +134,7 @@ export default function PrivacyPage() {
               <p>If you have questions about this Privacy Policy or our data practices, please contact:</p>
               <div className="mt-2 bg-gray-50 rounded-xl p-4">
                 <p><strong>GeTradie Pty Ltd</strong></p>
-                <p>Email: privacy@getradie.com.au</p>
+                <p>Email: support@getradie.com.au</p>
                 <p>Website: getradie.com.au/contact</p>
                 <p>Response time: Within 5 business days</p>
               </div>

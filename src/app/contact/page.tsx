@@ -35,9 +35,9 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email Us",
-    value: "hello@getradie.com.au",
+    value: "support@getradie.com.au",
     subValue: "We respond within 24 hours",
-    href: "mailto:hello@getradie.com.au",
+    href: "mailto:support@getradie.com.au",
     color: "text-blue-600",
     bg: "bg-blue-50",
   },

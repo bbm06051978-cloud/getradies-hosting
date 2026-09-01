@@ -175,7 +175,7 @@ export default function CookiesPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-3">7. Contact Us</h2>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p><strong>GeTradie Pty Ltd</strong></p>
-                <p>Email: privacy@getradie.com.au</p>
+                <p>Email: support@getradie.com.au</p>
                 <p>Website: getradie.com.au/contact</p>
               </div>
             </div>

@@ -272,8 +272,8 @@ export default function TermsPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-3">21. Contact</h2>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p><strong>GeTradie Pty Ltd</strong></p>
-                <p>Email: legal@getradie.com.au</p>
-                <p>Disputes: disputes@getradie.com.au</p>
+                <p>Email: support@getradie.com.au</p>
+                <p>Disputes: support@getradie.com.au</p>
                 <p>Website: getradie.com.au/contact</p>
               </div>
             </div>
