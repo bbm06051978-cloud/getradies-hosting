@@ -54,12 +54,16 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    fetch("/api/auth/me").then(r => r.json()).then(d => {
-      if (!d.user) { router.replace("/login"); return; }
-      if (d.user.role === "TRADIE") { router.replace("/dashboard-tradie"); return; }
-      if (d.user.role === "ADMIN") { router.replace("/admin"); return; }
-      setUser(d.user);
-    }).catch(() => {});
+    const checkAuth = () => {
+      fetch("/api/auth/me").then(r => r.json()).then(d => {
+        if (!d.user) { router.replace("/login"); return; }
+        if (d.user.role === "TRADIE") { router.replace("/dashboard-tradie"); return; }
+        if (d.user.role === "ADMIN") { router.replace("/admin"); return; }
+        setUser(d.user);
+      }).catch(() => {});
+    };
+    checkAuth();
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkAuth(); });
     fetch("/api/dashboard/homeowner").then(r => r.json()).then(d => {
       if (d.jobs)  setJobs(d.jobs);
       if (d.stats) setStats(d.stats);
