@@ -2,6 +2,8 @@
 import { LockAmountBanner } from "@/app/components/dashboard/LockAmountBanner";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getRoleFromToken } from "@/lib/clientAuth";
 import {
   Briefcase, MessageCircle, Calendar, CheckCircle,
   ShieldCheck, ArrowRight, Plus, Bell, Zap,
