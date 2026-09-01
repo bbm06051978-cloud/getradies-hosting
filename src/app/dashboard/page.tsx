@@ -3,7 +3,6 @@ import { LockAmountBanner } from "@/app/components/dashboard/LockAmountBanner";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getRoleFromToken } from "@/lib/clientAuth";
 import {
   Briefcase, MessageCircle, Calendar, CheckCircle,
   ShieldCheck, ArrowRight, Plus, Bell, Zap,
@@ -55,11 +54,12 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    const role = getRoleFromToken();
-    if (!role) { router.replace("/login"); return; }
-    if (role === "TRADIE") { router.replace("/dashboard-tradie"); return; }
-    if (role === "ADMIN") { router.replace("/admin"); return; }
-    fetch("/api/auth/me").then(r => r.json()).then(d => { if (d.user) setUser(d.user); }).catch(() => {});
+    fetch("/api/auth/me").then(r => r.json()).then(d => {
+      if (!d.user) { router.replace("/login"); return; }
+      if (d.user.role === "TRADIE") { router.replace("/dashboard-tradie"); return; }
+      if (d.user.role === "ADMIN") { router.replace("/admin"); return; }
+      setUser(d.user);
+    }).catch(() => {});
     fetch("/api/dashboard/homeowner").then(r => r.json()).then(d => {
       if (d.jobs)  setJobs(d.jobs);
       if (d.stats) setStats(d.stats);

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getRoleFromToken } from "@/lib/clientAuth";
+
 import {
   Briefcase,
   MessageSquare,
@@ -94,9 +94,7 @@ const [subscription, setSubscription] = useState({ plan: "Free", expiry: null as
   });
 
   useEffect(() => {
-    const role = getRoleFromToken();
-    if (!role) { router.replace("/login-tradie"); return; }
-    if (role === "HOMEOWNER") { router.replace("/dashboard"); return; }
+
    fetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => {
