@@ -414,6 +414,9 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
   const [addGST, setAddGST]       = useState(true);
   const [notes, setNotes]         = useState("Payment due within 7 days. Thank you for your business.");
   const [preview, setPreview]     = useState(false);
+  const [sending, setSending]     = useState(false);
+  const [sent, setSent]           = useState(false);
+  const [sendError, setSendError] = useState("");
 
   const addLine    = () => setLines(l => [...l, { id: Date.now(), desc: "", qty: "1", rate: "" }]);
   const removeLine = (id: number) => setLines(l => l.filter(x => x.id !== id));
@@ -422,6 +425,23 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
   const subtotal = lines.reduce((s, l) => s + (parseFloat(l.qty)||0)*(parseFloat(l.rate)||0), 0);
   const gstAmt   = addGST ? subtotal * 0.1 : 0;
   const total    = subtotal + gstAmt;
+
+  const sendInvoice = async () => {
+    if (!clientEmail) { setSendError("Please enter client email address."); return; }
+    setSending(true); setSendError(""); setSent(false);
+    try {
+      const res = await fetch("/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client, clientEmail, jobDesc, invoiceNo, date, due, lines, addGST, notes, subtotal, gstAmt, total }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setSendError(data.error || "Failed to send."); return; }
+      setSent(true);
+      setTimeout(() => setSent(false), 4000);
+    } catch { setSendError("Something went wrong."); }
+    finally { setSending(false); }
+  };
 
   const printInvoice = () => {
     const w = window.open("", "_blank");
@@ -554,6 +574,14 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
           className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-red-400 resize-none"/>
       </div>
 
+      {sendError && <p className="text-red-500 text-xs mb-2">{sendError}</p>}
+      {sent && <p className="text-green-600 text-xs mb-2 font-semibold">Invoice sent successfully! A copy was sent to your email.</p>}
+      <div className="flex gap-2 mb-2">
+        <button onClick={sendInvoice} disabled={sending}
+          className="flex-1 py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50">
+          {sending ? "Sending..." : "Send Invoice via Email"}
+        </button>
+      </div>
       <button onClick={printInvoice}
         className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
         style={{ background: "linear-gradient(135deg,#EF4444,#DC2626)" }}>
