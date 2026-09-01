@@ -104,7 +104,7 @@ function GSTCalculator({ onClose }: { onClose: () => void }) {
         className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40"
         style={{ background: "linear-gradient(135deg,#F97316,#EA580C)", color: "white" }}>
         {copied ? <><Check size={15}/>Copied!</> : <><Copy size={15}/>Copy Total (${total.toFixed(2)})</>}
-      </button>
+      </button>}
     </Modal>
   );
 }
@@ -196,7 +196,7 @@ function MaterialCalculator({ onClose }: { onClose: () => void }) {
         className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40"
         style={{ background: "linear-gradient(135deg,#3B82F6,#2563EB)", color: "white" }}>
         {copied ? <><Check size={15}/>Copied!</> : <><Copy size={15}/>Copy Total (${withMarkup.toFixed(2)})</>}
-      </button>
+      </button>}
     </Modal>
   );
 }
@@ -395,7 +395,7 @@ function TravelCalculator({ onClose }: { onClose: () => void }) {
         className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40"
         style={{ background: "linear-gradient(135deg,#22C55E,#16A34A)", color: "white" }}>
         {copied ? <><Check size={15}/>Copied!</> : <><Copy size={15}/>Copy (${total.toFixed(2)})</>}
-      </button>
+      </button>}
     </Modal>
   );
 }
@@ -586,7 +586,7 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
         className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
         style={{ background: "linear-gradient(135deg,#EF4444,#DC2626)" }}>
         <Download size={15}/> Generate &amp; Print Invoice
-      </button>
+      </button>}
     </Modal>
   );
 }
