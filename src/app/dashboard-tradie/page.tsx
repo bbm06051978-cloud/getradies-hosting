@@ -73,6 +73,7 @@ const quickActions = [
 
 export default function TradieDashboard() {
   const router = useRouter();
+  const router = useRouter();
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [jobLeads, setJobLeads] = useState<JobLead[]>([]);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
@@ -93,6 +94,9 @@ const [subscription, setSubscription] = useState({ plan: "Free", expiry: null as
   });
 
   useEffect(() => {
+    const role = getRoleFromToken();
+    if (!role) { router.replace("/login-tradie"); return; }
+    if (role === "HOMEOWNER") { router.replace("/dashboard"); return; }
    fetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => {

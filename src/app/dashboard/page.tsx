@@ -44,6 +44,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const [user, setUser]           = useState<{ name: string; email: string } | null>(null);
   const [jobs, setJobs]           = useState<Job[]>([]);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -52,6 +53,10 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
+    const role = getRoleFromToken();
+    if (!role) { router.replace("/login"); return; }
+    if (role === "TRADIE") { router.replace("/dashboard-tradie"); return; }
+    if (role === "ADMIN") { router.replace("/admin"); return; }
     fetch("/api/auth/me").then(r => r.json()).then(d => { if (d.user) setUser(d.user); }).catch(() => {});
     fetch("/api/dashboard/homeowner").then(r => r.json()).then(d => {
       if (d.jobs)  setJobs(d.jobs);
