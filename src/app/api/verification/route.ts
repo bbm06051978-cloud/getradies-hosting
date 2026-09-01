@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       headers: { "Authorization": `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: "GeTradie <noreply@getradie.com.au>",
-        to: "admin@getradie.au",
+        to: "admin@getradie.com.au",
         subject: `New Tradie Verification - ${tradieProfile.businessName}`,
         html: `<p>New verification submission from <strong>${tradieProfile.businessName}</strong> (${tradieProfile.specialty}). Licence: ${licenceNumber} (${licenceState}). <a href="https://getradie.com.au/admin">Review in Admin</a></p>`,
       }),

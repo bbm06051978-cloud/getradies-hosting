@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         from: "GeTradie <noreply@getradie.com.au>",
-        to: "admin@getradie.au",
+        to: "admin@getradie.com.au",
         subject: `New waitlist signup — ${email}`,
         html: `
           <div style="font-family:Arial,sans-serif;padding:24px;max-width:480px;">
