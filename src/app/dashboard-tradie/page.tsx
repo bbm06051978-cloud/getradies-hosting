@@ -94,14 +94,18 @@ const [subscription, setSubscription] = useState({ plan: "Free", expiry: null as
   });
 
   useEffect(() => {
-
-   fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) setUser(data.user);
-        else router.replace("/login");
-      })
-      .catch(() => router.replace("/login"));
+    const checkAuth = () => {
+      fetch("/api/auth/me")
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.user) { router.replace("/login-tradie"); return; }
+          if (data.user.role === "HOMEOWNER") { router.replace("/dashboard"); return; }
+          setUser(data.user);
+        })
+        .catch(() => router.replace("/login-tradie"));
+    };
+    checkAuth();
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkAuth(); });
 
     fetch("/api/dashboard/tradie")
       .then((res) => res.json())
