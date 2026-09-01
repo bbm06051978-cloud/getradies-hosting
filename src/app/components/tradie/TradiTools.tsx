@@ -418,6 +418,7 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
   const [sending, setSending]     = useState(false);
   const [sent, setSent]           = useState(false);
   const [sendError, setSendError] = useState("");
+  const isMobileWebView = typeof navigator !== "undefined" && /iPhone|iPad|Android/i.test(navigator.userAgent) && !(window as any)?.chrome;
 
   const addLine    = () => setLines(l => [...l, { id: Date.now(), desc: "", qty: "1", rate: "" }]);
   const removeLine = (id: number) => setLines(l => l.filter(x => x.id !== id));
