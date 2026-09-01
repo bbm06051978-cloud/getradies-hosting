@@ -584,7 +584,7 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
         className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
         style={{ background: "linear-gradient(135deg,#EF4444,#DC2626)" }}>
         <Download size={15}/> Generate &amp; Print Invoice
-      </button>)
+      </button>)}
       {invoicePreviewHtml && (
         <div style={{ position: "fixed", inset: 0, background: "#fff", zIndex: 9999, overflow: "auto", padding: "20px" }}>
           <button onClick={() => setInvoicePreviewHtml("")}
