@@ -607,7 +607,7 @@ function InvoiceGenerator({ onClose }: { onClose: () => void }) {
           {sending ? "Sending..." : "Send Invoice via Email"}
         </button>
       </div>
-      <button onClick={printInvoice}
+      {!isMobileWebView && (<button onClick={printInvoice}
         className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
         style={{ background: "linear-gradient(135deg,#EF4444,#DC2626)" }}>
         <Download size={15}/> Generate &amp; Print Invoice
