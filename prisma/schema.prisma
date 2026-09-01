@@ -43,6 +43,7 @@ model User {
   suburb           String?
   state            String?
   postcode         String?
+  emailNotifications Boolean      @default(true)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   jobs             Job[]
