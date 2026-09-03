@@ -74,6 +74,8 @@ function PostJobPageInner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [aiEstimate, setAiEstimate] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [suburbSuggestions, setSuburbSuggestions] = useState<{name: string; state: string; postcode: string}[]>([]);
   const [showSuburbDropdown, setShowSuburbDropdown] = useState(false);
