@@ -101,6 +101,28 @@ useEffect(() => {
     } catch {}
   };
 
+  const handleSendPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedConv) return;
+    setUploadingChatPhoto(true);
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, fileType: file.type, fileSize: file.size, documentType: "chat_photo" }),
+      });
+      const { uploadUrl, publicUrl } = await res.json();
+      await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobId: selectedConv.jobId, receiverId: selectedConv.otherUser.id, content: "", imageUrl: publicUrl }),
+      });
+      fetchMessages(selectedConv.jobId);
+    } catch { }
+    finally { setUploadingChatPhoto(false); e.target.value = ""; }
+  };
+
   const handleSend = async () => {
     if (!newMessage.trim() || !selectedConv || sending) return;
     setSending(true);
@@ -271,7 +293,9 @@ useEffect(() => {
                             <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                               isMe ? "bg-orange-500 text-white rounded-br-sm" : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm"
                             }`}>
-                              {msg.content}
+                              {msg.imageUrl ? (
+                                <img src={msg.imageUrl} alt="shared image" className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer" onClick={() => window.open(msg.imageUrl!, "_blank")} />
+                              ) : msg.content}
                             </div>
                             <div className={`flex items-center gap-1 mt-1 ${isMe ? "justify-end" : "justify-start"}`}>
                               <Clock size={10} className="text-gray-300" />
@@ -298,6 +322,10 @@ useEffect(() => {
                         placeholder="Type a message... (Enter to send)"
                         rows={1} className="flex-1 text-sm text-gray-700 outline-none bg-transparent resize-none max-h-32" />
                     </div>
+                    <label className="w-8 h-8 flex items-center justify-center cursor-pointer text-gray-400 hover:text-orange-500 transition-colors">
+                        {uploadingChatPhoto ? <span className="animate-spin text-xs">⏳</span> : <span className="text-lg">📎</span>}
+                        <input type="file" accept="image/*" className="hidden" onChange={handleSendPhoto} disabled={uploadingChatPhoto} />
+                      </label>
                     <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                       onClick={handleSend} disabled={!newMessage.trim() || sending}
                       className="w-11 h-11 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-200 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0">
