@@ -13,23 +13,30 @@ const s3 = new S3Client({
 
 const BUCKET = process.env.GETRADIE_S3_BUCKET || "getradie-documents";
 
-// POST — generate pre-signed GET URL for a document
+// POST - generate pre-signed GET URL for a document
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = req.cookies.get("token")?.value || req.headers.get("authorization")?.replace("Bearer ", "");
     if (!token) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
-    const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== "ADMIN") {
-      return NextResponse.json({ error: "Admin access required." }, { status: 403 });
-    }
+    const decoded = verifyToken(token) as any;
+    if (!decoded) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
 
     const { key } = await req.json();
     if (!key) return NextResponse.json({ error: "Document key is required." }, { status: 400 });
 
     // Extract S3 key from full URL if needed
-    const s3Key = key.includes("amazonaws.com") 
-      ? key.split(".amazonaws.com/")[1] 
+    const s3Key = key.includes("amazonaws.com")
+      ? key.split(".amazonaws.com/")[1]
       : key;
+
+    // Access control by folder:
+    // verification/ → ADMIN only
+    // jobs/ and chats/ → any authenticated user
+    if (s3Key.startsWith("verification/")) {
+      if (decoded.role !== "ADMIN") {
+        return NextResponse.json({ error: "Admin access required." }, { status: 403 });
+      }
+    }
 
     const command = new GetObjectCommand({
       Bucket: BUCKET,

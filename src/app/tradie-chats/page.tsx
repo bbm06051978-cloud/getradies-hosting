@@ -8,6 +8,7 @@ import {
   ArrowLeft, Send, MessageSquare, Briefcase,
   User, Clock, Search,
 } from "lucide-react";
+import { getSignedImageUrl } from "@/lib/signedUrl";
 import { TradieSidebar } from "@/app/components/tradie/TradieSidebar";
 import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
 
@@ -42,6 +43,7 @@ function TradieChatsPageInner() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [uploadingChatPhoto, setUploadingChatPhoto] = useState(false);
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [search, setSearch] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -93,6 +95,16 @@ useEffect(() => {
       const data = await res.json();
       if (data.conversations) setConversations(data.conversations);
     } catch {} finally { setLoading(false); }
+  };
+
+  const resolveSignedUrls = async (msgs: any[]) => {
+    const urlMap: Record<string, string> = {};
+    await Promise.all(msgs.map(async (msg) => {
+      if (msg.imageUrl) {
+        urlMap[msg.id] = await getSignedImageUrl(msg.imageUrl);
+      }
+    }));
+    setSignedUrls(prev => ({ ...prev, ...urlMap }));
   };
 
   const fetchMessages = async (jobId: string) => {
@@ -296,7 +308,9 @@ useEffect(() => {
                               isMe ? "bg-orange-500 text-white rounded-br-sm" : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm"
                             }`}>
                               {msg.imageUrl ? (
-                                <img src={msg.imageUrl} alt="shared image" className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer" onClick={() => window.open(msg.imageUrl!, "_blank")} />
+                                signedUrls[msg.id] ? (
+                                  <img src={signedUrls[msg.id]} alt="shared image" className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer" onClick={() => window.open(signedUrls[msg.id], "_blank")} />
+                                ) : <span className="text-xs opacity-60">Loading image...</span>
                               ) : msg.content}
                             </div>
                             <div className={`flex items-center gap-1 mt-1 ${isMe ? "justify-end" : "justify-start"}`}>

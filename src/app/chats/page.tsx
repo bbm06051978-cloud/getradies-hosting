@@ -35,6 +35,7 @@ function ChatsPageInner() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [uploadingChatPhoto, setUploadingChatPhoto] = useState(false);
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [search, setSearch] = useState("");
   const [chatMinimized, setChatMinimized] = useState(false);
@@ -101,6 +102,16 @@ function ChatsPageInner() {
       const data = await res.json();
       if (data.conversations) setConversations(data.conversations);
     } catch {} finally { setLoading(false); }
+  };
+
+  const resolveSignedUrls = async (msgs: any[]) => {
+    const urlMap: Record<string, string> = {};
+    await Promise.all(msgs.map(async (msg) => {
+      if (msg.imageUrl) {
+        urlMap[msg.id] = await getSignedImageUrl(msg.imageUrl);
+      }
+    }));
+    setSignedUrls(prev => ({ ...prev, ...urlMap }));
   };
 
   const fetchMessages = async (jobId: string, receiverId: string) => {
@@ -274,7 +285,9 @@ function ChatsPageInner() {
                                 isMe ? "bg-blue-600 text-white rounded-br-sm" : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm"
                               }`}>
                                 {msg.imageUrl ? (
-                                <img src={msg.imageUrl} alt="shared image" className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer" onClick={() => window.open(msg.imageUrl!, "_blank")} />
+                                signedUrls[msg.id] ? (
+                                  <img src={signedUrls[msg.id]} alt="shared image" className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer" onClick={() => window.open(signedUrls[msg.id], "_blank")} />
+                                ) : <span className="text-xs opacity-60">Loading image...</span>
                               ) : (
                                 msg.content
                               )}

@@ -8,6 +8,7 @@ import {
   Send, CheckCircle, XCircle, MessageSquare,
   DollarSign, User, Zap, RefreshCw, ChevronDown, ChevronUp,
 } from "lucide-react";
+import { getSignedImageUrls } from "@/lib/signedUrl";
 import { TradieSidebar } from "@/app/components/tradie/TradieSidebar";
 import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
 
@@ -204,10 +205,10 @@ function TradieJobsPageInner() {
                                     <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Job Description</p>
                                     <p className="text-sm text-gray-700 leading-relaxed">{job.description}</p>
                                   </div>
-                                  {job.photos && job.photos.length > 0 && (
+                                  {job.photos && job.photos.length > 0 && signedJobPhotos[job.id] && (
                                     <div className="flex gap-2 flex-wrap mt-2">
-                                      {job.photos.map((p, i) => (
-                                        <img key={i} src={p.url} alt="job photo" className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-90" onClick={() => window.open(p.url, "_blank")} />
+                                      {signedJobPhotos[job.id].map((url, i) => (
+                                        <img key={i} src={url} alt="job photo" className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-90" onClick={() => window.open(url, "_blank")} />
                                       ))}
                                     </div>
                                   )}
