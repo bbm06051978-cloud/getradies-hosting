@@ -20,7 +20,7 @@ type Conversation = {
 };
 
 type Message = {
-  id: string; content: string; createdAt: string; isRead: boolean;
+  id: string; content: string; imageUrl?: string | null; createdAt: string; isRead: boolean;
   sender: { id: string; name: string; role: string };
 };
 
