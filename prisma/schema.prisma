@@ -215,6 +215,7 @@ model Message {
   senderId   String
   receiverId String
   content    String
+  imageUrl   String?
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
   job        Job      @relation(fields: [jobId], references: [id])

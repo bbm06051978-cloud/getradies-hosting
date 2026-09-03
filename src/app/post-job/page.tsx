@@ -167,13 +167,31 @@ function PostJobPageInner() {
     setCurrentStep((s) => s - 1);
   };
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (photos.length >= 5) { setError("Maximum 5 photos allowed."); return; }
+    setUploadingPhoto(true);
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, fileType: file.type, fileSize: file.size, documentType: "job_photo" }),
+      });
+      const { uploadUrl, publicUrl } = await res.json();
+      await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      setPhotos(prev => [...prev, publicUrl]);
+    } catch { setError("Failed to upload photo."); }
+    finally { setUploadingPhoto(false); }
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, aiEstimate }),
+        body: JSON.stringify({ ...form, aiEstimate, photos }),
       });
 
       const data = await res.json();
@@ -324,6 +342,28 @@ function PostJobPageInner() {
                       rows={4}
                       className="w-full border border-gray-200 focus:border-blue-400 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none resize-none transition-colors"
                     />
+                  </div>
+
+                  {/* Photo Upload */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                      📷 Add Photos <span className="text-gray-400 font-normal">(optional, max 5)</span>
+                    </label>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {photos.map((p, i) => (
+                        <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200">
+                          <img src={p} alt="job photo" className="w-full h-full object-cover" />
+                          <button type="button" onClick={() => setPhotos(prev => prev.filter((_, idx) => idx !== i))}
+                            className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">✕</button>
+                        </div>
+                      ))}
+                      {photos.length < 5 && (
+                        <label className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-colors">
+                          {uploadingPhoto ? <span className="text-xs text-gray-400">Uploading...</span> : <><span className="text-2xl text-gray-300">+</span><span className="text-xs text-gray-400">Photo</span></>}
+                          <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploadingPhoto} />
+                        </label>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               )}

@@ -44,7 +44,8 @@ export async function POST(req: NextRequest) {
 
     // Generate unique key
     const ext = fileName.split(".").pop();
-    const key = `verification/${decoded.id}/${documentType || "doc"}_${Date.now()}.${ext}`;
+    const folder = documentType === "job_photo" ? `jobs/${decoded.id}` : `verification/${decoded.id}`;
+    const key = `${folder}/${documentType || "doc"}_${Date.now()}.${ext}`;
 
     // Generate pre-signed upload URL (valid for 5 minutes)
     const command = new PutObjectCommand({

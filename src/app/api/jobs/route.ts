@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid token." }, { status: 401 });
   }
 
-  const { title, description, trade, suburb, state, postcode, urgency, budget, preferredDate, aiEstimate } = await req.json();
+  const { title, description, trade, suburb, state, postcode, urgency, budget, preferredDate, aiEstimate, photos } = await req.json();
 
   if (!title || !description || !trade || !suburb || !state) {
     return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
@@ -75,6 +75,13 @@ export async function POST(req: NextRequest) {
       aiEstimate: aiEstimate || null,
     },
   });
+
+  // Save photos if provided
+  if (photos && photos.length > 0) {
+    await prisma.jobPhoto.createMany({
+      data: photos.map((url: string) => ({ jobId: job.id, url })),
+    });
+  }
 
   // Notify matching tradies about new job lead
   try {
