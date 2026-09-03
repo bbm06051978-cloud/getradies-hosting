@@ -30,12 +30,12 @@ export async function POST(req: NextRequest) {
       : key;
 
     // Access control by folder:
-    // verification/ → ADMIN only
-    // jobs/ and chats/ → any authenticated user
-    if (s3Key.startsWith("verification/")) {
-      if (decoded.role !== "ADMIN") {
-        return NextResponse.json({ error: "Admin access required." }, { status: 403 });
-      }
+    // verification/LICENCE, verification/INSURANCE → ADMIN only
+    // jobs/ chats/ and verification/job_photo, verification/chat_photo → any authenticated user
+    const isVerificationDoc = s3Key.startsWith("verification/") && 
+      (s3Key.includes("/LICENCE") || s3Key.includes("/INSURANCE"));
+    if (isVerificationDoc && decoded.role !== "ADMIN") {
+      return NextResponse.json({ error: "Admin access required." }, { status: 403 });
     }
 
     const command = new GetObjectCommand({
