@@ -274,7 +274,7 @@ function ChatsPageInner() {
                                 isMe ? "bg-blue-600 text-white rounded-br-sm" : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm"
                               }`}>
                                 {msg.imageUrl ? (
-                                <img src={msg.imageUrl} alt="shared image" className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer" onClick={() => window.open(msg.imageUrl, "_blank")} />
+                                <img src={msg.imageUrl} alt="shared image" className="max-w-[200px] max-h-[200px] rounded-lg object-cover cursor-pointer" onClick={() => window.open(msg.imageUrl!, "_blank")} />
                               ) : (
                                 msg.content
                               )}
