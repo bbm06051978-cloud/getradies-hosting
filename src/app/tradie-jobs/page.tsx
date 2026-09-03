@@ -67,11 +67,23 @@ function TradieJobsPageInner() {
   }, [searchParams]);
 
   useEffect(() => {
+    const resolveJobPhotos = async (jobs: any[]) => {
+      const photoMap: Record<string, string[]> = {};
+      await Promise.all(jobs.map(async (job: any) => {
+        if (job.photos && job.photos.length > 0) {
+          photoMap[job.id] = await getSignedImageUrls(job.photos.map((p: any) => p.url));
+        }
+      }));
+      setSignedJobPhotos(prev => ({ ...prev, ...photoMap }));
+    };
+
     const load = async () => {
       try {
         const res = await fetch("/api/tradie-jobs");
         const data = await res.json();
-        setAvailableJobs(data.availableJobs || []);
+        const jobs = data.availableJobs || [];
+        setAvailableJobs(jobs);
+        resolveJobPhotos(jobs);
         setMyQuotes(data.myQuotes || []);
         setBookings(data.activeBookings || []);
         setCompletedBookings(data.completedBookings || []);
