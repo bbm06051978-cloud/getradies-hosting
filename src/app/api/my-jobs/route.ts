@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
     where: { userId: decoded.id },
     orderBy: { createdAt: "desc" },
     include: {
+      photos: { select: { url: true } },
       quotes: {
         select: {
           id: true,
