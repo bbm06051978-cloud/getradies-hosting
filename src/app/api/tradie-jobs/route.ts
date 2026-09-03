@@ -85,6 +85,7 @@ export async function GET(req: NextRequest) {
       take: 100,
       include: {
         user: { select: { id: true, name: true, suburb: true, state: true } },
+        photos: { select: { url: true } },
         _count: { select: { quotes: true } },
       },
     }),

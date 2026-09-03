@@ -15,7 +15,7 @@ type UserRef = { id: string; name: string; suburb: string | null; state: string 
 type AvailableJob = {
   id: string; title: string; description: string; trade: string;
   suburb: string; state: string; status: string; aiEstimate: string | null;
-  createdAt: string; user: UserRef; _count: { quotes: number }; distanceKm?: number | null;
+  createdAt: string; user: UserRef; _count: { quotes: number }; distanceKm?: number | null; photos?: { url: string }[];
 };
 type MyQuote = {
   id: string; amount: number; description: string; status: string; createdAt: string;
@@ -204,6 +204,13 @@ function TradieJobsPageInner() {
                                     <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Job Description</p>
                                     <p className="text-sm text-gray-700 leading-relaxed">{job.description}</p>
                                   </div>
+                                  {job.photos && job.photos.length > 0 && (
+                                    <div className="flex gap-2 flex-wrap mt-2">
+                                      {job.photos.map((p, i) => (
+                                        <img key={i} src={p.url} alt="job photo" className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-90" onClick={() => window.open(p.url, "_blank")} />
+                                      ))}
+                                    </div>
+                                  )}
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Location</p>
