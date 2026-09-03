@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "asc" },
     });
 
+    // Mark messages as read
     await prisma.message.updateMany({
       where: {
         jobId,
@@ -118,9 +119,9 @@ export async function POST(req: NextRequest) {
   const decoded = verifyToken(token);
   if (!decoded) return NextResponse.json({ error: "Invalid token." }, { status: 401 });
 
-  const { jobId, receiverId, content } = await req.json();
+  const { jobId, receiverId, content, imageUrl } = await req.json();
 
-  if (!jobId || !receiverId || !content?.trim()) {
+  if (!jobId || !receiverId || (!content?.trim() && !imageUrl)) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
 
@@ -129,7 +130,8 @@ export async function POST(req: NextRequest) {
       jobId,
       senderId: decoded.id,
       receiverId,
-      content: content.trim(),
+      content: content?.trim() || "",
+      imageUrl: imageUrl || null,
     },
     include: {
       sender: {
