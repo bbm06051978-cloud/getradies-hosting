@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const key = `${folder}/${documentType || "doc"}_${Date.now()}.${ext}`;
 
     // Generate pre-signed upload URL (valid for 5 minutes)
-    const command = new PutObjectCommand({
+    const commandParams: any = {
       Bucket: BUCKET,
       Key: key,
       ContentType: fileType,
@@ -56,7 +56,11 @@ export async function POST(req: NextRequest) {
         userId: decoded.id,
         documentType: documentType || "doc",
       },
-    });
+    };
+    if (documentType === "job_photo") {
+      commandParams.ACL = "public-read";
+    }
+    const command = new PutObjectCommand(commandParams);
 
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
 
