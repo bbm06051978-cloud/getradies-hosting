@@ -8,6 +8,7 @@ import {
   ArrowLeft, Send, MessageSquare, Briefcase,
   User, Clock, Search, X, Minus,
 } from "lucide-react";
+import { getSignedImageUrl } from "@/lib/signedUrl";
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
 
