@@ -132,7 +132,7 @@ function ChatsPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobId: selectedConv.jobId, receiverId: selectedConv.otherUser.id, content: "", imageUrl: publicUrl }),
       });
-      fetchMessages(selectedConv);
+      fetchMessages(selectedConv.jobId, selectedConv.otherUser.id);
     } catch { }
     finally { setUploadingChatPhoto(false); e.target.value = ""; }
   };
