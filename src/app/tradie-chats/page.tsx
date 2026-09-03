@@ -112,6 +112,7 @@ useEffect(() => {
       const res = await fetch(`/api/messages?jobId=${jobId}`);
       const data = await res.json();
       if (data.messages) setMessages(data.messages);
+      resolveSignedUrls(data.messages);
     } catch {}
   };
 

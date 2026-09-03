@@ -123,6 +123,7 @@ function ChatsPageInner() {
       // Only update messages if this conversation is still active
       if (data.messages) {
         setMessages(data.messages);
+        resolveSignedUrls(data.messages);
       }
     } catch {}
   };
