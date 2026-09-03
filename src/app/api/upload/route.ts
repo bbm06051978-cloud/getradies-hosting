@@ -57,9 +57,6 @@ export async function POST(req: NextRequest) {
         documentType: documentType || "doc",
       },
     };
-    if (documentType === "job_photo") {
-      commandParams.ACL = "public-read";
-    }
     const command = new PutObjectCommand(commandParams);
 
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
