@@ -55,6 +55,7 @@ function TradieJobsPageInner() {
   const [bookings, setBookings]                   = useState<Booking[]>([]);
   const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
   const [loading, setLoading]                     = useState(true);
+  const [signedJobPhotos, setSignedJobPhotos] = useState<Record<string, string[]>>({});
   const [busy, setBusy]                           = useState<string | null>(null);
   const [expandedId, setExpandedId]               = useState<string | null>(null);
   const searchParams                              = useSearchParams();
