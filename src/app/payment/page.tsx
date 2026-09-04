@@ -116,7 +116,6 @@ function PaymentPageInner() {
   const searchParams = useSearchParams();
   const quoteId      = searchParams.get("quoteId") || "";
   const isMobile     = searchParams.get("mobile") === "true";
-  const router       = useRouter();
 
  const [jobTitle,    setJobTitle]    = useState("");
   const [tradie,      setTradie]      = useState("");
