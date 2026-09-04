@@ -74,7 +74,8 @@ function PostJobPageInner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [aiEstimate, setAiEstimate] = useState("");
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<string[]>([]); // local preview URLs
+  const [photoS3Urls, setPhotoS3Urls] = useState<string[]>([]); // S3 URLs for submit
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [suburbSuggestions, setSuburbSuggestions] = useState<{name: string; state: string; postcode: string}[]>([]);
@@ -173,6 +174,9 @@ function PostJobPageInner() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (photos.length >= 5) { setError("Maximum 5 photos allowed."); return; }
+    // Show local preview immediately
+    const localUrl = URL.createObjectURL(file);
+    setPhotos(prev => [...prev, localUrl]);
     setUploadingPhoto(true);
     try {
       const res = await fetch("/api/upload", {
@@ -182,7 +186,8 @@ function PostJobPageInner() {
       });
       const { uploadUrl, publicUrl } = await res.json();
       await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
-      setPhotos(prev => [...prev, publicUrl]);
+      setPhotos(prev => prev.map(p => p === localUrl ? publicUrl : p));
+      setPhotoS3Urls(prev => [...prev, publicUrl]);
     } catch { setError("Failed to upload photo."); }
     finally { setUploadingPhoto(false); }
   };
@@ -193,7 +198,7 @@ function PostJobPageInner() {
       const res = await fetch("/api/jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, aiEstimate, photos }),
+        body: JSON.stringify({ ...form, aiEstimate, photos: photoS3Urls }),
       });
 
       const data = await res.json();
@@ -355,7 +360,7 @@ function PostJobPageInner() {
                       {photos.map((p, i) => (
                         <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200">
                           <img src={p} alt="job photo" className="w-full h-full object-cover" />
-                          <button type="button" onClick={() => setPhotos(prev => prev.filter((_, idx) => idx !== i))}
+                          <button type="button" onClick={() => { setPhotos(prev => prev.filter((_, idx) => idx !== i)); setPhotoS3Urls(prev => prev.filter((_, idx) => idx !== i)); }}
                             className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">✕</button>
                         </div>
                       ))}
