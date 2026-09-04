@@ -1,4 +1,5 @@
 "use client";
+import { getSignedImageUrls } from "@/lib/signedUrl";
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -23,6 +24,7 @@ type Job = {
   id: string; title: string; trade: string; suburb: string;
   state: string; postcode: string | null; status: string;
   aiEstimate: string | null; createdAt: string; description: string;
+  photos?: { url: string }[];
   quotes: Quote[]; bookings: BookingRef[];
 };
 
@@ -68,7 +70,7 @@ function MyJobsPageInner() {
   useEffect(() => {
     fetch("/api/my-jobs")
       .then(r => r.json())
-      .then(d => { if (d.jobs) setJobs(d.jobs); })
+      .then(async d => { if (d.jobs) { setJobs(d.jobs); const photoMap: Record<string, string[]> = {}; await Promise.all(d.jobs.map(async (job: Job) => { if (job.photos && job.photos.length > 0) { photoMap[job.id] = await getSignedImageUrls(job.photos.map(p => p.url)); } })); setSignedJobPhotos(photoMap); } })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -250,6 +252,15 @@ function MyJobsPageInner() {
                           <div>
                             <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Job Description</p>
                             <p className="text-sm text-gray-700 leading-relaxed">{job.description}</p>
+                          </div>
+                        )}
+
+                        {/* Photos */}
+                        {signedJobPhotos[job.id] && signedJobPhotos[job.id].length > 0 && (
+                          <div className="flex gap-2 flex-wrap">
+                            {signedJobPhotos[job.id].map((url, i) => (
+                              <img key={i} src={url} alt="job photo" className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-90" onClick={() => window.open(url, "_blank")} />
+                            ))}
                           </div>
                         )}
 
