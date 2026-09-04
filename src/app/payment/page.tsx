@@ -115,6 +115,8 @@ function PaymentPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const quoteId      = searchParams.get("quoteId") || "";
+  const isMobile     = searchParams.get("mobile") === "true";
+  const router       = useRouter();
 
  const [jobTitle,    setJobTitle]    = useState("");
   const [tradie,      setTradie]      = useState("");
@@ -332,7 +334,7 @@ function PaymentPageInner() {
                       amount={selectedLock}
                       jobTitle={jobTitle}
                       tradie={tradie}
-                      onSuccess={() => setSuccess(true)}
+                      onSuccess={() => { setSuccess(true); if (isMobile) { setTimeout(() => router.push("/payment/success?payment_success=true"), 500); } }}
                     />
                   </Elements>
                 </>
