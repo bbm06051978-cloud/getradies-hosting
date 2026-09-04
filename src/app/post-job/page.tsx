@@ -186,7 +186,7 @@ function PostJobPageInner() {
       });
       const { uploadUrl, publicUrl } = await res.json();
       await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
-      setPhotos(prev => prev.map(p => p === localUrl ? publicUrl : p));
+      // Keep localUrl for display, store S3 URL separately for submit
       setPhotoS3Urls(prev => [...prev, publicUrl]);
     } catch { setError("Failed to upload photo."); }
     finally { setUploadingPhoto(false); }
