@@ -56,6 +56,7 @@ const getJobTab = (job: Job): "open" | "inprogress" | "closed" => {
 function MyJobsPageInner() {
   const router = useRouter();
   const [jobs, setJobs]             = useState<Job[]>([]);
+  const [signedJobPhotos, setSignedJobPhotos] = useState<Record<string, string[]>>({});
   const [loading, setLoading]       = useState(true);
   const [tab, setTab]               = useState<"open" | "inprogress" | "closed">("open");
   const [expandedId, setExpandedId] = useState<string | null>(null);
