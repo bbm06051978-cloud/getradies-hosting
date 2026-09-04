@@ -82,6 +82,7 @@ function TradieJobsPageInner() {
         const res = await fetch("/api/tradie-jobs");
         const data = await res.json();
         const jobs = data.availableJobs || [];
+        console.log("Jobs with photos:", jobs.filter((j: any) => j.photos?.length > 0).map((j: any) => ({id: j.id, title: j.title, photos: j.photos})));
         setAvailableJobs(jobs);
         resolveJobPhotos(jobs);
         setMyQuotes(data.myQuotes || []);
