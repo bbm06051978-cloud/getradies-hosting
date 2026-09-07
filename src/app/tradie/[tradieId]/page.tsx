@@ -26,7 +26,9 @@ type Profile = {
   reviews: Review[];
 };
 
-export default function TradiePublicProfilePage() {
+function TradiePublicProfilePage() {
+  const searchParams = useSearchParams();
+  const isMobile = searchParams.get("mobile") === "true";
   const params  = useParams();
   const tradieId = Array.isArray(params.tradieId) ? params.tradieId[0] : params.tradieId;
 
