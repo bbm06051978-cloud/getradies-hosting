@@ -218,11 +218,11 @@ function ChatsPageInner() {
         </div>
 
         {/* ── LinkedIn-style chat windows ── */}
-        <div className="fixed bottom-0 right-6 z-50 flex items-end gap-3">
+        <div className="fixed bottom-0 right-0 sm:right-6 z-50 flex items-end gap-3 w-full sm:w-auto px-2 sm:px-0">
 
           {/* CHAT WINDOW — opens when conversation selected */}
           {selectedConv && (
-            <div className="w-80 bg-white rounded-t-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
+            <div className="w-full sm:w-80 bg-white rounded-t-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
               style={{ height: chatMinimized ? "auto" : "420px" }}>
 
               {/* Chat header */}
