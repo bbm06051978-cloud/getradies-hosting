@@ -3,6 +3,7 @@ import { getSignedImageUrls } from "@/lib/signedUrl";
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { LeaveReview } from "@/app/components/LeaveReview";
 import { motion } from "motion/react";
 import {
   ArrowLeft, Briefcase, MapPin, Calendar, ChevronRight,
@@ -61,6 +62,7 @@ function MyJobsPageInner() {
   const [tab, setTab]               = useState<"open" | "inprogress" | "closed">("open");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [busy, setBusy]             = useState<string | null>(null);
+  const [reviewBooking, setReviewBooking] = useState<{id: string; tradieName: string; jobTitle: string} | null>(null);
   const searchParams                = useSearchParams();
 
   useEffect(() => {
@@ -91,7 +93,7 @@ function MyJobsPageInner() {
       const res = await fetch("/api/bookings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId, action: "confirm_done" }),
+        body: JSON.stringify({ bookingId, action: "confirm_complete" }),
       });
       if (res.ok) {
         setJobs(prev => prev.map(j => ({
@@ -328,6 +330,17 @@ function MyJobsPageInner() {
                               disabled={busy === booking.id}
                               className="flex items-center gap-1 bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
                               <ThumbsUp size={12}/>{busy === booking.id ? "Confirming..." : "Confirm Job Done"}
+                            </button>
+                          )}
+
+                          
+                          {/* Leave Review */}
+                          {booking?.status === "COMPLETED" && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setReviewBooking({ id: booking.id, tradieName: booking.tradieProfile.businessName, jobTitle: job.title }); }}
+                              className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                            >
+                              ⭐ Leave Review
                             </button>
                           )}
 
