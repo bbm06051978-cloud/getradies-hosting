@@ -381,6 +381,16 @@ function MyJobsPageInner() {
         </div>
       </div>
     </div>
+
+  {reviewBooking && (
+    <LeaveReview
+      bookingId={reviewBooking.id}
+      tradieName={reviewBooking.tradieName}
+      jobTitle={reviewBooking.jobTitle}
+      onClose={() => setReviewBooking(null)}
+      onSubmitted={() => setReviewBooking(null)}
+    />
+  )}
   );
 }
 
