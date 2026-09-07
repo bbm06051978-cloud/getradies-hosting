@@ -133,6 +133,7 @@ function MyJobsPageInner() {
   ] as const;
 
   return (
+    <>
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar/>
       <div className="flex-1 flex flex-col">
@@ -391,6 +392,7 @@ function MyJobsPageInner() {
       onSubmitted={() => setReviewBooking(null)}
     />
   )}
+    </>
   );
 }
 
