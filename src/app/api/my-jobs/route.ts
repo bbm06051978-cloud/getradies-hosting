@@ -41,7 +41,8 @@ export async function GET(req: NextRequest) {
       },
       bookings: {
         select: {
-          id: true, status: true, scheduledAt: true,
+          id: true, status: true, scheduledAt: true, tradieProfileId: true,
+          totalAmount: true,
           review: { select: { id: true } },
           tradieProfile: {
             select: {
