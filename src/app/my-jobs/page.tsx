@@ -16,6 +16,7 @@ import { Topbar } from "@/app/components/dashboard/Topbar";
 type Quote = { id: string; amount: number; status: string };
 type BookingRef = {
   id: string; status: string; scheduledAt: string; totalAmount: number;
+  tradieProfileId: string;
   tradieProfile: {
     businessName: string; specialty: string;
     user: { id: string; name: string; phone: string };
