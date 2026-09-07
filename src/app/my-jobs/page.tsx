@@ -234,7 +234,7 @@ function MyJobsPageInner() {
                             )}
                             {booking && (
                               <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
-                                <span className="font-semibold text-gray-700">{booking.tradieProfile.businessName}</span>
+                                <span className="font-semibold text-gray-700"><a href={`/tradie/${booking.tradieProfileId}`} className="text-blue-700 hover:underline">{booking.tradieProfile.businessName}</a></span>
                                 {booking.scheduledAt && <span>· {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" })}</span>}
                               </div>
                             )}
@@ -292,7 +292,7 @@ function MyJobsPageInner() {
                         {booking && (
                           <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
                             <p className="text-xs font-bold text-orange-700 uppercase tracking-widest mb-2">Booked Tradie</p>
-                            <p className="text-sm font-semibold text-gray-800">{booking.tradieProfile.businessName}</p>
+                            <p className="text-sm font-semibold text-gray-800"><a href={`/tradie/${booking.tradieProfileId}`} className="text-blue-700 hover:underline">{booking.tradieProfile.businessName}</a></p>
                             <p className="text-xs text-gray-500">{booking.tradieProfile.specialty}</p>
                             {booking.scheduledAt && (
                               <p className="text-xs text-gray-600 mt-1">
