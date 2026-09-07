@@ -258,5 +258,5 @@ function TradiePublicProfilePage() {
 }
 
 export default function TradieProfilePage() {
-  return <Suspense><TradieProfilePageInner/></Suspense>;
+  return <Suspense><TradiePublicProfilePage/></Suspense>;
 }
