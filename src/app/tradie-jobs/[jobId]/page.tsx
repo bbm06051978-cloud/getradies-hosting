@@ -32,6 +32,7 @@ export default function TradieJobDetailPage() {
   const jobId = Array.isArray(params.jobId) ? params.jobId[0] : params.jobId;
 
   const [job, setJob]               = useState<Job | null>(null);
+const [signedPhotos, setSignedPhotos] = useState<string[]>([]);
 const [alreadyQuoted, setAlreadyQuoted] = useState(false);
 const [booking, setBooking] = useState<{ id: string; status: string; scheduledAt: string; totalAmount: number } | null>(null);
 const [confirming, setConfirming] = useState(false);
