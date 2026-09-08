@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
       postcode: true,
       createdAt: true,
       role: true,
+      profilePhoto: true,
       _count: {
         select: {
           jobs: true,
@@ -52,7 +53,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Invalid token." }, { status: 401 });
   }
 
-  const { name, phone, suburb, state, postcode, currentPassword, newPassword } = await req.json();
+  const { name, phone, suburb, state, postcode, currentPassword, newPassword, profilePhoto } = await req.json();
 
   // If changing password, verify current password first
   if (newPassword) {
@@ -71,7 +72,7 @@ export async function PATCH(req: NextRequest) {
     const passwordHash = await bcrypt.hash(newPassword, 10);
     await prisma.user.update({
       where: { id: decoded.id },
-      data: { name, phone, suburb, state, postcode, passwordHash },
+      data: { name, phone, suburb, state, postcode, passwordHash, ...(profilePhoto !== undefined && { profilePhoto }) },
     });
 
     return NextResponse.json({ success: true });
@@ -79,7 +80,7 @@ export async function PATCH(req: NextRequest) {
 
   await prisma.user.update({
     where: { id: decoded.id },
-    data: { name, phone, suburb, state, postcode },
+    data: { name, phone, suburb, state, postcode, ...(profilePhoto !== undefined && { profilePhoto }) },
   });
 
   return NextResponse.json({ success: true });

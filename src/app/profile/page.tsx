@@ -139,7 +139,28 @@ export default function ProfilePage() {
   };
 
   if (loading) {
-    return (
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, fileType: file.type, fileSize: file.size, documentType: "job_photo" }),
+      });
+      const { uploadUrl, publicUrl } = await res.json();
+      await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profilePhoto: publicUrl }),
+      });
+      setUser((prev: any) => ({ ...prev, profilePhoto: publicUrl }));
+    } catch { } finally { setUploadingPhoto(false); }
+  };
+
+  return (
       <div className="flex min-h-screen bg-slate-50">
         <Sidebar />
         <main className="flex-1 flex flex-col min-w-0">
@@ -154,6 +175,27 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, fileType: file.type, fileSize: file.size, documentType: "job_photo" }),
+      });
+      const { uploadUrl, publicUrl } = await res.json();
+      await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+      await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profilePhoto: publicUrl }),
+      });
+      setUser((prev: any) => ({ ...prev, profilePhoto: publicUrl }));
+    } catch { } finally { setUploadingPhoto(false); }
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -196,7 +238,14 @@ export default function ProfilePage() {
             {/* Avatar banner */}
             <div className="bg-gradient-to-r from-blue-900 to-blue-700 h-24 relative">
               <div className="absolute -bottom-10 left-6">
-                <div className="w-20 h-20 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                <div className="w-20 h-20 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center relative overflow-hidden group cursor-pointer">
+                  <label className="absolute inset-0 flex items-center justify-center cursor-pointer z-10 bg-black/0 group-hover:bg-black/30 transition-all">
+                    <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload}/>
+                    {uploadingPhoto ? <span className="text-white text-xs">...</span> : <span className="text-white text-xs opacity-0 group-hover:opacity-100">Edit</span>}
+                  </label>
+                  {user?.profilePhoto ? (
+                    <img src={user.profilePhoto} alt="Profile" className="w-full h-full object-cover"/>
+                  ) : (
                   <span className="text-blue-900 font-bold text-2xl">
                     {user?.name?.charAt(0).toUpperCase() || "U"}
                   </span>
