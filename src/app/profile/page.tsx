@@ -246,9 +246,10 @@ export default function ProfilePage() {
                   {user?.profilePhoto ? (
                     <img src={user.profilePhoto} alt="Profile" className="w-full h-full object-cover"/>
                   ) : (
-                  <span className="text-blue-900 font-bold text-2xl">
-                    {user?.name?.charAt(0).toUpperCase() || "U"}
-                  </span>
+                    <span className="text-blue-900 font-bold text-2xl">
+                      {user?.name?.charAt(0).toUpperCase() || "U"}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
