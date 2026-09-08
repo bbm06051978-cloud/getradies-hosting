@@ -375,16 +375,11 @@ if (data.subscription) setSubscription(data.subscription);
                         )}
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
-			<Link href={`/quotes?jobId=${job.id}`}>
+<Link href={`/tradie-jobs/${job.id}`}>
                           <button className="bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors">
                             Send Quote
                           </button>
                         </Link>
-                        <Link href={`/tradie-jobs/${job.id}`}>
-  <button className="text-sm text-gray-500 border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50">
-    View
-  </button>
-</Link>
                       </div>
                     </div>
                   ))}
