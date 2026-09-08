@@ -23,6 +23,7 @@ type Job = {
   createdAt: string;
   user: { id: string; name: string; suburb: string; state: string };
   _count: { quotes: number };
+  photos?: { url: string }[];
 };
 
 export default function TradieJobDetailPage() {
@@ -51,7 +52,7 @@ const [confirming, setConfirming] = useState(false);
     fetch(`/api/tradie-jobs/${jobId}`)
       .then(r => r.json())
       .then(d => { 
-        if (d.job) setJob(d.job);
+        if (d.job) { if (d.job.photos?.length) { Promise.all(d.job.photos.map((p: any) => getSignedImageUrl(p.url))).then(setSignedPhotos); } setJob(d.job); };
         if (d.alreadyQuoted) setAlreadyQuoted(true);
         if (d.booking) setBooking(d.booking);
       })

@@ -18,6 +18,7 @@ export async function GET(
     where: { id: jobId },
     include: {
       user: { select: { id: true, name: true, suburb: true, state: true } },
+      photos: { select: { url: true } },
       _count: { select: { quotes: true } },
     },
   });
