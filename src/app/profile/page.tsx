@@ -23,6 +23,7 @@ type UserProfile = {
   postcode: string | null;
   createdAt: string;
   role: string;
+  profilePhoto: string | null;
   _count: { jobs: number };
 };
 
