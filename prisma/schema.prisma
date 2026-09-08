@@ -44,6 +44,7 @@ model User {
   state            String?
   postcode         String?
   emailNotifications Boolean      @default(true)
+  profilePhoto     String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   jobs             Job[]
