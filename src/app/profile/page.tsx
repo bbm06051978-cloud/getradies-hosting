@@ -1,4 +1,5 @@
 "use client";
+import { getSignedImageUrl } from "@/lib/signedUrl";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -30,6 +31,7 @@ type UserProfile = {
 export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [signedPhotoUrl, setSignedPhotoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -59,6 +61,9 @@ export default function ProfilePage() {
       .then((r) => r.json())
       .then((d) => {
         if (d.user) {
+          if (d.user.profilePhoto) {
+            getSignedImageUrl(d.user.profilePhoto).then(url => setSignedPhotoUrl(url));
+          }
           setUser(d.user);
           setForm({
             name: d.user.name || "",
@@ -159,6 +164,7 @@ export default function ProfilePage() {
         body: JSON.stringify({ profilePhoto: publicUrl }),
       });
       setUser((prev: any) => ({ ...prev, profilePhoto: publicUrl }));
+      getSignedImageUrl(publicUrl).then(url => setSignedPhotoUrl(url));
     } catch { } finally { setUploadingPhoto(false); }
   };
 
@@ -196,6 +202,7 @@ export default function ProfilePage() {
         body: JSON.stringify({ profilePhoto: publicUrl }),
       });
       setUser((prev: any) => ({ ...prev, profilePhoto: publicUrl }));
+      getSignedImageUrl(publicUrl).then(url => setSignedPhotoUrl(url));
     } catch { } finally { setUploadingPhoto(false); }
   };
 
@@ -245,8 +252,8 @@ export default function ProfilePage() {
                     <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload}/>
                     {uploadingPhoto ? <span className="text-white text-xs">...</span> : <span className="text-white text-xs opacity-0 group-hover:opacity-100">Edit</span>}
                   </label>
-                  {user?.profilePhoto ? (
-                    <img src={user.profilePhoto} alt="Profile" className="w-full h-full object-cover"/>
+                  {signedPhotoUrl ? (
+                    <img src={signedPhotoUrl || ""} alt="Profile" className="w-full h-full object-cover"/>
                   ) : (
                     <span className="text-blue-900 font-bold text-2xl">
                       {user?.name?.charAt(0).toUpperCase() || "U"}
