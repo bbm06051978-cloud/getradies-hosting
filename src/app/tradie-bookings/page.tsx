@@ -221,6 +221,14 @@ useEffect(() => {
                               {booking.homeowner?.name?.charAt(0).toUpperCase() || "H"}
                             </span>
                           </div>
+                          <span className="text-sm font-medium text-gray-700">{booking.homeowner?.name || "Homeowner"}</span>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
 
                           {booking.status === "PENDING" && (
                             <div className="mt-5 pt-4 border-t border-gray-200">
