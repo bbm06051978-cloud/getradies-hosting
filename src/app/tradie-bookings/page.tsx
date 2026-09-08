@@ -282,6 +282,7 @@ useEffect(() => {
                               <p className="text-sm text-red-700 font-semibold">Dispute raised — GeTradie team is reviewing this booking</p>
                             </div>
                           )}
+                          </motion.div>
                         </motion.div>
                       )}
                     </AnimatePresence>
