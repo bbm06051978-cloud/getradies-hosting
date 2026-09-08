@@ -286,6 +286,7 @@ useEffect(() => {
                       )}
                     </AnimatePresence>
                   </motion.div>
+                </motion.div>
                 );
               })}
             </div>
