@@ -217,18 +217,76 @@ useEffect(() => {
                         <div className="flex items-center gap-2">
                           {/* Homeowner avatar */}
                           <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 border-2 border-blue-200">
-                            <span className="text-white text-xs font-bold">
-                              {booking.homeowner?.name?.charAt(0).toUpperCase() || "H"}
-                            </span>
+                            <span className="text-white text-xs font-bold">{booking.homeowner?.name?.charAt(0).toUpperCase() || "H"}</span>
                           </div>
-                          <span className="text-sm font-medium text-gray-700">{booking.homeowner?.name || "Homeowner"}</span>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-800">{booking.homeowner?.name || "Homeowner"}</p>
+                            <p className="text-xs text-gray-400">{booking.homeowner?.suburb}, {booking.homeowner?.state}</p>
+                          </div>
                         </div>
+                        <button onClick={() => setExpandedId(isExpanded ? null : booking.id)}
+                          className="flex items-center gap-1 text-orange-500 text-xs font-semibold hover:text-orange-700">
+                          {isExpanded ? "Less" : "More details"}
+                          {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </button>
                       </div>
+                    </div>
 
-                      {/* Actions */}
-                      <AnimatePresence>
-                        {isExpanded && (
-                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                          className="border-t border-gray-100 bg-slate-50 px-5 py-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Homeowner Contact</p>
+                              <div className="space-y-2">
+                                {/* Homeowner avatar */}
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <User size={16} className="text-blue-600" />
+                                  </div>
+                                  <p className="text-sm font-semibold text-gray-900">{booking.homeowner?.name || "Unknown"}</p>
+                                </div>
+                                {booking.homeowner?.phone && (
+                                  <a href={`tel:${booking.homeowner.phone}`} className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
+                                    <Phone size={14} />{booking.homeowner.phone}
+                                  </a>
+                                )}
+                                {booking.homeowner?.email && (
+                                  <a href={`mailto:${booking.homeowner.email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
+                                    <Mail size={14} />{booking.homeowner.email}
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                            <div>
+                              
+                              <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
+                                <p className="text-xs text-blue-700 font-semibold">💰 Payment Info</p>
+                                {booking.payment && booking.status === "COMPLETED" ? (
+                                  <div className="mt-1 space-y-1">
+                                    <div className="flex justify-between">
+                                      <span className="text-xs text-gray-500">Lock Amount Paid</span>
+                                      <span className="text-xs font-bold text-gray-700">${booking.payment.amount} AUD</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-xs text-gray-500">GeTradie Fee</span>
+                                      <span className="text-xs font-bold text-red-500">-${booking.payment.getradieFee} AUD</span>
+                                    </div>
+                                    <div className="flex justify-between border-t border-blue-200 pt-1 mt-1">
+                                      <span className="text-xs font-bold text-green-700">Your Payout</span>
+                                      <span className="text-xs font-bold text-green-700">${booking.payment.tradieEarning} AUD</span>
+                                    </div>
+                                    <p className="text-xs text-blue-500 mt-1">Plus direct payment from homeowner for remaining balance.</p>
+                                  </div>
+                                ) : (
+                                  <p className="text-xs text-blue-600 mt-0.5">
+                                    The lock amount is held securely by GeTradie. Collect the remaining balance directly from the homeowner after job completion.
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
 
                           {booking.status === "PENDING" && (
                             <div className="mt-5 pt-4 border-t border-gray-200">
@@ -282,7 +340,6 @@ useEffect(() => {
                               <p className="text-sm text-red-700 font-semibold">Dispute raised — GeTradie team is reviewing this booking</p>
                             </div>
                           )}
-                          </motion.div>
                         </motion.div>
                       )}
                     </AnimatePresence>
