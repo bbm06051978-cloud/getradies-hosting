@@ -179,6 +179,17 @@ const handleConfirmBooking = async () => {
               <p className="text-sm text-gray-700 leading-relaxed">{job.description || "No description provided."}</p>
             </div>
 
+            {signedPhotos.length > 0 && (
+              <div className="mt-4">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Job Photos</p>
+                <div className="flex gap-2 flex-wrap">
+                  {signedPhotos.map((url, i) => (
+                    <img key={i} src={url} alt="job photo" className="w-24 h-24 object-cover rounded-xl border border-gray-200 cursor-pointer hover:opacity-90" onClick={() => window.open(url, "_blank")}/>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {job.aiEstimate && (
               <div className="mt-5 bg-blue-50 border border-blue-100 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
