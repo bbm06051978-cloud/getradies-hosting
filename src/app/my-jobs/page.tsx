@@ -209,7 +209,7 @@ function MyJobsPageInner() {
                 return (
                   <motion.div key={job.id}
                     initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                    className={`bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow border-l-4 ${job.bookings[0]?.status === "COMPLETED" ? (job.bookings[0]?.review ? "border-l-green-400 border border-gray-100" : "border-l-yellow-400 border border-gray-100") : "border border-gray-100"}`}>
 
                     {/* Card header */}
                     <div className="p-5 cursor-pointer" onClick={() => setExpandedId(isExpanded ? null : job.id)}>
