@@ -66,15 +66,6 @@ const trades = [
     button: "bg-purple-600 hover:bg-purple-700",
     jobs: ["Interior painting", "Exterior painting", "Deck staining", "Fence painting", "Roof painting", "Pressure washing"],
   },
-
-  
-];
-
-const howItWorks = [
-  { step: "01", title: "Post Your Job", desc: "Describe what you need in under 2 minutes. It's free for homeowners." },
-  { step: "02", title: "Get AI Estimate", desc: "Instantly see a price range before any tradie contacts you." },
-  { step: "03", title: "Receive Quotes", desc: "Verified local tradies send you fixed-price quotes within hours." },
-  { step: "04", title: "Hire with Confidence", desc: "Compare quotes, chat with tradies and hire the best fit." },
   {
     slug: "handyman",
     emoji: "🔨",
@@ -88,8 +79,16 @@ const howItWorks = [
     border: "border-amber-100",
     button: "bg-amber-600 hover:bg-amber-700",
     jobs: ["Furniture assembly", "Door & window repairs", "Wall patching", "Fence repairs", "Shelving installation", "General maintenance"],
-  }
+  },
+
+  
 ];
+
+const howItWorks = [
+  { step: "01", title: "Post Your Job", desc: "Describe what you need in under 2 minutes. It's free for homeowners." },
+  { step: "02", title: "Get AI Estimate", desc: "Instantly see a price range before any tradie contacts you." },
+  { step: "03", title: "Receive Quotes", desc: "Verified local tradies send you fixed-price quotes within hours." },
+  { step: "04", title: "Hire with Confidence", desc: "Compare quotes, chat with tradies and hire the best fit." },];
 
 export default function ServicesPage() {
   return (
