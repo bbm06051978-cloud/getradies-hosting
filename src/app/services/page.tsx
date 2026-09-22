@@ -230,10 +230,10 @@ export default function ServicesPage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {howItWorks.map((step, i) => (
-              <div key={step.step} className="bg-white/10 backdrop-blur-sm rounded-2xl p-10 text-center hover:bg-white/20 transition-colors">
+              <div key={step?.step ?? i} className="bg-white/10 backdrop-blur-sm rounded-2xl p-10 text-center hover:bg-white/20 transition-colors">
                 <span className="text-5xl block mb-2">{["📋","🤖","💬","✅"][i]}</span>
-                <p className="text-blue-100 text-lg font-bold mb-1">{step.title}</p>
-                <p className="text-white text-lg leading-relaxed">{step.desc}</p>
+                <p className="text-blue-100 text-lg font-bold mb-1">{step?.title}</p>
+                <p className="text-white text-lg leading-relaxed">{step?.desc}</p>
               </div>
             ))}
           </div>
