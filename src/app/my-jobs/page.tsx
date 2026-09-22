@@ -17,6 +17,7 @@ type Quote = { id: string; amount: number; status: string };
 type BookingRef = {
   id: string; status: string; scheduledAt: string; totalAmount: number;
   tradieProfileId: string;
+  review?: { id: string } | null;
   tradieProfile: {
     businessName: string; specialty: string;
     user: { id: string; name: string; phone: string };
@@ -338,12 +339,18 @@ function MyJobsPageInner() {
                           
                           {/* Leave Review */}
                           {booking?.status === "COMPLETED" && (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setReviewBooking({ id: booking.id, tradieName: booking.tradieProfile.businessName, jobTitle: job.title }); }}
-                              className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
-                            >
-                              ⭐ Leave Review
-                            </button>
+                            booking?.review ? (
+                              <button disabled className="flex items-center gap-1 bg-green-100 text-green-700 text-xs font-bold px-3 py-2 rounded-lg cursor-default border border-green-200">
+                                ✅ Reviewed
+                              </button>
+                            ) : (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setReviewBooking({ id: booking.id, tradieName: booking.tradieProfile.businessName, jobTitle: job.title }); }}
+                                className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                              >
+                                ⭐ Leave Review
+                              </button>
+                            )
                           )}
 
                           {/* Raise Dispute */}
@@ -390,7 +397,7 @@ function MyJobsPageInner() {
       tradieName={reviewBooking.tradieName}
       jobTitle={reviewBooking.jobTitle}
       onClose={() => setReviewBooking(null)}
-      onSubmitted={() => setReviewBooking(null)}
+      onSubmitted={() => { setJobs(prev => prev.map(j => ({ ...j, bookings: j.bookings.map(b => b.id === reviewBooking!.id ? { ...b, review: { id: "done" } } : b) }))); setReviewBooking(null); }}
     />
   )}
     </>
