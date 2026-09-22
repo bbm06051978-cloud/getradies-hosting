@@ -74,7 +74,21 @@ const howItWorks = [
   { step: "01", title: "Post Your Job", desc: "Describe what you need in under 2 minutes. It's free for homeowners." },
   { step: "02", title: "Get AI Estimate", desc: "Instantly see a price range before any tradie contacts you." },
   { step: "03", title: "Receive Quotes", desc: "Verified local tradies send you fixed-price quotes within hours." },
-  { step: "04", title: "Hire with Confidence", desc: "Compare quotes, chat with tradies and hire the best fit." },
+  { step: "04", title: "Hire with Confidence", desc: "Compare quotes, chat with tradies and hire the best fit." },,
+  {
+    slug: "handyman",
+    emoji: "🔨",
+    name: "Handyman",
+    tagline: "General repairs and maintenance around your home",
+    description: "Experienced handymen for all general home repairs, maintenance, furniture assembly, minor renovations and odd jobs.",
+    avgCost: "$100 – $400",
+    hourly: "$60 – $150/hr",
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+    border: "border-amber-100",
+    button: "bg-amber-600 hover:bg-amber-700",
+    jobs: ["Furniture assembly", "Door & window repairs", "Wall patching", "Fence repairs", "Shelving installation", "General maintenance"],
+  }
 ];
 
 export default function ServicesPage() {
@@ -90,13 +104,13 @@ export default function ServicesPage() {
 
         <div className="relative max-w-4xl mx-auto px-4 text-left">
           <span className="inline-block bg-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-widest">
-            7 Trade Categories
+            5 Major Trade Categories
           </span>
           <h1 className="text-4xl lg:text-4xl font-semibold text-white mb-5 leading-tight">
             Find the Right <span className="text-orange-400">Tradie</span> for Any Job
           </h1>
           <p className="text-white text-lg max-w-2xl mb-8">
-            GeTradie connects you with verified local tradies across 7 major trade categories. Get AI-powered estimates and fixed-price quotes — all in one place.
+            GeTradie connects you with verified local tradies across 5 major trade categories. Get AI-powered estimates and fixed-price quotes — all in one place.
           </p>
           <div className="flex flex-wrap gap-3 justify-start">
             {trades.map((t) => (
