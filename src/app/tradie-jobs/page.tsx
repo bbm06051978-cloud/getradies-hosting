@@ -488,10 +488,6 @@ function TradieJobsPageInner() {
                                 <div className="p-5 space-y-4">
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Homeowner</p>
-                                      <p className="text-sm text-gray-700">{booking.job.user.name}</p>
-                                    </div>
-                                    <div>
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Location</p>
                                       <p className="text-sm text-gray-700">{booking.job.suburb}, {booking.job.state}</p>
                                     </div>
@@ -510,11 +506,19 @@ function TradieJobsPageInner() {
                                   )}
                                   {booking.payment && (
                                     <div className="bg-green-50 border border-green-100 rounded-xl p-4">
-                                      <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Lock Amount Payout</p>
+                                      <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Payment Summary</p>
                                       <div className="space-y-1">
                                         <div className="flex justify-between text-sm">
-                                          <span className="text-gray-500">Lock Amount</span>
-                                          <span className="font-semibold text-gray-700">${booking.payment.amount} AUD</span>
+                                          <span className="text-gray-500">Total Quote</span>
+                                          <span className="font-semibold text-gray-700">${booking.totalAmount.toLocaleString()} AUD</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                          <span className="text-gray-500">🔒 Lock Amount (held by GeTradie)</span>
+                                          <span className="font-semibold text-blue-700">${booking.payment.amount} AUD</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                          <span className="text-gray-500">💳 Collected from homeowner</span>
+                                          <span className="font-semibold text-green-700">${booking.totalAmount - booking.payment.amount} AUD</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                           <span className="text-gray-500">GeTradie Fee</span>
