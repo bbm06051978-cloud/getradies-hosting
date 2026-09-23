@@ -1,6 +1,6 @@
 ﻿"use client";
 import { useState } from "react";
-import { X, ShieldCheck, AlertTriangle, CheckCircle, ChevronRight } from "lucide-react";
+import { X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 
@@ -21,52 +21,37 @@ export function LockAmountBanner() {
           <div style={{ position: "absolute", top: "-30px", right: "-30px", width: "150px", height: "150px", borderRadius: "50%", background: "rgba(249,115,22,0.15)", filter: "blur(40px)" }}/>
 
           <div className="relative p-5">
+            {/* Close button */}
             <button onClick={() => setDismissed(true)} className="absolute top-3 right-3 text-white/50 hover:text-white transition-colors">
               <X size={16}/>
             </button>
 
-            <div className="flex items-start gap-4 pr-6 mb-4">
-              <div style={{ width: "48px", height: "48px", borderRadius: "14px", flexShrink: 0, background: "rgba(249,115,22,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <ShieldCheck size={24} color="#FB923C"/>
+            {/* Header */}
+            <p className="text-orange-300 text-xs font-bold uppercase tracking-widest mb-1">🛡️ Your Protection Tip</p>
+            <h3 className="text-white font-bold text-base lg:text-lg leading-snug mb-3">🔒 Lock an amount. Stay protected.</h3>
+
+            {/* What it is */}
+            <p className="text-blue-200 text-sm mb-4">
+              Your lock amount is held securely by GeTradie. After the job is done, you pay the remaining balance directly to the tradie.
+            </p>
+
+            {/* Benefits */}
+            <div className="space-y-2 mb-4">
+              <div className="flex items-start gap-2">
+                <span className="text-base">⚖️</span>
+                <p className="text-white text-sm">Something goes wrong? Your lock stays with GeTradie while the issue is sorted.</p>
               </div>
-              <div>
-                <span className="text-orange-300 text-xs font-bold uppercase tracking-widest">Your Protection Tip</span>
-                <h3 className="text-white font-bold text-base lg:text-lg leading-snug mt-1">
-                  Lock More = Better Protection!
-                </h3>
-                <p className="text-blue-200 text-xs mt-1">
-                  Lock amount held by GeTradie &mdash; not the tradie. Pay the tradie balance directly after the job.
-                </p>
+              <div className="flex items-start gap-2">
+                <span className="text-base">✅</span>
+                <p className="text-white text-sm">Job done? You decide when your lock amount is released.</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-              {[
-                { icon: ShieldCheck, color: "#10B981", title: "Dispute Protection", desc: "Dispute? Your lock is protected until resolved in your favour." },
-                { icon: CheckCircle, color: "#60A5FA", title: "Tradies Work Harder", desc: "Higher lock = tradies take your job more seriously." },
-                { icon: AlertTriangle, color: "#F59E0B", title: "You Are in Control", desc: "Lock releases only when YOU confirm the job is done." },
-              ].map(b => {
-                const Icon = b.icon;
-                return (
-                  <div key={b.title} style={{ background: "rgba(255,255,255,0.08)", borderRadius: "12px", padding: "12px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Icon size={14} color={b.color}/>
-                      <span className="text-white text-xs font-bold">{b.title}</span>
-                    </div>
-                    <p className="text-blue-200 text-xs leading-relaxed">{b.desc}</p>
-                  </div>
-                );
-              })}
-            </div>
-
+            {/* Pitch + CTA */}
             <div className="flex items-center justify-between flex-wrap gap-3" style={{ background: "rgba(255,255,255,0.06)", borderRadius: "12px", padding: "12px", border: "1px solid rgba(255,255,255,0.1)" }}>
               <div>
-                <p className="text-white text-xs font-bold mb-0.5">
-                  💰 Lock amount held by GeTradie &mdash; never released without your approval.
-                </p>
-                <p className="text-blue-200 text-xs">
-                  💡 Higher lock = more tradie commitment. You stay in control. Always.
-                </p>
+                <p className="text-white text-xs font-bold mb-0.5">💡 A higher lock can show stronger commitment from the tradie.</p>
+                <p className="text-blue-200 text-xs">You&apos;re in control. Always.</p>
               </div>
               <Link href="/my-jobs">
                 <button style={{ background: "#F97316", color: "white", border: "none", borderRadius: "10px", padding: "8px 16px", fontSize: "12px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", whiteSpace: "nowrap" }}>
