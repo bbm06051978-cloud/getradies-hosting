@@ -244,6 +244,5 @@ export function Sidebar() {
         </div>
       )}
     </>
-    </>
   );
 }
