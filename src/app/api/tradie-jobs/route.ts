@@ -116,6 +116,15 @@ export async function GET(req: NextRequest) {
             user: { select: { id: true, name: true, suburb: true, state: true } },
           },
         },
+        payment: {
+          select: {
+            amount: true,
+            getradieFee: true,
+            tradieEarning: true,
+            status: true,
+            paidAt: true,
+          },
+        },
       },
     }),
 
