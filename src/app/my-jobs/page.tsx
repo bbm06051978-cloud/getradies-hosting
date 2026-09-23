@@ -18,6 +18,7 @@ type BookingRef = {
   id: string; status: string; scheduledAt: string; totalAmount: number;
   tradieProfileId: string;
   review?: { id: string } | null;
+  payment?: { amount: number } | null;
   tradieProfile: {
     businessName: string; specialty: string;
     user: { id: string; name: string; phone: string };
@@ -301,20 +302,15 @@ function MyJobsPageInner() {
                                 Scheduled: {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
                               </p>
                             )}
-                            {booking.totalAmount > 0 && acceptedQuote && (
-                              <div className="mt-2 bg-white/60 rounded-lg p-2 space-y-1 border border-orange-100">
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-gray-500">Total Quote</span>
-                                  <span className="font-bold text-gray-800">${acceptedQuote.amount.toLocaleString()} AUD</span>
-                                </div>
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-gray-500">🔒 Lock Amount (held by GeTradie)</span>
-                                  <span className="font-bold text-blue-700">${booking.totalAmount.toLocaleString()} AUD</span>
-                                </div>
-                                <div className="flex justify-between text-xs border-t border-orange-100 pt-1">
-                                  <span className="text-gray-500">💳 Pay tradie directly</span>
-                                  <span className="font-bold text-green-700">${(acceptedQuote.amount - booking.totalAmount).toLocaleString()} AUD</span>
-                                </div>
+                            {acceptedQuote && (
+                              <div className="mt-2 bg-white/60 rounded-lg p-2 border border-orange-100 text-xs space-y-1">
+                                <p className="text-gray-700">Total Quote: <span className="font-bold text-gray-900">${acceptedQuote.amount.toLocaleString()} AUD</span></p>
+                                {booking.payment?.amount && (
+                                  <>
+                                    <p className="text-gray-700">🔒 Lock Amount (held by GeTradie): <span className="font-bold text-blue-700">${booking.payment.amount.toLocaleString()} AUD</span></p>
+                                    <p className="text-gray-700 border-t border-orange-100 pt-1">💳 Pay tradie directly: <span className="font-bold text-green-700">${(acceptedQuote.amount - booking.payment.amount).toLocaleString()} AUD</span></p>
+                                  </>
+                                )}
                               </div>
                             )}
                           </div>
