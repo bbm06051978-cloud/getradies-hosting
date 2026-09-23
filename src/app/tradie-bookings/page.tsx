@@ -263,11 +263,19 @@ useEffect(() => {
                               
                               <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
                                 <p className="text-xs text-blue-700 font-semibold">💰 Payment Info</p>
-                                {booking.payment && booking.status === "COMPLETED" ? (
+                                {booking.payment ? (
                                   <div className="mt-1 space-y-1">
                                     <div className="flex justify-between">
-                                      <span className="text-xs text-gray-500">Lock Amount Paid</span>
-                                      <span className="text-xs font-bold text-gray-700">${booking.payment.amount} AUD</span>
+                                      <span className="text-xs text-gray-500">Total Quote</span>
+                                      <span className="text-xs font-bold text-gray-700">${booking.totalAmount.toLocaleString()} AUD</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-xs text-gray-500">🔒 Lock Amount (held by GeTradie)</span>
+                                      <span className="text-xs font-bold text-blue-700">${booking.payment.amount} AUD</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-xs text-gray-500">💳 Collect from homeowner</span>
+                                      <span className="text-xs font-bold text-green-700">${booking.totalAmount - booking.payment.amount} AUD</span>
                                     </div>
                                     <div className="flex justify-between">
                                       <span className="text-xs text-gray-500">GeTradie Fee</span>
@@ -281,7 +289,7 @@ useEffect(() => {
                                   </div>
                                 ) : (
                                   <p className="text-xs text-blue-600 mt-0.5">
-                                    The lock amount is held securely by GeTradie. Collect the remaining balance directly from the homeowner after job completion.
+                                    Lock amount is held securely by GeTradie until homeowner confirms job completion. Collect the remaining balance directly from the homeowner after the job.
                                   </p>
                                 )}
                               </div>
