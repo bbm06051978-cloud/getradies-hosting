@@ -113,8 +113,9 @@ export async function GET(req: NextRequest) {
       include: {
         job: {
           include: {
-            user: { select: { id: true, name: true, suburb: true, state: true } },
+            user: { select: { id: true, name: true, suburb: true, state: true, phone: true, email: true } },
           },
+          select: { id: true, title: true, trade: true, suburb: true, state: true, description: true },
         },
         payment: {
           select: {

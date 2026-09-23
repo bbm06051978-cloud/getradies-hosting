@@ -24,7 +24,7 @@ type MyQuote = {
 };
 type Booking = {
   id: string; scheduledAt: string; status: string; totalAmount: number;
-  job: { id: string; title: string; trade: string; suburb: string; state: string; description?: string; user: UserRef };
+  job: { id: string; title: string; trade: string; suburb: string; state: string; description?: string; user: UserRef & { phone?: string; email?: string } };
   payment?: { amount: number; getradieFee: number; tradieEarning: number; status: string };
 };
 
@@ -402,7 +402,19 @@ function TradieJobsPageInner() {
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Location</p>
                                       <p className="text-sm text-gray-700">{booking.job.suburb}, {booking.job.state}</p>
                                     </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Homeowner</p>
+                                      <p className="text-sm text-gray-700">{booking.job.user.name}</p>
+                                      {booking.job.user.phone && <a href={`tel:${booking.job.user.phone}`} className="text-xs text-blue-600 block">{booking.job.user.phone}</a>}
+                                      {booking.job.user.email && <a href={`mailto:${booking.job.user.email}`} className="text-xs text-blue-600 block">{booking.job.user.email}</a>}
+                                    </div>
                                   </div>
+                                  {booking.job.description && (
+                                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Job Description</p>
+                                      <p className="text-sm text-gray-700">{booking.job.description}</p>
+                                    </div>
+                                  )}
                                   <div className="flex gap-2 pt-1 flex-wrap">
                                     {showConfirm && (
                                       <button onClick={(e) => { e.stopPropagation(); handleConfirmBooking(booking.id); }} disabled={busy === booking.id}
@@ -487,7 +499,19 @@ function TradieJobsPageInner() {
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Location</p>
                                       <p className="text-sm text-gray-700">{booking.job.suburb}, {booking.job.state}</p>
                                     </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Homeowner</p>
+                                      <p className="text-sm text-gray-700">{booking.job.user.name}</p>
+                                      {booking.job.user.phone && <a href={`tel:${booking.job.user.phone}`} className="text-xs text-blue-600 block">{booking.job.user.phone}</a>}
+                                      {booking.job.user.email && <a href={`mailto:${booking.job.user.email}`} className="text-xs text-blue-600 block">{booking.job.user.email}</a>}
+                                    </div>
                                   </div>
+                                  {booking.job.description && (
+                                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Job Description</p>
+                                      <p className="text-sm text-gray-700">{booking.job.description}</p>
+                                    </div>
+                                  )}
                                   {booking.payment && (
                                     <div className="bg-green-50 border border-green-100 rounded-xl p-4">
                                       <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Lock Amount Payout</p>
