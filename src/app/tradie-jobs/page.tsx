@@ -521,17 +521,10 @@ function TradieJobsPageInner() {
                                         </span>
                                       </div>
                                       <div className="space-y-1">
-                                        <div className="flex justify-between text-sm">
-                                          <span className="text-gray-500">Total Quote</span>
-                                          <span className="font-semibold text-gray-700">${booking.totalAmount.toLocaleString()} AUD</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                          <span className="text-gray-500">🔒 Lock Amount (held by GeTradie)</span>
-                                          <span className="font-semibold text-blue-700">${booking.payment.amount} AUD</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                          <span className="text-gray-500">💳 Collected from homeowner</span>
-                                          <span className="font-semibold text-green-700">${booking.totalAmount - booking.payment.amount} AUD</span>
+                                        <div className="space-y-0.5 text-xs">
+                                          <p className="text-gray-600">Total Quote: <span className="font-bold text-gray-800">${booking.totalAmount.toLocaleString()} AUD</span></p>
+                                          <p className="text-gray-600">🔒 Lock Amount: <span className="font-bold text-blue-700">${booking.payment.amount} AUD</span></p>
+                                          <p className="text-gray-600">💳 Collected from homeowner: <span className="font-bold text-green-700">${booking.totalAmount - booking.payment.amount} AUD</span></p>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                           <span className="text-gray-500">GeTradie Fee</span>
