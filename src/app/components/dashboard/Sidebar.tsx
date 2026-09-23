@@ -188,22 +188,21 @@ export function Sidebar() {
           </button>
           <NavContent/>
         </aside>
-      {/* Help & Support Button - moved inside */}
-      {false && {/* placeholder */}}
-    <>
+      )}
+
       {/* Help & Support Button */}
       <button
         onClick={() => setShowHelp(true)}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-slate-50 transition-colors w-full ${collapsed && typeof window !== "undefined" && window.innerWidth >= 768 ? "justify-center" : ""}`}
+        className="fixed bottom-6 left-4 flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-700 hover:bg-slate-100 transition-colors bg-white shadow-sm border border-gray-100"
       >
-        <HelpCircle size={18} className="shrink-0 text-gray-500" />
-        {(!collapsed) && <span>Help & Support</span>}
+        <HelpCircle size={16} className="text-gray-500" />
+        <span className="text-xs font-medium">Help & Support</span>
       </button>
 
       {/* Help Modal */}
       {showHelp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowHelp(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900">Help & Support</h2>
               <button onClick={() => setShowHelp(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
@@ -211,38 +210,25 @@ export function Sidebar() {
             <div className="space-y-3">
               <a href="mailto:support@getradie.com.au" className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
                 <span className="text-2xl">📧</span>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">Email Support</p>
-                  <p className="text-xs text-gray-500">support@getradie.com.au</p>
-                </div>
+                <div><p className="font-semibold text-gray-900 text-sm">Email Support</p><p className="text-xs text-gray-500">support@getradie.com.au</p></div>
               </a>
               <a href="/help" target="_blank" className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl hover:bg-orange-100 transition-colors">
                 <span className="text-2xl">📖</span>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">Help Centre</p>
-                  <p className="text-xs text-gray-500">Browse FAQs and guides</p>
-                </div>
+                <div><p className="font-semibold text-gray-900 text-sm">Help Centre</p><p className="text-xs text-gray-500">Browse FAQs and guides</p></div>
               </a>
               <a href="/how-it-works" target="_blank" className="flex items-center gap-3 p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
                 <span className="text-2xl">🎯</span>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">How GeTradie Works</p>
-                  <p className="text-xs text-gray-500">Step-by-step guide</p>
-                </div>
+                <div><p className="font-semibold text-gray-900 text-sm">How GeTradie Works</p><p className="text-xs text-gray-500">Step-by-step guide</p></div>
               </a>
               <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
                 <span className="text-2xl">⏰</span>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">Support Hours</p>
-                  <p className="text-xs text-gray-500">Mon–Fri 9am–5pm AEST</p>
-                </div>
+                <div><p className="font-semibold text-gray-900 text-sm">Support Hours</p><p className="text-xs text-gray-500">Mon–Fri 9am–5pm AEST</p></div>
               </div>
             </div>
-            <button onClick={() => setShowHelp(false)} className="mt-5 w-full bg-blue-900 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-800 transition-colors">
-              Close
-            </button>
+            <button onClick={() => setShowHelp(false)} className="mt-5 w-full bg-blue-900 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-800 transition-colors">Close</button>
           </div>
         </div>
       )}
+    </>
   );
 }
