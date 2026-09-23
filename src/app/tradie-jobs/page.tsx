@@ -433,11 +433,7 @@ function TradieJobsPageInner() {
                                         <MessageSquare size={13}/> Message
                                       </button>
                                     </Link>
-                                    <Link href={`/tradie-bookings?bookingId=${booking.id}`}>
-                                      <button className="flex items-center gap-1.5 text-xs font-semibold text-orange-500 border border-orange-200 hover:border-orange-400 px-4 py-2 rounded-xl transition-colors">
-                                        Manage <ChevronRight size={13}/>
-                                      </button>
-                                    </Link>
+                                    
                                   </div>
                                 </div>
                               </div>
@@ -532,11 +528,7 @@ function TradieJobsPageInner() {
                                     </div>
                                   )}
                                   <div className="flex gap-2 pt-1">
-                                    <Link href={`/tradie-bookings?bookingId=${booking.id}`}>
-                                      <button className="text-xs font-semibold text-gray-500 border border-gray-200 px-4 py-2 rounded-xl hover:border-gray-400 transition-colors">
-                                        View Booking
-                                      </button>
-                                    </Link>
+                                    
                                   </div>
                                 </div>
                               </div>
