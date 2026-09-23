@@ -496,6 +496,10 @@ function TradieJobsPageInner() {
                                       <p className="text-sm text-gray-700">{booking.job.suburb}, {booking.job.state}</p>
                                     </div>
                                     <div>
+                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Scheduled</p>
+                                      <p className="text-sm text-gray-700">{new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}</p>
+                                    </div>
+                                    <div>
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Homeowner</p>
                                       <p className="text-sm text-gray-700">{booking.job.user.name}</p>
                                       {booking.job.user.phone && <a href={`tel:${booking.job.user.phone}`} className="text-xs text-blue-600 block">{booking.job.user.phone}</a>}
