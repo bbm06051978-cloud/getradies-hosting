@@ -301,8 +301,21 @@ function MyJobsPageInner() {
                                 Scheduled: {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
                               </p>
                             )}
-                            {booking.totalAmount > 0 && (
-                              <p className="text-xs font-bold text-green-700 mt-1">Lock Amount: ${booking.totalAmount} AUD</p>
+                            {booking.totalAmount > 0 && acceptedQuote && (
+                              <div className="mt-2 bg-white/60 rounded-lg p-2 space-y-1 border border-orange-100">
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-gray-500">Total Quote</span>
+                                  <span className="font-bold text-gray-800">${acceptedQuote.amount.toLocaleString()} AUD</span>
+                                </div>
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-gray-500">🔒 Lock Amount (held by GeTradie)</span>
+                                  <span className="font-bold text-blue-700">${booking.totalAmount.toLocaleString()} AUD</span>
+                                </div>
+                                <div className="flex justify-between text-xs border-t border-orange-100 pt-1">
+                                  <span className="text-gray-500">💳 Pay tradie directly</span>
+                                  <span className="font-bold text-green-700">${(acceptedQuote.amount - booking.totalAmount).toLocaleString()} AUD</span>
+                                </div>
+                              </div>
                             )}
                           </div>
                         )}
