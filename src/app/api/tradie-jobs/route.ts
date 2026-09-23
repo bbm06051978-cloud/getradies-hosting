@@ -112,10 +112,10 @@ export async function GET(req: NextRequest) {
       orderBy: { scheduledAt: "asc" },
       include: {
         job: {
-          include: {
+          select: {
+            id: true, title: true, trade: true, suburb: true, state: true, description: true,
             user: { select: { id: true, name: true, suburb: true, state: true, phone: true, email: true } },
           },
-          select: { id: true, title: true, trade: true, suburb: true, state: true, description: true },
         },
         payment: {
           select: {
