@@ -188,7 +188,8 @@ export function Sidebar() {
           </button>
           <NavContent/>
         </aside>
-      )}
+      {/* Help & Support Button - moved inside */}
+      {false && {/* placeholder */}}
     <>
       {/* Help & Support Button */}
       <button
@@ -243,6 +244,5 @@ export function Sidebar() {
           </div>
         </div>
       )}
-    </>
   );
 }
