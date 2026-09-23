@@ -247,14 +247,14 @@ useEffect(() => {
                                   </div>
                                   <p className="text-sm font-semibold text-gray-900">{booking.homeowner?.name || "Unknown"}</p>
                                 </div>
-                                {booking.homeowner?.phone && (
+                                {(booking.status === "CONFIRMED" || booking.status === "PENDING_CONFIRMATION") && booking.homeowner?.phone && (
                                   <a href={`tel:${booking.homeowner.phone}`} className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
-                                    <Phone size={14} />{booking.homeowner.phone}
+                                    <Phone size={14} />📞 Call Homeowner
                                   </a>
                                 )}
-                                {booking.homeowner?.email && (
-                                  <a href={`mailto:${booking.homeowner.email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
-                                    <Mail size={14} />{booking.homeowner.email}
+                                {false && (
+                                  <a href="#" className="hidden">
+                                    <Mail size={14}} />{booking.homeowner.email}
                                   </a>
                                 )}
                               </div>
