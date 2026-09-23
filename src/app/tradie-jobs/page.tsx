@@ -514,7 +514,12 @@ function TradieJobsPageInner() {
                                   )}
                                   {booking.payment && (
                                     <div className="bg-green-50 border border-green-100 rounded-xl p-4">
-                                      <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-2">Payment Summary</p>
+                                      <div className="flex items-center justify-between mb-2">
+                                        <p className="text-xs font-bold text-green-700 uppercase tracking-widest">Payment Summary</p>
+                                        <span className="text-xs font-bold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full">
+                                          🏆 {booking.payment.amount >= 500 ? 200 : booking.payment.amount >= 250 ? 75 : booking.payment.amount >= 100 ? 25 : 10} pts earned
+                                        </span>
+                                      </div>
                                       <div className="space-y-1">
                                         <div className="flex justify-between text-sm">
                                           <span className="text-gray-500">Total Quote</span>
