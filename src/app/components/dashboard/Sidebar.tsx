@@ -18,11 +18,11 @@ const myAccount = [
   { label: "Profile",          icon: User,        href: "/profile"       },
   { label: "Payment Methods",  icon: CreditCard,  href: "#"              },
   { label: "Notifications",    icon: Bell,        href: "/notifications" },
-  { label: "Help & Support",   icon: HelpCircle,  href: "/help"          },
 ];
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
@@ -189,6 +189,61 @@ export function Sidebar() {
           <NavContent/>
         </aside>
       )}
+    <>
+      {/* Help & Support Button */}
+      <button
+        onClick={() => setShowHelp(true)}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-slate-50 transition-colors w-full ${collapsed && typeof window !== "undefined" && window.innerWidth >= 768 ? "justify-center" : ""}`}
+      >
+        <HelpCircle size={18} className="shrink-0 text-gray-500" />
+        {(!collapsed) && <span>Help & Support</span>}
+      </button>
+
+      {/* Help Modal */}
+      {showHelp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-900">Help & Support</h2>
+              <button onClick={() => setShowHelp(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+            </div>
+            <div className="space-y-3">
+              <a href="mailto:support@getradie.com.au" className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
+                <span className="text-2xl">📧</span>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Email Support</p>
+                  <p className="text-xs text-gray-500">support@getradie.com.au</p>
+                </div>
+              </a>
+              <a href="/help" target="_blank" className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl hover:bg-orange-100 transition-colors">
+                <span className="text-2xl">📖</span>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Help Centre</p>
+                  <p className="text-xs text-gray-500">Browse FAQs and guides</p>
+                </div>
+              </a>
+              <a href="/how-it-works" target="_blank" className="flex items-center gap-3 p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
+                <span className="text-2xl">🎯</span>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">How GeTradie Works</p>
+                  <p className="text-xs text-gray-500">Step-by-step guide</p>
+                </div>
+              </a>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                <span className="text-2xl">⏰</span>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Support Hours</p>
+                  <p className="text-xs text-gray-500">Mon–Fri 9am–5pm AEST</p>
+                </div>
+              </div>
+            </div>
+            <button onClick={() => setShowHelp(false)} className="mt-5 w-full bg-blue-900 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-800 transition-colors">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </>
     </>
   );
 }
