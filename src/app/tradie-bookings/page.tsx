@@ -236,14 +236,6 @@ useEffect(() => {
                       {isExpanded && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
                           className="border-t border-gray-100 bg-slate-50 px-5 py-4">
-                          {/* Payment Summary - Top */}
-                          {booking.payment && (
-                            <div className="mb-4 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 flex flex-wrap gap-4">
-                              <div><p className="text-xs text-gray-500">Total Quote</p><p className="text-sm font-bold text-gray-900">${booking.totalAmount.toLocaleString()} AUD</p></div>
-                              <div><p className="text-xs text-gray-500">🔒 Lock (held by GeTradie)</p><p className="text-sm font-bold text-blue-700">${booking.payment.amount} AUD</p></div>
-                              <div><p className="text-xs text-gray-500">💳 Collect from homeowner</p><p className="text-sm font-bold text-green-700">${booking.totalAmount - booking.payment.amount} AUD</p></div>
-                            </div>
-                          )}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Homeowner Contact</p>

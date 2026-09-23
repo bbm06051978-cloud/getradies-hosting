@@ -385,6 +385,13 @@ function TradieJobsPageInner() {
                           <div style={{ maxHeight: isExpanded ? "800px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
                                 className="border-t border-orange-100 bg-orange-50/30">
                                 <div className="p-5 space-y-4">
+                                  {booking.payment && (
+                                    <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 flex flex-wrap gap-4 mb-3">
+                                      <div><p className="text-xs text-gray-500">Total Quote</p><p className="text-sm font-bold text-gray-900">${booking.totalAmount.toLocaleString()} AUD</p></div>
+                                      <div><p className="text-xs text-gray-500">🔒 Lock (held by GeTradie)</p><p className="text-sm font-bold text-blue-700">${booking.payment.amount} AUD</p></div>
+                                      <div><p className="text-xs text-gray-500">💳 Collect from homeowner</p><p className="text-sm font-bold text-green-700">${booking.totalAmount - booking.payment.amount} AUD</p></div>
+                                    </div>
+                                  )}
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Scheduled</p>
