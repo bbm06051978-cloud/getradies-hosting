@@ -503,9 +503,7 @@ function TradieJobsPageInner() {
                                     <div>
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Homeowner</p>
                                       <p className="text-sm text-gray-700">{booking.job.user.name}</p>
-                                      {(booking.status === "CONFIRMED" || booking.status === "PENDING_CONFIRMATION") && booking.job.user.phone && (
-                                        <a href={`tel:${booking.job.user.phone}`} className="text-xs text-blue-600 block">📞 Call Homeowner</a>
-                                      )}
+                                      
                                     </div>
                                   </div>
                                   {booking.job.description && (
