@@ -107,7 +107,7 @@ function MyJobsPageInner() {
     } catch {} finally { setBusy(null); }
   };
 
-  const handleCancel = async (bookingId: string) => {
+  const handleCancelBooking = async (bookingId: string) => {
     if (!confirm("Are you sure you want to cancel this booking? The job will be reopened for other tradies.")) return;
     try {
       const res = await fetch("/api/bookings", {
@@ -382,7 +382,7 @@ function MyJobsPageInner() {
                           {/* Cancel Booking */}
                           {showCancel && (
                             <button
-                              onClick={(e) => { e.stopPropagation(); handleCancel(booking.id); }}
+                              onClick={(e) => { e.stopPropagation(); handleCancelBooking(booking.id); }}
                               className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-2 rounded-lg transition-colors border border-red-200">
                               ❌ Cancel Booking
                             </button>
