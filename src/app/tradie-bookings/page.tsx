@@ -252,11 +252,7 @@ useEffect(() => {
                                     <Phone size={14} />📞 Call Homeowner
                                   </a>
                                 )}
-                                {false && (
-                                  <a href="#" className="hidden">
-                                    <Mail size={14}} />{booking.homeowner.email}
-                                  </a>
-                                )}
+                                
                               </div>
                             </div>
                             <div>
