@@ -114,22 +114,38 @@ export async function PATCH(req: NextRequest) {
   }
 
   if (action === "cancel") {
+    // Get booking with payment and job info
+    const bookingToCancel = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: { payment: true, job: { select: { id: true } } },
+    });
+
+    if (!bookingToCancel) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+
+    // Only allow cancel on PENDING or CONFIRMED
+    if (!["PENDING", "CONFIRMED"].includes(bookingToCancel.status)) {
+      return NextResponse.json({ error: "Cannot cancel at this stage." }, { status: 400 });
+    }
+
+    // Cancel booking
     await prisma.booking.update({
       where: { id: bookingId },
       data: { status: "CANCELLED" },
     });
 
-   const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      select: { jobId: true },
+    // Reopen job so other tradies can quote
+    await prisma.job.update({
+      where: { id: bookingToCancel.job.id },
+      data: { status: "OPEN" },
     });
-    if (booking) {
-      await prisma.job.update({
-        where: { id: booking.jobId },
-        data: { status: "CANCELLED" },
-      });
-    }
-    return NextResponse.json({ success: true });
+
+    // Reset accepted quote back to PENDING so others can quote
+    await prisma.quote.updateMany({
+      where: { bookingId: bookingId },
+      data: { status: "PENDING" },
+    });
+
+    return NextResponse.json({ success: true, message: "Booking cancelled. Job reopened." });
   }
 
   if (action === "reschedule" && scheduledAt) {

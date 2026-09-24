@@ -107,6 +107,19 @@ function TradieJobsPageInner() {
     } catch {} finally { setBusy(null); }
   };
 
+  const handleCancelBooking = async (bookingId: string) => {
+    if (!confirm("Are you sure you want to cancel this booking? The job will be reopened for other tradies.")) return;
+    try {
+      const res = await fetch("/api/tradie-bookings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId, action: "cancel" }),
+      });
+      if (res.ok) { load(); }
+      else { alert("Failed to cancel booking."); }
+    } catch { alert("Something went wrong."); }
+  };
+
   const handleMarkDone = async (bookingId: string) => {
     setBusy(bookingId);
     try {
@@ -431,6 +444,12 @@ function TradieJobsPageInner() {
                                       <button onClick={(e) => { e.stopPropagation(); handleMarkDone(booking.id); }} disabled={busy === booking.id}
                                         className="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
                                         <CheckCircle size={13}/>{busy === booking.id ? "Submitting..." : "Mark Job Done"}
+                                      </button>
+                                    )}
+                                    {(booking.status === "PENDING" || booking.status === "CONFIRMED") && (
+                                      <button onClick={(e) => { e.stopPropagation(); handleCancelBooking(booking.id); }}
+                                        className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-4 py-2 rounded-xl transition-colors border border-red-200">
+                                        ❌ Cancel
                                       </button>
                                     )}
                                     <Link href={`/tradie-chats?jobId=${booking.job.id}&receiverId=${booking.job.user.id}&receiverName=${encodeURIComponent(booking.job.user.name)}&jobTitle=${encodeURIComponent(booking.job.title)}&trade=${encodeURIComponent(booking.job.trade)}`}>

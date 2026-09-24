@@ -107,6 +107,19 @@ function MyJobsPageInner() {
     } catch {} finally { setBusy(null); }
   };
 
+  const handleCancel = async (bookingId: string) => {
+    if (!confirm("Are you sure you want to cancel this booking? The job will be reopened for other tradies.")) return;
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId, action: "cancel" }),
+      });
+      if (res.ok) { fetchJobs(); }
+      else { alert("Failed to cancel booking."); }
+    } catch { alert("Something went wrong."); }
+  };
+
   const handleDispute = async (bookingId: string) => {
     setBusy(bookingId);
     try {
@@ -205,6 +218,7 @@ function MyJobsPageInner() {
                 const isExpanded    = expandedId === job.id;
                 const showConfirmDone = booking?.status === "PENDING_CONFIRMATION";
                 const showDispute     = booking?.status === "PENDING_CONFIRMATION";
+                const showCancel      = booking?.status === "PENDING" || booking?.status === "CONFIRMED";
                 const showChat        = booking && !["COMPLETED", "CANCELLED"].includes(booking.status);
 
                 return (
@@ -363,6 +377,15 @@ function MyJobsPageInner() {
                                 ⭐ Leave Review
                               </button>
                             )
+                          )}
+
+                          {/* Cancel Booking */}
+                          {showCancel && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleCancel(booking.id); }}
+                              className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-2 rounded-lg transition-colors border border-red-200">
+                              ❌ Cancel Booking
+                            </button>
                           )}
 
                           {/* Raise Dispute */}
