@@ -141,7 +141,7 @@ export async function PATCH(req: NextRequest) {
 
     // Reset accepted quote back to PENDING so others can quote
     await prisma.quote.updateMany({
-      where: { bookingId: bookingId },
+      where: { jobId: bookingToCancel.job.id },
       data: { status: "PENDING" },
     });
 
