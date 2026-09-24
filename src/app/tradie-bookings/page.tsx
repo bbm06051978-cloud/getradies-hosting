@@ -247,7 +247,7 @@ useEffect(() => {
                                   </div>
                                   <p className="text-sm font-semibold text-gray-900">{booking.homeowner?.name || "Unknown"}</p>
                                 </div>
-                                {(booking.status === "CONFIRMED" || booking.status === "PENDING_CONFIRMATION") && booking.homeowner?.phone && (
+                                {(booking.status === "CONFIRMED" || booking.status === "PENDING" || booking.status === "PENDING_CONFIRMATION") && booking.homeowner?.phone && (
                                   <a href={`tel:${booking.homeowner.phone}`} className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
                                     <Phone size={14} />📞 Call Homeowner
                                   </a>
