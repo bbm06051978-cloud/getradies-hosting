@@ -297,6 +297,9 @@ function MyJobsPageInner() {
                             <p className="text-xs font-bold text-orange-700 uppercase tracking-widest mb-2">Booked Tradie</p>
                             <p className="text-sm font-semibold text-gray-800"><a href={`/tradie/${booking.tradieProfileId}`} className="text-blue-700 hover:underline">{booking.tradieProfile.businessName}</a></p>
                             <p className="text-xs text-gray-500">{booking.tradieProfile.specialty}</p>
+                            {(booking.status === "CONFIRMED" || booking.status === "PENDING" || booking.status === "PENDING_CONFIRMATION") && booking.tradieProfile.user?.phone && (
+                              <a href={`tel:${booking.tradieProfile.user.phone}`} className="text-xs text-blue-600 mt-1 block">📞 Call Tradie</a>
+                            )}
                             {booking.scheduledAt && (
                               <p className="text-xs text-gray-600 mt-1">
                                 Scheduled: {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
