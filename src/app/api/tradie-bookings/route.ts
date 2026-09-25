@@ -131,6 +131,21 @@ if (action === "confirm") {
     return NextResponse.json({ success: true });
   }
 
+  if (action === "cancel") {
+    const bookingToCancel = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: { job: { select: { id: true } } },
+    });
+    if (!bookingToCancel) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    if (!["PENDING", "CONFIRMED"].includes(bookingToCancel.status)) {
+      return NextResponse.json({ error: "Cannot cancel at this stage." }, { status: 400 });
+    }
+    await prisma.booking.update({ where: { id: bookingId }, data: { status: "CANCELLED" } });
+    await prisma.job.update({ where: { id: bookingToCancel.job.id }, data: { status: "OPEN" } });
+    await prisma.quote.updateMany({ where: { jobId: bookingToCancel.job.id }, data: { status: "PENDING" } });
+    return NextResponse.json({ success: true, message: "Booking cancelled. Job reopened." });
+  }
+
   return NextResponse.json({ error: "Invalid action." }, { status: 400 });
 }
 
