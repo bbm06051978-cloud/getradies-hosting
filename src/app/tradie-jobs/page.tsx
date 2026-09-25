@@ -115,7 +115,7 @@ function TradieJobsPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId, action: "cancel" }),
       });
-      if (res.ok) { load(); }
+      if (res.ok) { setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "CANCELLED" } : b)); }
       else { alert("Failed to cancel booking."); }
     } catch { alert("Something went wrong."); }
   };
