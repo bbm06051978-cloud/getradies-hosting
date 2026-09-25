@@ -143,6 +143,25 @@ if (action === "confirm") {
     await prisma.booking.update({ where: { id: bookingId }, data: { status: "CANCELLED" } });
     await prisma.job.update({ where: { id: bookingToCancel.job.id }, data: { status: "OPEN" } });
     await prisma.quote.updateMany({ where: { jobId: bookingToCancel.job.id }, data: { status: "PENDING" } });
+
+    // Notify homeowner
+    const fullBooking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: {
+        job: { select: { id: true, title: true, userId: true } },
+        tradieProfile: { select: { businessName: true } },
+      },
+    });
+    if (fullBooking) {
+      await prisma.notification.create({
+        data: {
+          userId: fullBooking.job.userId,
+          title: "Booking Cancelled by Tradie",
+          message: `${fullBooking.tradieProfile.businessName} has cancelled the booking for "${fullBooking.job.title}". Your job has been reopened and you can receive new quotes.`,
+        },
+      });
+    }
+
     return NextResponse.json({ success: true, message: "Booking cancelled. Job reopened." });
   }
 
