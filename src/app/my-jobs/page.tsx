@@ -115,7 +115,7 @@ function MyJobsPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId, action: "cancel" }),
       });
-      if (res.ok) { fetchJobs(); }
+      if (res.ok) { setJobs(prev => prev.map(j => ({ ...j, bookings: j.bookings.map(b => b.id === bookingId ? { ...b, status: "CANCELLED" } : b) }))); }
       else { alert("Failed to cancel booking."); }
     } catch { alert("Something went wrong."); }
   };
