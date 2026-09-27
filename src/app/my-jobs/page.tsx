@@ -52,7 +52,7 @@ const getJobTab = (job: Job): "open" | "inprogress" | "closed" => {
   const bookingStatus = job.bookings[0]?.status;
   if (bookingStatus === "COMPLETED" || bookingStatus === "DISPUTED") return "closed";
   if (bookingStatus === "CANCELLED" && job.status === "OPEN") return "open";
-  if (bookingStatus === "CANCELLED") return "closed";
+  if (bookingStatus === "CANCELLED" && job.status !== "OPEN") return "closed";
   if (job.status === "COMPLETED" || job.status === "CANCELLED" || job.status === "DISPUTED") return "closed";
   if (bookingStatus === "PENDING_CONFIRMATION" || bookingStatus === "CONFIRMED" || bookingStatus === "PENDING" || job.status === "IN_PROGRESS") return "inprogress";
   if (job.status === "BOOKED") return "inprogress";
