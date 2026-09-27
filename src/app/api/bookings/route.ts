@@ -136,16 +136,10 @@ export async function PATCH(req: NextRequest) {
       data: { status: "CANCELLED" },
     });
 
-    // Reopen job so other tradies can quote
+    // HW cancelled — close the job
     await prisma.job.update({
       where: { id: bookingToCancel.job.id },
-      data: { status: "OPEN" },
-    });
-
-    // Reset accepted quote back to PENDING so others can quote
-    await prisma.quote.updateMany({
-      where: { jobId: bookingToCancel.job.id },
-      data: { status: "PENDING" },
+      data: { status: "CANCELLED" },
     });
 
     // Stripe refund
@@ -177,7 +171,7 @@ export async function PATCH(req: NextRequest) {
         data: {
           userId: fullBooking.tradieProfile.user.id,
           title: "Booking Cancelled by Homeowner",
-          message: `The homeowner has cancelled the booking for "${fullBooking.job.title}". The job has been reopened.`,
+          message: `The homeowner has cancelled the booking for "${fullBooking.job.title}".`,
         },
       });
 
