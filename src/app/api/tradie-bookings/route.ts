@@ -153,6 +153,16 @@ if (action === "confirm") {
       if (payment && payment.stripePaymentIntentId) {
         await stripe.refunds.create({ payment_intent: payment.stripePaymentIntentId });
         await prisma.payment.update({ where: { bookingId }, data: { status: "refunded" } });
+        // Notify homeowner of refund
+        if (fullBooking) {
+          await prisma.notification.create({
+            data: {
+              userId: fullBooking.job.userId,
+              title: "Lock Amount Refunded",
+              message: `Your lock amount of $${payment.amount} AUD for "${fullBooking.job.title}" has been refunded to your card. It may take 3-5 business days to appear.`,
+            },
+          });
+        }
       }
     } catch (refundErr) {
       console.error("Stripe refund error:", refundErr);
