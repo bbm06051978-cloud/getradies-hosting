@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-06-24.dahlia" });
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -144,6 +147,52 @@ export async function PATCH(req: NextRequest) {
       where: { jobId: bookingToCancel.job.id },
       data: { status: "PENDING" },
     });
+
+    // Stripe refund
+    try {
+      const payment = await prisma.payment.findUnique({ where: { bookingId } });
+      if (payment && payment.stripePaymentIntentId) {
+        await stripe.refunds.create({ payment_intent: payment.stripePaymentIntentId });
+        await prisma.payment.update({ where: { bookingId }, data: { status: "refunded" } });
+      }
+    } catch (refundErr) {
+      console.error("Stripe refund error:", refundErr);
+    }
+
+    // Get full booking details for notifications
+    const fullBooking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: {
+        job: { select: { id: true, title: true, userId: true } },
+        tradieProfile: {
+          select: { businessName: true, user: { select: { id: true } } },
+        },
+        payment: true,
+      },
+    });
+
+    if (fullBooking) {
+      // Notify tradie
+      await prisma.notification.create({
+        data: {
+          userId: fullBooking.tradieProfile.user.id,
+          title: "Booking Cancelled by Homeowner",
+          message: `The homeowner has cancelled the booking for "${fullBooking.job.title}". The job has been reopened.`,
+        },
+      });
+
+      // Notify HW of refund if applicable
+      const payment = await prisma.payment.findUnique({ where: { bookingId } });
+      if (payment && payment.status === "refunded") {
+        await prisma.notification.create({
+          data: {
+            userId: fullBooking.job.userId,
+            title: "Lock Amount Refunded",
+            message: `Your lock amount of $${payment.amount} AUD for "${fullBooking.job.title}" has been refunded to your card. It may take 3-5 business days to appear.`,
+          },
+        });
+      }
+    }
 
     return NextResponse.json({ success: true, message: "Booking cancelled. Job reopened." });
   }
