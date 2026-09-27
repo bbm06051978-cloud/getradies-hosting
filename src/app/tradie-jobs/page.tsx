@@ -52,6 +52,7 @@ function TradieJobsPageInner() {
   const [tab, setTab]                             = useState<"available" | "active" | "closed">("available");
   const [availableJobs, setAvailableJobs]         = useState<AvailableJob[]>([]);
   const [myQuotes, setMyQuotes]                   = useState<MyQuote[]>([]);
+  const [cancelledBookingJobIds, setCancelledBookingJobIds] = useState<string[]>([]);
   const [bookings, setBookings]                   = useState<Booking[]>([]);
   const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
   const [loading, setLoading]                     = useState(true);
@@ -86,6 +87,7 @@ function TradieJobsPageInner() {
         setAvailableJobs(jobs);
         resolveJobPhotos(jobs);
         setMyQuotes(data.myQuotes || []);
+        setCancelledBookingJobIds((data.cancelledBookings || []).map((b: any) => b.job.id));
         setBookings(data.activeBookings || []);
         setCompletedBookings(data.completedBookings || []);
       } catch {} finally { setLoading(false); }
@@ -132,7 +134,7 @@ function TradieJobsPageInner() {
     } catch {} finally { setBusy(null); }
   };
 
-  const activeQuotes   = myQuotes.filter(q => q.status === "PENDING" && !bookings.some(b => b.job?.id === q.job.id && b.status === "CANCELLED"));
+  const activeQuotes   = myQuotes.filter(q => q.status === "PENDING" && !cancelledBookingJobIds.includes(q.job.id));
   const activeBookings = bookings.filter(b => !["COMPLETED", "CANCELLED", "DISPUTED"].includes(b.status));
   const closedBookings = [...bookings, ...completedBookings].filter(b => ["COMPLETED", "CANCELLED", "DISPUTED"].includes(b.status));
   const rejectedQuotes = myQuotes.filter(q => q.status === "REJECTED");

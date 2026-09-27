@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
 
   const serviceRadius = tradieProfile.serviceRadius || 30;
 
-  const [availableJobs, myQuotes, activeBookings, completedBookings] = await Promise.all([
+  const [availableJobs, myQuotes, cancelledBookings, activeBookings, completedBookings] = await Promise.all([
 
     // Available job leads — fetch all in state, filter by distance after
     prisma.job.findMany({
@@ -101,6 +101,12 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+    }),
+
+    // Cancelled bookings (to filter out re-opened quotes)
+    prisma.booking.findMany({
+      where: { tradieProfileId: tradieProfile.id, status: "CANCELLED" },
+      select: { job: { select: { id: true } } },
     }),
 
     // Active bookings
@@ -193,6 +199,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     availableJobs: filteredJobs,
     myQuotes,
+    cancelledBookings,
     activeBookings,
     completedBookings,
     serviceArea: suburbsToSearch,
