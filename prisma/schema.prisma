@@ -164,8 +164,9 @@ model Payment {
   method        String?
   paidAt        DateTime?
   createdAt     DateTime  @default(now())
-  getradieFee   Float?    @default(0)
-  tradieEarning Float?    @default(0)
+  getradieFee          Float?    @default(0)
+  tradieEarning        Float?    @default(0)
+  stripePaymentIntentId String?
   booking       Booking   @relation(fields: [bookingId], references: [id])
 }
 

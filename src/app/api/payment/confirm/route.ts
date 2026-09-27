@@ -88,13 +88,14 @@ export async function POST(req: NextRequest) {
       // Create payment record
       await tx.payment.create({
         data: {
-          bookingId:     newBooking.id,
-          amount:        lockAmount,
-          status:        "paid",
-          method:        "card",
-          paidAt:        new Date(),
-          getradieFee:   getradieFee,
-          tradieEarning: tradieEarning,
+          bookingId:            newBooking.id,
+          amount:               lockAmount,
+          status:               "paid",
+          method:               "card",
+          paidAt:               new Date(),
+          getradieFee:          getradieFee,
+          tradieEarning:        tradieEarning,
+          stripePaymentIntentId: paymentIntentId,
         },
       });
 

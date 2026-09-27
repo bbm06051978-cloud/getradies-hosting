@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-06-24.dahlia" });
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -143,6 +146,17 @@ if (action === "confirm") {
     await prisma.booking.update({ where: { id: bookingId }, data: { status: "CANCELLED" } });
     await prisma.job.update({ where: { id: bookingToCancel.job.id }, data: { status: "OPEN" } });
     await prisma.quote.updateMany({ where: { jobId: bookingToCancel.job.id }, data: { status: "PENDING" } });
+
+    // Refund lock amount via Stripe
+    try {
+      const payment = await prisma.payment.findUnique({ where: { bookingId } });
+      if (payment && payment.stripePaymentIntentId) {
+        await stripe.refunds.create({ payment_intent: payment.stripePaymentIntentId });
+        await prisma.payment.update({ where: { bookingId }, data: { status: "refunded" } });
+      }
+    } catch (refundErr) {
+      console.error("Stripe refund error:", refundErr);
+    }
 
     // Notify homeowner
     const fullBooking = await prisma.booking.findUnique({
