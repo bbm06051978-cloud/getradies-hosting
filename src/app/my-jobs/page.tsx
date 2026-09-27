@@ -35,6 +35,7 @@ type Job = {
 const getStatusBadge = (job: Job) => {
   const bookingStatus = job.bookings[0]?.status;
   if (bookingStatus === "DISPUTED")             return { label: "⚠️ Disputed",              color: "bg-red-100 text-red-700" };
+  if (bookingStatus === "CANCELLED" && job.status === "OPEN") return { label: "🔓 Reopened — Accepting Quotes", color: "bg-blue-100 text-blue-700" };
   if (bookingStatus === "CANCELLED")            return { label: "❌ Cancelled",              color: "bg-gray-100 text-gray-600" };
   if (bookingStatus === "COMPLETED")            return { label: "✅ Completed",              color: "bg-green-100 text-green-700" };
   if (bookingStatus === "PENDING_CONFIRMATION") return { label: "🔔 Awaiting Your Confirmation", color: "bg-purple-100 text-purple-700" };
