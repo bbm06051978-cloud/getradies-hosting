@@ -132,7 +132,7 @@ function TradieJobsPageInner() {
     } catch {} finally { setBusy(null); }
   };
 
-  const activeQuotes   = myQuotes.filter(q => q.status === "PENDING");
+  const activeQuotes   = myQuotes.filter(q => q.status === "PENDING" && !bookings.some(b => b.jobId === q.jobId && b.status === "CANCELLED"));
   const activeBookings = bookings.filter(b => !["COMPLETED", "CANCELLED", "DISPUTED"].includes(b.status));
   const closedBookings = [...bookings, ...completedBookings].filter(b => ["COMPLETED", "CANCELLED", "DISPUTED"].includes(b.status));
   const rejectedQuotes = myQuotes.filter(q => q.status === "REJECTED");
