@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      payment: true,
     },
     orderBy: { scheduledAt: "asc" },
   });
