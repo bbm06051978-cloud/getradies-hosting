@@ -6,26 +6,13 @@ type LegalModalProps = {
   label: string;
   className?: string;
   style?: React.CSSProperties;
+  children?: React.ReactNode;
 };
 
-export default function LegalModal({ href, label, className, style }: LegalModalProps) {
+export default function LegalModal({ href, label, className, style, children }: LegalModalProps) {
   const [open, setOpen] = useState(false);
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(href + "?raw=1");
-      if (res.ok) {
-        setContent(await res.text());
-      }
-    } catch {}
-    setLoading(false);
-  };
 
   useEffect(() => {
-    if (open && !content) load();
     if (open) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
     return () => { document.body.style.overflow = ""; };
@@ -39,7 +26,7 @@ export default function LegalModal({ href, label, className, style }: LegalModal
         className={className}
         style={style}
       >
-        {label}
+        {children || label}
       </button>
 
       {open && (
@@ -58,7 +45,6 @@ export default function LegalModal({ href, label, className, style }: LegalModal
             maxHeight: "85vh", display: "flex", flexDirection: "column",
             boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
           }}>
-            {/* Header */}
             <div style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
               padding: "16px 20px", borderBottom: "1px solid #E5E7EB",
@@ -73,17 +59,12 @@ export default function LegalModal({ href, label, className, style }: LegalModal
                 }}
               >✕</button>
             </div>
-            {/* Content */}
-            <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
-              {loading ? (
-                <p style={{ color: "#9CA3AF", textAlign: "center", marginTop: "40px" }}>Loading...</p>
-              ) : (
-                <iframe
-                  src={href}
-                  style={{ width: "100%", height: "600px", border: "none" }}
-                  title={label}
-                />
-              )}
+            <div style={{ flex: 1, overflow: "hidden" }}>
+              <iframe
+                src={href}
+                style={{ width: "100%", height: "600px", border: "none" }}
+                title={label}
+              />
             </div>
           </div>
         </div>

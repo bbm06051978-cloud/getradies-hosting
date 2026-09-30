@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { TradieSidebar } from "@/app/components/tradie/TradieSidebar";
 import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
 import { Bell, Wifi, WifiOff, Shield, FileText, ChevronRight, CheckCircle } from "lucide-react";
+import LegalModal from "@/app/components/LegalModal";
 
 type NotificationSettings = {
   newJobLead: boolean;
@@ -166,14 +167,14 @@ export default function TradieSettingsPage() {
               { label: "Privacy Policy", href: "/privacy", icon: Shield },
               { label: "Cookie Policy", href: "/cookies", icon: FileText },
             ].map(item => (
-              <a key={item.label} href={item.href}
-                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 -mx-2 px-2 rounded-xl transition-colors">
+              <LegalModal key={item.label} href={item.href} label={item.label}
+                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 -mx-2 px-2 rounded-xl transition-colors w-full text-left bg-transparent cursor-pointer">
                 <div className="flex items-center gap-3">
                   <item.icon size={16} className="text-gray-400"/>
                   <span className="text-sm font-medium text-gray-700">{item.label}</span>
                 </div>
                 <ChevronRight size={16} className="text-gray-400"/>
-              </a>
+              </LegalModal>
             ))}
           </div>
 
