@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import LegalModal from "@/app/components/LegalModal";
 
 // ── CONSTANTS ──────────────────────────────────────────────────────
 const TRADES = ["Electrical","Plumbing","Cleaning","Painting","Handyman","Carpentry","Removalists"];
@@ -578,9 +579,9 @@ function RegisterPageInner() {
                 />
                 <span style={{ fontSize: "12px", color: "#667085", lineHeight: "1.6" }}>
                   I agree to GeTradie's{" "}
-                  <Link href="/terms" style={{ color: "#0047AB", fontWeight: 600 }}>Terms of Service</Link>
+                  <LegalModal href="/terms" label="Terms of Service" style={{ color: "#0047AB", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" }} />
                   {" "}and{" "}
-                  <Link href="/privacy" style={{ color: "#0047AB", fontWeight: 600 }}>Privacy Policy</Link>.
+                  <LegalModal href="/privacy" label="Privacy Policy" style={{ color: "#0047AB", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: "inherit" }} />.
                   {" "}I confirm I am at least 18 years of age and located in Australia.
                 </span>
               </label>

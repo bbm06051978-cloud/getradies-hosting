@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import LegalModal from "@/app/components/LegalModal";
 import Image from "next/image";
 
 // ─── CONSTANTS ──────────────────────────────────────────────

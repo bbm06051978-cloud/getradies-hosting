@@ -175,7 +175,7 @@ export default function PrivacyPage() {
     <main className="min-h-screen bg-slate-50 pt-28 pb-20 px-4">
       <div className="mx-auto max-w-3xl rounded-2xl bg-white p-6 sm:p-10 shadow-sm">
         <div className="mb-6">
-          <button onClick={() => window.history.back()} className="text-sm text-blue-600 hover:underline">← Back</button>
+          <Link href="/" className="text-sm text-blue-600 hover:underline">← GeTradie — Australia's Only AI-Powered Tradie Marketplace</Link>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">Privacy Policy</h1>
         <p className="mt-2 text-sm text-slate-500">Last updated: {LAST_UPDATED}</p>
