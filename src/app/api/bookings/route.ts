@@ -137,7 +137,7 @@ export async function PATCH(req: NextRequest) {
       data: { status: "CANCELLED" },
     });
 
-    // HW cancelled — close the job
+    // HW cancelled â€” close the job
     await prisma.job.update({
       where: { id: bookingToCancel.job.id },
       data: { status: "CANCELLED" },
@@ -242,7 +242,7 @@ export async function POST(req: NextRequest) {
   // Update job status
   await prisma.job.update({ where: { id: jobId }, data: { status: "BOOKED" } });
 
-  // Notify tradie — quote accepted
+  // Notify tradie â€” quote accepted
   const tradieProfile = await prisma.tradieProfile.findUnique({
     where: { id: tradieProfileId },
     select: { userId: true },
