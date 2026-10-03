@@ -222,7 +222,7 @@ function MyJobsPageInner() {
                 const showConfirmDone = booking?.status === "PENDING_CONFIRMATION";
                 const showDispute     = booking?.status === "PENDING_CONFIRMATION";
                 const showCancel      = booking?.status === "PENDING" || booking?.status === "CONFIRMED";
-                const showChat        = booking && !["COMPLETED", "CANCELLED"].includes(booking.status);
+                const showChat        = booking && !["COMPLETED", "CANCELLED", "DISPUTED"].includes(booking.status) && getJobTab(job) !== "closed";
 
                 return (
                   <motion.div key={job.id}
