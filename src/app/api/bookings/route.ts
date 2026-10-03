@@ -68,7 +68,10 @@ export async function PATCH(req: NextRequest) {
     const booking = await prisma.booking.update({
       where: { id: bookingId },
       data: { status: "COMPLETED" },
-      include: { tradieProfile: { select: { userId: true } }, job: { select: { title: true } } },
+      include: {
+        tradieProfile: { select: { userId: true, businessName: true, user: { select: { name: true, email: true, emailNotifications: true } } } },
+        job: { select: { title: true, suburb: true, state: true, user: { select: { name: true, email: true, emailNotifications: true } } } },
+      },
     });
     await prisma.job.update({
       where: { id: booking.jobId },
@@ -84,6 +87,68 @@ export async function PATCH(req: NextRequest) {
         },
       });
     }
+
+    const homeowner = booking.job.user;
+    const tradieUser = booking.tradieProfile?.user;
+    const jobTitle = booking.job.title;
+    const location = [booking.job.suburb, booking.job.state].filter(Boolean).join(", ");
+
+    const emailWrap = (heading: string, bodyHtml: string) => `
+      <div style="font-family:Arial,sans-serif;padding:40px;max-width:500px;margin:0 auto;">
+        <div style="background:#0047AB;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
+          <h1 style="color:#fff;margin:0;font-size:24px;">GeTradie</h1>
+        </div>
+        <div style="background:#fff;padding:32px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
+          <h2 style="color:#111827;font-size:20px;margin:0 0 8px;">${heading}</h2>
+          ${bodyHtml}
+        </div>
+        <div style="padding:20px;text-align:center;">
+          <p style="color:#9CA3AF;font-size:12px;margin:0;">GeTradie Pty Ltd &bull; Parramatta NSW 2150 &bull; getradie.com.au</p>
+        </div>
+      </div>
+    `;
+
+    const sendCompletionEmail = async (to: string, subject: string, html: string) => {
+      try {
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ from: "GeTradie <noreply@getradie.com.au>", to, subject, html }),
+        });
+      } catch (emailErr) {
+        console.error("Job completion email error:", emailErr);
+      }
+    };
+
+    if (homeowner?.email && homeowner.emailNotifications !== false) {
+      await sendCompletionEmail(
+        homeowner.email,
+        `Job Completed: ${jobTitle}`,
+        emailWrap("Job Completed", `
+          <p style="color:#6B7280;font-size:15px;line-height:1.6;">Hi ${homeowner.name},<br><br>
+          You've confirmed that <strong>${jobTitle}</strong>${location ? ` in ${location}` : ""} is complete.</p>
+          <div style="background:#F0FDF4;border-left:4px solid #10B981;border-radius:8px;padding:14px 16px;margin:20px 0;">
+            <p style="color:#065F46;font-size:13px;margin:0;">Payment has been released to your tradie. Thank you for using GeTradie!</p>
+          </div>
+          <p style="color:#6B7280;font-size:14px;line-height:1.6;">Had a great experience? Leave a review for your tradie in the app under My Jobs.</p>
+        `)
+      );
+    }
+
+    if (tradieUser?.email && tradieUser.emailNotifications !== false) {
+      await sendCompletionEmail(
+        tradieUser.email,
+        `Job Confirmed Complete: ${jobTitle}`,
+        emailWrap("Job Confirmed Complete", `
+          <p style="color:#6B7280;font-size:15px;line-height:1.6;">Hi ${tradieUser.name},<br><br>
+          The homeowner has confirmed <strong>${jobTitle}</strong>${location ? ` in ${location}` : ""} is complete.</p>
+          <div style="background:#F0FDF4;border-left:4px solid #10B981;border-radius:8px;padding:14px 16px;margin:20px 0;">
+            <p style="color:#065F46;font-size:13px;margin:0;">Your payment will be released shortly. Great work!</p>
+          </div>
+        `)
+      );
+    }
+
     return NextResponse.json({ success: true });
   }
 
