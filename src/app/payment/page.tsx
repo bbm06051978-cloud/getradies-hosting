@@ -172,8 +172,8 @@ function PaymentPageInner() {
       <Sidebar/>
       <main className="flex-1 flex flex-col min-w-0">
         <Topbar/>
-        <div className="flex items-center justify-center flex-1 p-8">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center max-w-md">
+        <div className="flex items-center justify-center flex-1 p-4 sm:p-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-12 text-center max-w-md">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle size={40} className="text-green-500"/>
             </div>
@@ -190,6 +190,13 @@ function PaymentPageInner() {
               <p className="text-xs text-blue-600 font-semibold">What happens next?</p>
               <p className="text-xs text-blue-500 mt-1">The tradie will confirm your booking shortly. Your lock amount is held securely until the job is done.</p>
             </div>
+            {isMobile ? (
+              <button
+                onClick={() => { const rn = (window as any).ReactNativeWebView; if (rn) rn.postMessage("go_jobs"); else router.push("/my-jobs"); }}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-sm transition-colors">
+                View My Jobs
+              </button>
+            ) : (
             <div className="flex gap-3">
               <Link href="/bookings" className="flex-1">
                 <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-sm transition-colors">
@@ -202,6 +209,7 @@ function PaymentPageInner() {
                 </button>
               </Link>
             </div>
+            )}
           </div>
         </div>
       </main>
@@ -333,7 +341,7 @@ function PaymentPageInner() {
                       amount={selectedLock}
                       jobTitle={jobTitle}
                       tradie={tradie}
-                      onSuccess={() => { setSuccess(true); if (isMobile) { setTimeout(() => router.push("/payment/success?payment_success=true"), 500); } }}
+                      onSuccess={() => { setSuccess(true); if (isMobile) { (window as any).ReactNativeWebView?.postMessage("payment_receipt:" + selectedLock); } }}
                     />
                   </Elements>
                 </>
