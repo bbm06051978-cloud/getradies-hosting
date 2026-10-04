@@ -193,6 +193,17 @@ export async function PATCH(req: NextRequest) {
 
   const { quoteId } = await req.json();
 
+  // A job can only have one live booking (cancelled ones don't count)
+  const quoteToAccept = await prisma.quote.findUnique({ where: { id: quoteId }, select: { jobId: true } });
+  if (!quoteToAccept) return NextResponse.json({ error: "Quote not found." }, { status: 404 });
+  const existingBooking = await prisma.booking.findFirst({
+    where: { jobId: quoteToAccept.jobId, status: { not: "CANCELLED" } },
+    select: { id: true },
+  });
+  if (existingBooking) {
+    return NextResponse.json({ error: "This job already has a booking." }, { status: 400 });
+  }
+
 const quote = await prisma.quote.update({
     where: { id: quoteId },
     data: { status: "ACCEPTED" },

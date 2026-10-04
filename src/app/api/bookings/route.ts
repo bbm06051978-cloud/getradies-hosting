@@ -286,6 +286,15 @@ export async function POST(req: NextRequest) {
   const job = await prisma.job.findUnique({ where: { id: jobId, userId: decoded.id } });
   if (!job) return NextResponse.json({ error: "Job not found." }, { status: 404 });
 
+  // A job can only have one live booking (cancelled ones don't count)
+  const existingBooking = await prisma.booking.findFirst({
+    where: { jobId, status: { not: "CANCELLED" } },
+    select: { id: true },
+  });
+  if (existingBooking) {
+    return NextResponse.json({ error: "This job already has a booking." }, { status: 400 });
+  }
+
   // Accept the quote and reject others
   await prisma.quote.update({ where: { id: quoteId }, data: { status: "ACCEPTED" } });
   await prisma.quote.updateMany({
