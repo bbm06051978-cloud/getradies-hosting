@@ -40,6 +40,7 @@ export async function GET(req: NextRequest) {
         },
       },
       bookings: {
+        orderBy: { createdAt: "desc" },
         select: {
           id: true, status: true, scheduledAt: true, tradieProfileId: true,
           totalAmount: true,
