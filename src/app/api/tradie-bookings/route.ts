@@ -46,6 +46,9 @@ export async function GET(req: NextRequest) {
           state: true,
           description: true,
           aiEstimate: true,
+          urgency: true,
+          budget: true,
+          preferredAt: true,
         },
       },
       tradieProfile: {
@@ -113,6 +116,7 @@ export async function PATCH(req: NextRequest) {
       if (!checked.date) return NextResponse.json({ error: checked.error }, { status: 400 });
       when = checked.date;
     }
+    const asked = booking.job.preferredAt;
     const claimed = await prisma.booking.updateMany({
       where: { id: booking.id, status: "PENDING" },
       data: { status: "CONFIRMED", ...(when ? { scheduledAt: when, scheduleSetAt: new Date() } : {}) },
@@ -125,9 +129,11 @@ export async function PATCH(req: NextRequest) {
         data: {
           userId: booking.job.userId,
           title: "✅ Booking Confirmed!",
-          message: when
-            ? `${businessName} confirmed your booking for "${jobTitle}" on ${sydneyTime(when)}. You can cancel free of charge until ${CANCEL_CUTOFF_HOURS} hours before the start.`
-            : `${businessName} confirmed your booking for "${jobTitle}".`,
+          message: !when
+            ? `${businessName} confirmed your booking for "${jobTitle}".`
+            : asked && Math.abs(asked.getTime() - when.getTime()) > 60 * 1000
+              ? `${businessName} confirmed your booking for "${jobTitle}" at a different time: ${sydneyTime(when)} (you asked for ${sydneyTime(asked)}). If that doesn't suit you, you can cancel free of charge until ${CANCEL_CUTOFF_HOURS} hours before the start.`
+              : `${businessName} confirmed your booking for "${jobTitle}" on ${sydneyTime(when)}. You can cancel free of charge until ${CANCEL_CUTOFF_HOURS} hours before the start.`,
         },
       });
     } catch (err) {

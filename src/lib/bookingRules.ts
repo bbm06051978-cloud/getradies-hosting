@@ -142,6 +142,24 @@ export function isAutoCompleteDue(b: RuleBooking, now: Date = new Date()): boole
   return !!at && now.getTime() >= at.getTime();
 }
 
+// A new booking starts with the time the homeowner asked for when posting the job.
+// If they did not give one (or it has passed), it gets a placeholder a week out,
+// which only becomes real when the tradie confirms a time.
+export function initialScheduleFor(preferredAt: Date | string | null | undefined, now: Date = new Date()): Date {
+  if (preferredAt) {
+    const d = new Date(preferredAt);
+    if (!isNaN(d.getTime()) && d.getTime() > now.getTime()) return d;
+  }
+  return new Date(now.getTime() + 7 * DAY);
+}
+
+export const URGENCY_OPTIONS = ["Emergency", "Urgent", "This Week", "Flexible"] as const;
+
+// The homeowner must say when they want the tradie, unless they chose Flexible.
+export function startTimeRequired(urgency: string | null | undefined): boolean {
+  return urgency !== "Flexible";
+}
+
 export function validateScheduleTime(value: unknown, now: Date = new Date()): { date: Date | null; error: string } {
   if (typeof value !== "string" && !(value instanceof Date)) return { date: null, error: "Please choose a date and time." };
   const d = new Date(value);

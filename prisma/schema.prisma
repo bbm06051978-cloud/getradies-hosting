@@ -109,6 +109,9 @@ model Job {
   postcode    String?
   status      JobStatus  @default(OPEN)
   aiEstimate  String?
+  urgency     String?
+  budget      String?
+  preferredAt DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   bookings    Booking[]

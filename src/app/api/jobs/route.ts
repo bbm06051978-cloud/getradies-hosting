@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { validateScheduleTime } from "@/lib/bookingRules";
 import { isInPilotArea, PILOT_REGION_NAME } from "@/lib/pilot";
 
 // Nearby suburbs map
@@ -48,11 +49,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid token." }, { status: 401 });
   }
 
-  const { title, description, trade, suburb, state, postcode, urgency, budget, preferredDate, aiEstimate, photos } = await req.json();
+  const { title, description, trade, suburb, state, postcode, urgency, budget, preferredAt, aiEstimate, photos } = await req.json();
 
   if (!title || !description || !trade || !suburb || !state) {
     return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
   }
+
+  // When the homeowner would like the tradie to start (date and time).
+  // Older app versions do not send this, so it is optional here; the posting screens require it.
+  let preferredStart: Date | null = null;
+  if (preferredAt !== undefined && preferredAt !== null && preferredAt !== "") {
+    const checked = validateScheduleTime(preferredAt);
+    if (!checked.date) {
+      return NextResponse.json({ error: "Please choose a start date and time in the future." }, { status: 400 });
+    }
+    preferredStart = checked.date;
+  }
+  const clean = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim().slice(0, 60) : null);
 
   // Pilot area check
   if (postcode && !isInPilotArea(postcode)) {
@@ -73,6 +86,9 @@ export async function POST(req: NextRequest) {
       postcode,
       status: "OPEN",
       aiEstimate: aiEstimate || null,
+      urgency: clean(urgency),
+      budget: clean(budget),
+      preferredAt: preferredStart,
     },
   });
 

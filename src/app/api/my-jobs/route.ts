@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: "desc" },
         select: {
           id: true, status: true, scheduledAt: true, tradieProfileId: true,
+          scheduleSetAt: true, markedDoneAt: true,
           totalAmount: true,
           review: { select: { id: true } },
           payment: { select: { amount: true } },

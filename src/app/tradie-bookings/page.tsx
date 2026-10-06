@@ -3,6 +3,8 @@
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { ConfirmTimePanel } from "@/app/components/booking/ConfirmTimePanel";
+import { formatWhen } from "@/lib/dateTime";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowLeft, Briefcase, Calendar, Clock, MapPin,
@@ -15,9 +17,9 @@ import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
 type Homeowner = { name: string; phone: string; email: string; suburb: string; state: string; };
 
 type Booking = {
-  id: string; scheduledAt: string; status: string; totalAmount: number; createdAt: string;
+  id: string; scheduledAt: string; status: string; totalAmount: number; createdAt: string; scheduleSetAt?: string | null;
   homeowner?: Homeowner;
-  job: { id: string; title: string; trade: string; suburb: string; state: string; description: string; aiEstimate: string | null; };
+  job: { id: string; title: string; trade: string; suburb: string; state: string; description: string; aiEstimate: string | null; urgency?: string | null; budget?: string | null; preferredAt?: string | null; };
   payment: { id: string; amount: number; status: string; getradieFee: number | null; tradieEarning: number | null; paidAt: string | null; } | null;
 };
 
@@ -66,18 +68,16 @@ const refetchBookings = async () => {
     } catch {}
   };
 
-  const handleConfirm = async (bookingId: string) => {
-    setBusy(bookingId);
-    const ok = await patch(bookingId, "confirm").catch(() => false);
-    if (ok) await refetchBookings();
-    setBusy(null);
-  };
+  // Confirming a booking means committing to a start time, so it opens the time panel.
+  const [timeFor, setTimeFor] = useState<string | null>(null);
+  const handleConfirm = (bookingId: string) => setTimeFor(bookingId);
 
   const handleMarkDone = async (bookingId: string) => {
     if (!confirm("Mark this job as done? The homeowner will be asked to confirm completion.")) return;
     setBusy(bookingId);
     const ok = await patch(bookingId, "mark_done").catch(() => false);
     if (ok) await refetchBookings();
+    else alert("Could not mark the job done. Please refresh and try again.");
     setBusy(null);
   };
 
@@ -193,11 +193,13 @@ useEffect(() => {
                             <div className="flex items-center gap-4 mt-2 flex-wrap">
                               <div className="flex items-center gap-1.5 text-sm text-gray-700">
                                 <Calendar size={14} className="text-orange-500" />
-                                <span className="font-medium">{new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "long", year: "numeric" })}</span>
-                              </div>
-                              <div className="flex items-center gap-1.5 text-sm text-gray-700">
-                                <Clock size={14} className="text-orange-500" />
-                                <span className="font-medium">{new Date(booking.scheduledAt).toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" })}</span>
+                                <span className="font-medium">
+                                  {booking.scheduleSetAt
+                                    ? formatWhen(booking.scheduledAt)
+                                    : booking.job?.preferredAt
+                                      ? `Homeowner asked for ${formatWhen(booking.job.preferredAt)}`
+                                      : "Start time not set yet"}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -295,15 +297,28 @@ useEffect(() => {
                           {booking.status === "PENDING" && (
                             <div className="mt-5 pt-4 border-t border-gray-200">
                               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Job Actions</p>
-                              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                                onClick={() => handleConfirm(booking.id)} disabled={busy === booking.id}
-                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white px-6 py-3 rounded-xl font-bold text-sm transition-colors shadow-sm">
-                                <CheckCircle size={16} />
-                                {busy === booking.id ? "Confirming..." : "Confirm Booking"}
-                              </motion.button>
-                              <p className="text-xs text-gray-400 mt-2">
-                                Confirm you will attend this job on the scheduled date.
-                              </p>
+                              {timeFor === booking.id ? (
+                                <ConfirmTimePanel
+                                  bookingId={booking.id}
+                                  action="confirm"
+                                  initialIso={booking.job?.preferredAt}
+                                  homeownerAskedIso={booking.job?.preferredAt}
+                                  onDone={async () => { setTimeFor(null); await refetchBookings(); }}
+                                  onClose={() => setTimeFor(null)}
+                                />
+                              ) : (
+                                <>
+                                  <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                    onClick={() => handleConfirm(booking.id)}
+                                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition-colors shadow-sm">
+                                    <CheckCircle size={16} />
+                                    Confirm Booking
+                                  </motion.button>
+                                  <p className="text-xs text-gray-400 mt-2">
+                                    You will choose the start time and commit to it.
+                                  </p>
+                                </>
+                              )}
                             </div>
                           )}
 

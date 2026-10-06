@@ -36,7 +36,7 @@ const userSelect = { id: true, name: true, email: true, emailNotifications: true
 
 export const bookingWithParties = {
   payment: true,
-  job: { select: { id: true, title: true, suburb: true, state: true, status: true, userId: true, user: { select: userSelect } } },
+  job: { select: { id: true, title: true, suburb: true, state: true, status: true, userId: true, preferredAt: true, user: { select: userSelect } } },
   tradieProfile: { select: { id: true, userId: true, businessName: true, user: { select: userSelect } } },
 } satisfies Prisma.BookingInclude;
 

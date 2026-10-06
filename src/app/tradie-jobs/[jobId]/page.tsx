@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { getSignedImageUrl } from "@/lib/signedUrl";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ConfirmTimePanel } from "@/app/components/booking/ConfirmTimePanel";
+import { formatWhen } from "@/lib/dateTime";
 import {
   ArrowLeft, MapPin, Calendar, Briefcase, Zap,
   Send, CheckCircle, DollarSign, User, FileText, Clock, ShieldCheck,
@@ -25,6 +27,9 @@ type Job = {
   user: { id: string; name: string; suburb: string; state: string };
   _count: { quotes: number };
   photos?: { url: string }[];
+  urgency?: string | null;
+  budget?: string | null;
+  preferredAt?: string | null;
 };
 
 export default function TradieJobDetailPage() {
@@ -34,7 +39,7 @@ export default function TradieJobDetailPage() {
   const [job, setJob]               = useState<Job | null>(null);
 const [signedPhotos, setSignedPhotos] = useState<string[]>([]);
 const [alreadyQuoted, setAlreadyQuoted] = useState(false);
-const [booking, setBooking] = useState<{ id: string; status: string; scheduledAt: string; totalAmount: number } | null>(null);
+const [booking, setBooking] = useState<{ id: string; status: string; scheduledAt: string; scheduleSetAt?: string | null; totalAmount: number } | null>(null);
 const [confirming, setConfirming] = useState(false);
   const [loading, setLoading]       = useState(true);
   const [sending, setSending]       = useState(false);
@@ -66,18 +71,10 @@ const [confirming, setConfirming] = useState(false);
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => setForm({ ...form, [e.target.name]: e.target.value });
 
-const handleConfirmBooking = async () => {
+// Confirming a booking means committing to a start time, so it opens the time panel.
+const handleConfirmBooking = () => {
     if (!booking) return;
     setConfirming(true);
-    try {
-      await fetch("/api/tradie-bookings", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId: booking.id, action: "confirm" }),
-      });
-      setBooking(prev => prev ? { ...prev, status: "CONFIRMED" } : null);
-    } catch {}
-    finally { setConfirming(false); }
   };
 
   const handleSendQuote = async () => {
@@ -171,6 +168,13 @@ const handleConfirmBooking = async () => {
                   <span className="flex items-center gap-1 text-xs text-gray-500"><Calendar size={12}/>{new Date(job.createdAt).toLocaleDateString("en-AU", { day:"numeric", month:"long", year:"numeric" })}</span>
                   <span className="flex items-center gap-1 text-xs text-gray-500"><User size={12}/>{job._count.quotes} quote{job._count.quotes !== 1 ? "s" : ""} sent</span>
                 </div>
+                {(job.preferredAt || job.urgency || job.budget) && (
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    {job.preferredAt && <span className="flex items-center gap-1 text-xs font-semibold text-gray-800 bg-yellow-50 border border-yellow-200 px-2.5 py-1 rounded-full"><Clock size={12}/>Wants start: {formatWhen(job.preferredAt)}</span>}
+                    {job.urgency && <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">{job.urgency}</span>}
+                    {job.budget && <span className="text-xs text-gray-500">Budget: {job.budget}</span>}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -217,20 +221,31 @@ const handleConfirmBooking = async () => {
                     <h3 className="font-bold text-green-800 mb-1">🎉 Quote Accepted!</h3>
                     <p className="text-green-600 text-sm mb-4">The homeowner has accepted your quote. Please confirm the booking to proceed.</p>
                     <div className="bg-white rounded-xl p-3 mb-4 text-left">
-                      <p className="text-xs text-gray-500">Scheduled</p>
-                      <p className="text-sm font-bold text-gray-900">{new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" })}</p>
+                      <p className="text-xs text-gray-500">Homeowner asked for</p>
+                      <p className="text-sm font-bold text-gray-900">{job.preferredAt ? formatWhen(job.preferredAt) : "No time given"}</p>
                       <p className="text-xs text-gray-500 mt-1">Amount</p>
                       <p className="text-sm font-bold text-gray-900">${booking.totalAmount.toLocaleString()} AUD</p>
                     </div>
-                    <button onClick={handleConfirmBooking} disabled={confirming}
-                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
-                      {confirming ? "Confirming..." : "✅ Confirm Booking"}
-                    </button>
+                    {confirming ? (
+                      <ConfirmTimePanel
+                        bookingId={booking.id}
+                        action="confirm"
+                        initialIso={job.preferredAt}
+                        homeownerAskedIso={job.preferredAt}
+                        onDone={(iso) => { setBooking(prev => prev ? { ...prev, status: "CONFIRMED", scheduledAt: iso, scheduleSetAt: new Date().toISOString() } : null); setConfirming(false); }}
+                        onClose={() => setConfirming(false)}
+                      />
+                    ) : (
+                      <button onClick={handleConfirmBooking}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors">
+                        ✅ Confirm Booking
+                      </button>
+                    )}
                   </>
                 ) : booking?.status === "CONFIRMED" ? (
                   <>
                     <h3 className="font-bold text-green-800 mb-1">✅ Booking Confirmed</h3>
-                    <p className="text-green-600 text-sm">You have confirmed this booking. Job is scheduled.</p>
+                    <p className="text-green-600 text-sm">You have confirmed this booking.{booking.scheduleSetAt ? ` Start: ${formatWhen(booking.scheduledAt)}.` : ""}</p>
                   </>
                 ) : (
                   <>

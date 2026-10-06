@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { useState , Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { startTimeRequired } from "@/lib/bookingRules";
+import { combineLocal, formatWhen, todayInput } from "@/lib/dateTime";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Briefcase,
@@ -108,6 +110,7 @@ function PostJobPageInner() {
     urgency: "",
     budget: "",
     preferredDate: "",
+    preferredTime: "",
   });
 
   const handleChange = (
@@ -140,6 +143,10 @@ function PostJobPageInner() {
     }
   };
 
+  // When the homeowner would like the tradie to start. Required unless they chose "Flexible".
+  const preferredStart = combineLocal(form.preferredDate, form.preferredTime);
+  const needsStart = startTimeRequired(form.urgency);
+
   const validateStep = () => {
     if (currentStep === 1) {
       if (!form.title.trim()) return "Job title is required.";
@@ -152,6 +159,9 @@ function PostJobPageInner() {
     }
     if (currentStep === 3) {
       if (!form.urgency) return "Please select urgency.";
+      if (needsStart && !preferredStart) return "Please choose the date and time you'd like the tradie to start.";
+      if ((form.preferredDate || form.preferredTime) && !preferredStart) return "Please choose both a date and a time.";
+      if (preferredStart && preferredStart.getTime() <= Date.now()) return "Please choose a start time in the future.";
       if (!form.budget) return "Please select a budget range.";
     }
     return null;
@@ -198,7 +208,7 @@ function PostJobPageInner() {
       const res = await fetch("/api/jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, aiEstimate, photos: photoS3Urls }),
+        body: JSON.stringify({ ...form, preferredAt: preferredStart ? preferredStart.toISOString() : null, aiEstimate, photos: photoS3Urls }),
       });
 
       const data = await res.json();
@@ -509,19 +519,34 @@ function PostJobPageInner() {
                     </div>
                   </div>
 
-                  {/* Preferred Date */}
+                  {/* Preferred start: date and time */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Preferred Date (Optional)
+                      When would you like the tradie to start? {needsStart ? "*" : "(Optional)"}
                     </label>
-                    <input
-                      type="date"
-                      name="preferredDate"
-                      value={form.preferredDate}
-                      onChange={handleChange}
-                      min={new Date().toISOString().split("T")[0]}
-                      className="w-full border border-gray-200 focus:border-blue-400 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none transition-colors"
-                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="date"
+                        name="preferredDate"
+                        aria-label="Preferred date"
+                        value={form.preferredDate}
+                        onChange={(e) => { handleChange(e); setError(""); }}
+                        min={todayInput()}
+                        className="w-full border border-gray-200 focus:border-blue-400 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none transition-colors"
+                      />
+                      <input
+                        type="time"
+                        name="preferredTime"
+                        aria-label="Preferred start time"
+                        step={900}
+                        value={form.preferredTime}
+                        onChange={(e) => { handleChange(e); setError(""); }}
+                        className="w-full border border-gray-200 focus:border-blue-400 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none transition-colors"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1.5">
+                      Tradies see this before they quote. The tradie confirms the time when they accept your booking, and you can cancel free of charge until 12 hours before it.
+                    </p>
                   </div>
 
                   {/* Budget */}
@@ -588,14 +613,10 @@ function PostJobPageInner() {
                       <span className="text-gray-500 font-medium">Budget</span>
                       <span className="text-gray-900 font-semibold">{form.budget}</span>
                     </div>
-                    {form.preferredDate && (
+                    {preferredStart && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500 font-medium">Preferred Date</span>
-                        <span className="text-gray-900 font-semibold">
-                          {new Date(form.preferredDate).toLocaleDateString("en-AU", {
-                            day: "numeric", month: "long", year: "numeric"
-                          })}
-                        </span>
+                        <span className="text-gray-500 font-medium">Preferred start</span>
+                        <span className="text-gray-900 font-semibold">{formatWhen(preferredStart)}</span>
                       </div>
                     )}
                     <div className="pt-2 border-t border-gray-200">

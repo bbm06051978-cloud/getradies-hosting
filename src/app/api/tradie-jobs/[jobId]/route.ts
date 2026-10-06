@@ -38,7 +38,7 @@ export async function GET(
       jobId,
       tradieProfileId: tradieProfile?.id,
     },
-    select: { id: true, status: true, scheduledAt: true, totalAmount: true },
+    select: { id: true, status: true, scheduledAt: true, scheduleSetAt: true, totalAmount: true },
   }) : null;
 
   return NextResponse.json({ job, alreadyQuoted: !!alreadyQuoted, booking });

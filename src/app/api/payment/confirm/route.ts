@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { initialScheduleFor } from "@/lib/bookingRules";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-06-24.dahlia",
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
           jobId,
           tradieProfileId,
           totalAmount:  quote.amount,
-          scheduledAt:  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          scheduledAt:  initialScheduleFor(quote.job.preferredAt),
           status:       "PENDING",
         },
       });

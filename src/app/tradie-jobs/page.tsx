@@ -11,20 +11,23 @@ import {
 import { getSignedImageUrls } from "@/lib/signedUrl";
 import { TradieSidebar } from "@/app/components/tradie/TradieSidebar";
 import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
+import { ConfirmTimePanel } from "@/app/components/booking/ConfirmTimePanel";
+import { formatWhen } from "@/lib/dateTime";
 
 type UserRef = { id: string; name: string; suburb: string | null; state: string | null };
 type AvailableJob = {
   id: string; title: string; description: string; trade: string;
   suburb: string; state: string; status: string; aiEstimate: string | null;
   createdAt: string; user: UserRef; _count: { quotes: number }; distanceKm?: number | null; photos?: { url: string }[];
+  urgency?: string | null; budget?: string | null; preferredAt?: string | null;
 };
 type MyQuote = {
   id: string; amount: number; description: string; status: string; createdAt: string;
   job: { id: string; title: string; trade: string; suburb: string; state: string; user: UserRef };
 };
 type Booking = {
-  id: string; scheduledAt: string; status: string; totalAmount: number;
-  job: { id: string; title: string; trade: string; suburb: string; state: string; description?: string; user: UserRef & { phone?: string; email?: string } };
+  id: string; scheduledAt: string; status: string; totalAmount: number; scheduleSetAt?: string | null;
+  job: { id: string; title: string; trade: string; suburb: string; state: string; description?: string; urgency?: string | null; budget?: string | null; preferredAt?: string | null; user: UserRef & { phone?: string; email?: string } };
   payment?: { amount: number; getradieFee: number; tradieEarning: number; status: string };
 };
 
@@ -59,6 +62,7 @@ function TradieJobsPageInner() {
   const [signedJobPhotos, setSignedJobPhotos] = useState<Record<string, string[]>>({});
   const [busy, setBusy]                           = useState<string | null>(null);
   const [expandedId, setExpandedId]               = useState<string | null>(null);
+  const [timeFor, setTimeFor]                     = useState<{ id: string; action: "confirm" | "set_time" } | null>(null);
   const searchParams                              = useSearchParams();
   const pollRef                                   = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -97,16 +101,14 @@ function TradieJobsPageInner() {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, []);
 
-  const handleConfirmBooking = async (bookingId: string) => {
-    setBusy(bookingId);
-    try {
-      await fetch("/api/tradie-bookings", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId, action: "confirm" }),
-      });
-      setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "CONFIRMED" } : b));
-    } catch {} finally { setBusy(null); }
+  // Confirming a booking means committing to a start time, so it opens the time panel.
+  const handleConfirmBooking = (bookingId: string) => setTimeFor({ id: bookingId, action: "confirm" });
+
+  const handleTimeSaved = (bookingId: string, scheduledAt: string) => {
+    setBookings(prev => prev.map(b => b.id === bookingId
+      ? { ...b, status: "CONFIRMED", scheduledAt, scheduleSetAt: new Date().toISOString() }
+      : b));
+    setTimeFor(null);
   };
 
   const handleCancelBooking = async (bookingId: string) => {
@@ -118,20 +120,21 @@ function TradieJobsPageInner() {
         body: JSON.stringify({ bookingId, action: "cancel" }),
       });
       if (res.ok) { setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "CANCELLED" } : b)); }
-      else { alert("Failed to cancel booking."); }
+      else { const d = await res.json().catch(() => ({})); alert(d.error || "Failed to cancel booking."); }
     } catch { alert("Something went wrong."); }
   };
 
   const handleMarkDone = async (bookingId: string) => {
     setBusy(bookingId);
     try {
-      await fetch("/api/tradie-bookings", {
+      const res = await fetch("/api/tradie-bookings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId, action: "mark_done" }),
       });
-      setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "PENDING_CONFIRMATION" } : b));
-    } catch {} finally { setBusy(null); }
+      if (res.ok) { setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: "PENDING_CONFIRMATION" } : b)); }
+      else { const d = await res.json().catch(() => ({})); alert(d.error || "Could not mark the job done."); }
+    } catch { alert("Something went wrong."); } finally { setBusy(null); }
   };
 
   const activeQuotes   = myQuotes.filter(q => q.status === "PENDING" && !cancelledBookingJobIds.includes(q.job.id));
@@ -210,6 +213,13 @@ function TradieJobsPageInner() {
                                     <span className="flex items-center gap-1 text-xs text-gray-400"><Calendar size={11}/>{new Date(job.createdAt).toLocaleDateString("en-AU", { day:"numeric", month:"short" })}</span>
                                     <span className="text-xs text-gray-400">{job._count.quotes} quote{job._count.quotes !== 1 ? "s" : ""} sent</span>
                                   </div>
+                                  {(job.preferredAt || job.urgency || job.budget) && (
+                                    <div className="flex items-center gap-2 flex-wrap mt-2">
+                                      {job.preferredAt && <span className="flex items-center gap-1 text-xs font-semibold text-gray-800 bg-yellow-50 border border-yellow-200 px-2 py-0.5 rounded-full"><Clock size={11}/>Wants start: {formatWhen(job.preferredAt)}</span>}
+                                      {job.urgency && <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">{job.urgency}</span>}
+                                      {job.budget && <span className="text-xs text-gray-500">Budget: {job.budget}</span>}
+                                    </div>
+                                  )}
                                   {job.aiEstimate && (
                                     <div className="flex items-center gap-1.5 mt-2">
                                       <Zap size={11} className="text-blue-500 fill-blue-500"/>
@@ -386,7 +396,11 @@ function TradieJobsPageInner() {
                                   <div className="flex items-center gap-4 mt-2 flex-wrap">
                                     <span className="flex items-center gap-1.5 text-sm font-semibold text-gray-700">
                                       <Calendar size={13} className="text-orange-500"/>
-                                      {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday:"short", day:"numeric", month:"long" })}
+                                      {booking.scheduleSetAt
+                                        ? formatWhen(booking.scheduledAt)
+                                        : booking.job.preferredAt
+                                          ? `Homeowner asked for ${formatWhen(booking.job.preferredAt)}`
+                                          : "Start time not set yet"}
                                     </span>
                                     <span className="text-sm font-bold text-green-600">${booking.totalAmount.toLocaleString()} AUD</span>
                                   </div>
@@ -397,7 +411,7 @@ function TradieJobsPageInner() {
                               </div>
                             </div>
                           </div>
-                          <div style={{ maxHeight: isExpanded ? "800px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
+                          <div style={{ maxHeight: isExpanded ? "1200px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
                                 className="border-t border-orange-100 bg-orange-50/30">
                                 <div className="p-5 space-y-4">
                                   {booking.payment && (
@@ -409,17 +423,18 @@ function TradieJobsPageInner() {
                                   )}
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Scheduled</p>
-                                      <p className="text-sm text-gray-700">{new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}</p>
-                                      <p className="text-sm text-gray-500">{new Date(booking.scheduledAt).toLocaleTimeString("en-AU", { hour:"2-digit", minute:"2-digit" })}</p>
+                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Start time</p>
+                                      {booking.scheduleSetAt
+                                        ? <p className="text-sm font-semibold text-gray-800">{formatWhen(booking.scheduledAt)}</p>
+                                        : <p className="text-sm text-gray-500">Not set yet. You choose it when you confirm.</p>}
                                     </div>
                                     <div>
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Location</p>
                                       <p className="text-sm text-gray-700">{booking.job.suburb}, {booking.job.state}</p>
                                     </div>
                                     <div>
-                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Scheduled</p>
-                                      <p className="text-sm text-gray-700">{new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday:"long", day:"numeric", month:"long", year:"numeric" })}</p>
+                                      <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Homeowner asked for</p>
+                                      <p className="text-sm text-gray-700">{booking.job.preferredAt ? formatWhen(booking.job.preferredAt) : "No time given"}{booking.job.urgency ? ` · ${booking.job.urgency}` : ""}</p>
                                     </div>
                                     <div>
                                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Homeowner</p>
@@ -435,11 +450,27 @@ function TradieJobsPageInner() {
                                       <p className="text-sm text-gray-700">{booking.job.description}</p>
                                     </div>
                                   )}
+                                  {timeFor?.id === booking.id && (
+                                    <ConfirmTimePanel
+                                      bookingId={booking.id}
+                                      action={timeFor.action}
+                                      initialIso={booking.scheduleSetAt ? booking.scheduledAt : booking.job.preferredAt}
+                                      homeownerAskedIso={booking.job.preferredAt}
+                                      onDone={(iso) => handleTimeSaved(booking.id, iso)}
+                                      onClose={() => setTimeFor(null)}
+                                    />
+                                  )}
                                   <div className="flex gap-2 pt-1 flex-wrap">
-                                    {showConfirm && (
+                                    {showConfirm && timeFor?.id !== booking.id && (
                                       <button onClick={(e) => { e.stopPropagation(); handleConfirmBooking(booking.id); }} disabled={busy === booking.id}
                                         className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
-                                        <CheckCircle size={13}/>{busy === booking.id ? "Confirming..." : "Confirm Booking"}
+                                        <CheckCircle size={13}/>Confirm Booking
+                                      </button>
+                                    )}
+                                    {showMarkDone && timeFor?.id !== booking.id && (
+                                      <button onClick={(e) => { e.stopPropagation(); setTimeFor({ id: booking.id, action: "set_time" }); }}
+                                        className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 border border-blue-200 hover:border-blue-400 px-4 py-2 rounded-xl transition-colors">
+                                        <Clock size={13}/>{booking.scheduleSetAt ? "Change time" : "Set start time"}
                                       </button>
                                     )}
                                     {showMarkDone && (

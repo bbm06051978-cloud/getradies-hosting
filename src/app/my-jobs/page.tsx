@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
+import { formatWhen } from "@/lib/dateTime";
 
 type Quote = { id: string; amount: number; status: string };
 type BookingRef = {
   id: string; status: string; scheduledAt: string; totalAmount: number;
+  scheduleSetAt?: string | null; markedDoneAt?: string | null;
   tradieProfileId: string;
   review?: { id: string } | null;
   payment?: { amount: number } | null;
@@ -28,6 +30,7 @@ type Job = {
   id: string; title: string; trade: string; suburb: string;
   state: string; postcode: string | null; status: string;
   aiEstimate: string | null; createdAt: string; description: string;
+  urgency?: string | null; budget?: string | null; preferredAt?: string | null;
   photos?: { url: string }[];
   quotes: Quote[]; bookings: BookingRef[];
 };
@@ -255,7 +258,9 @@ function MyJobsPageInner() {
                             {booking && (
                               <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
                                 <span className="font-semibold text-gray-700"><a href={`/tradie/${booking.tradieProfileId}`} className="text-blue-700 hover:underline">{booking.tradieProfile.businessName}</a></span>
-                                {booking.scheduledAt && <span>· {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" })}</span>}
+                                {booking.scheduleSetAt
+                                  ? <span>· {formatWhen(booking.scheduledAt)}</span>
+                                  : ["PENDING", "CONFIRMED"].includes(booking.status) && <span>· Start time to be confirmed by the tradie</span>}
                               </div>
                             )}
                           </div>
@@ -317,9 +322,13 @@ function MyJobsPageInner() {
                             {(booking.status === "CONFIRMED" || booking.status === "PENDING" || booking.status === "PENDING_CONFIRMATION") && booking.tradieProfile.user?.phone && (
                               <a href={`tel:${booking.tradieProfile.user.phone}`} className="text-xs text-blue-600 mt-1 block">📞 Call Tradie</a>
                             )}
-                            {booking.scheduledAt && (
+                            {booking.scheduleSetAt ? (
                               <p className="text-xs text-gray-600 mt-1">
-                                Scheduled: {new Date(booking.scheduledAt).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                                Start time (confirmed by tradie): <span className="font-semibold text-gray-800">{formatWhen(booking.scheduledAt)}</span>
+                              </p>
+                            ) : ["PENDING", "CONFIRMED"].includes(booking.status) && (
+                              <p className="text-xs text-gray-600 mt-1">
+                                {job.preferredAt ? `You asked for ${formatWhen(job.preferredAt)}. ` : ""}The tradie has not confirmed a start time yet.
                               </p>
                             )}
                             {acceptedQuote && (

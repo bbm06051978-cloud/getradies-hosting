@@ -123,6 +123,7 @@ export async function GET(req: NextRequest) {
         job: {
           select: {
             id: true, title: true, trade: true, suburb: true, state: true, description: true,
+            urgency: true, budget: true, preferredAt: true,
             user: { select: { id: true, name: true, suburb: true, state: true, phone: true, email: true } },
           },
         },
@@ -150,6 +151,7 @@ export async function GET(req: NextRequest) {
         job: {
           select: {
             id: true, title: true, trade: true, suburb: true, state: true, description: true,
+            urgency: true, budget: true, preferredAt: true,
             user: { select: { id: true, name: true, suburb: true, state: true, phone: true, email: true } },
           },
         },
