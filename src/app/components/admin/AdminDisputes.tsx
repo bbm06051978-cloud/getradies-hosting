@@ -14,7 +14,7 @@ type AdminDispute = {
     id: string; status: string; scheduledAt: string; hasAgreedTime: boolean; markedDoneAt: string | null;
     quoteAmount: number; jobTitle: string; location: string;
     homeowner: Party; tradie: Party;
-    lockAmount: number; heldAmount: number; paymentStatus: string | null; hasStripeReference: boolean;
+    lockAmount: number; platformFee: number; heldAmount: number; paymentStatus: string | null; hasStripeReference: boolean;
   };
 };
 type LegacyBooking = {
@@ -88,8 +88,8 @@ export function AdminDisputes({ legacy, onLegacyResolve, legacyBusy, onChanged }
   const outcomeLine = (d: AdminDispute) => {
     if (d.status === "WITHDRAWN") return "Withdrawn by the person who raised it";
     if (d.outcome === "REFUND_HOMEOWNER") return `Refunded homeowner ${money(d.refundAmount)}`;
-    if (d.outcome === "RELEASE_TRADIE") return `Released to tradie (${money(d.tradieAmount)})`;
-    if (d.outcome === "SPLIT") return `Split: homeowner ${money(d.refundAmount)}, tradie ${money(d.tradieAmount)}`;
+    if (d.outcome === "RELEASE_TRADIE") return `Released to tradie (${money(d.tradieAmount)} after fee)`;
+    if (d.outcome === "SPLIT") return `Split: homeowner ${money(d.refundAmount)}, tradie ${money(d.tradieAmount)} after fee`;
     return d.status;
   };
 
@@ -177,13 +177,13 @@ export function AdminDisputes({ legacy, onLegacyResolve, legacyBusy, onChanged }
             </div>
 
             {outcome === "REFUND_HOMEOWNER" && <p className="text-xs text-gray-400">Homeowner gets {money(b.heldAmount)} back, including the GeTradie fee. The booking is cancelled, the job reopens{d.category === "TRADIE_NO_SHOW" ? " and a no-show is recorded against the tradie" : ""}.</p>}
-            {outcome === "RELEASE_TRADIE" && <p className="text-xs text-gray-400">No refund. The lock amount of {money(b.heldAmount)} goes to the tradie and the job is completed. The payout to the tradie is still made by hand.</p>}
+            {outcome === "RELEASE_TRADIE" && <p className="text-xs text-gray-400">No refund. The tradie is owed {money(Math.max(0, b.heldAmount - Math.min(b.platformFee, b.heldAmount)))} (the {money(b.heldAmount)} held, less GeTradie's {money(Math.min(b.platformFee, b.heldAmount))} fee) and the job is completed. It then appears in the Payouts tab.</p>}
             {outcome === "SPLIT" && (
               <div>
                 <p className="text-xs text-gray-400 mb-1">Refund to homeowner (more than $0, less than {money(b.heldAmount)}):</p>
                 <input type="number" min="0" step="0.01" value={refund} onChange={e => setRefund(e.target.value)}
                   className="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white w-40"/>
-                {splitOk && refund !== "" && <p className="text-xs text-gray-400 mt-1">Tradie keeps {money(Math.round((b.heldAmount - refundNum) * 100) / 100)}.</p>}
+                {splitOk && refund !== "" && <p className="text-xs text-gray-400 mt-1">Tradie's share is {money(Math.round((b.heldAmount - refundNum) * 100) / 100)}, less GeTradie's {money(Math.min(b.platformFee, b.heldAmount - refundNum))} fee: tradie is paid {money(Math.max(0, Math.round((b.heldAmount - refundNum - Math.min(b.platformFee, b.heldAmount - refundNum)) * 100) / 100))}.</p>}
               </div>
             )}
 

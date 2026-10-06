@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AdminDisputes } from "@/app/components/admin/AdminDisputes";
+import { AdminPayouts } from "@/app/components/admin/AdminPayouts";
 import {
   Users, Briefcase, CheckCircle, AlertCircle,
   ShieldCheck, XCircle, DollarSign, BarChart2,
@@ -134,6 +135,7 @@ export default function AdminPage() {
     { key: "users",        label: "Users",         icon: Users       },
     { key: "jobs",         label: "Jobs",          icon: Briefcase   },
     { key: "disputes",     label: "Disputes",      icon: AlertCircle },
+    { key: "payouts",      label: "Payouts",       icon: DollarSign  },
     { key: "verification", label: "Verification",  icon: ShieldCheck },
   ];
 
@@ -412,6 +414,9 @@ export default function AdminPage() {
                   </div>
                 </div>
               )}
+
+              {/* ── PAYOUTS ── */}
+              {tab === "payouts" && <AdminPayouts/>}
 
               {/* ── DISPUTES ── */}
               {tab === "disputes" && (

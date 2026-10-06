@@ -205,6 +205,9 @@ model Payment {
   tradieEarning        Float?    @default(0)
   stripePaymentIntentId String?
   refundedAmount        Float?    @default(0)
+  payoutAmount          Float?
+  payoutPaidAt          DateTime?
+  payoutReference       String?
   booking       Booking   @relation(fields: [bookingId], references: [id])
 }
 

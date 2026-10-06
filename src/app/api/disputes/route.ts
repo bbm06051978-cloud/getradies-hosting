@@ -92,6 +92,7 @@ export async function GET(req: NextRequest) {
               email: d.booking.tradieProfile.user.email, businessName: d.booking.tradieProfile.businessName,
             },
             lockAmount: d.booking.payment?.amount ?? 0,
+            platformFee: d.booking.payment?.getradieFee ?? 0,
             heldAmount: held,
             paymentStatus: d.booking.payment?.status ?? null,
             hasStripeReference: !!d.booking.payment?.stripePaymentIntentId,

@@ -29,7 +29,7 @@ type MyQuote = {
 type Booking = {
   id: string; scheduledAt: string; status: string; totalAmount: number; scheduleSetAt?: string | null;
   job: { id: string; title: string; trade: string; suburb: string; state: string; description?: string; urgency?: string | null; budget?: string | null; preferredAt?: string | null; user: UserRef & { phone?: string; email?: string } };
-  payment?: { amount: number; getradieFee: number; tradieEarning: number; status: string };
+  payment?: { amount: number; getradieFee: number; tradieEarning: number; status: string; refundedAmount?: number | null; payoutAmount?: number | null; payoutPaidAt?: string | null; payoutReference?: string | null };
 };
 
 const getQuoteStatusBadge = (status: string) => {
@@ -589,6 +589,12 @@ function TradieJobsPageInner() {
                                           <p className="text-gray-600">🔒 Lock Amount: <span className="font-bold text-blue-700">${booking.payment.amount} AUD</span></p>
                                           <p className="text-gray-600">💳 Collected from homeowner: <span className="font-bold text-green-700">${booking.totalAmount - booking.payment.amount} AUD</span></p>
                                         </div>
+                                        {(booking.payment.refundedAmount ?? 0) > 0 && (
+                                          <div className="flex justify-between text-sm">
+                                            <span className="text-gray-500">Refunded to homeowner</span>
+                                            <span className="font-semibold text-red-500">-${booking.payment.refundedAmount} AUD</span>
+                                          </div>
+                                        )}
                                         <div className="flex justify-between text-sm">
                                           <span className="text-gray-500">GeTradie Fee</span>
                                           <span className="font-semibold text-red-500">-${booking.payment.getradieFee} AUD</span>
@@ -597,6 +603,13 @@ function TradieJobsPageInner() {
                                           <span className="font-bold text-green-700">Your Payout</span>
                                           <span className="font-bold text-green-700">${booking.payment.tradieEarning} AUD</span>
                                         </div>
+                                        {booking.status === "COMPLETED" && (
+                                          <p className="text-xs text-gray-500 pt-1">
+                                            {booking.payment.payoutPaidAt
+                                              ? `✅ Paid ${formatWhen(booking.payment.payoutPaidAt)} · Ref: ${booking.payment.payoutReference || "-"}`
+                                              : "⏳ Payout pending. GeTradie pays this to you by bank transfer."}
+                                          </p>
+                                        )}
                                       </div>
                                     </div>
                                   )}

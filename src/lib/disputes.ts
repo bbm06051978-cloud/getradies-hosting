@@ -417,7 +417,11 @@ export async function resolveDispute(args: {
 
   // 2. Records.
   const fullRefund = args.outcome === "REFUND_HOMEOWNER";
-  const tradieAmount = fullRefund ? 0 : round2(held - refund);
+  // Whatever is not refunded is the tradie's share, less GeTradie's platform fee,
+  // the same as on a job completed without a dispute. A full refund carries no fee.
+  const share = fullRefund ? 0 : round2(held - refund);
+  const feeKept = fullRefund ? 0 : round2(Math.min(payment?.getradieFee ?? 0, share));
+  const tradieAmount = round2(share - feeKept);
   // If an earlier attempt refunded the money but could not close the dispute, report that refund.
   const refunded = fullRefund && refund === 0 && payment?.status === "refunded"
     ? round2(payment.refundedAmount || payment.amount)
@@ -435,6 +439,10 @@ export async function resolveDispute(args: {
         },
       });
       if (closed.count !== 1) throw new DisputeError("This dispute has already been closed.", 409);
+
+      if (payment) {
+        await tx.payment.update({ where: { id: payment.id }, data: { getradieFee: feeKept, tradieEarning: tradieAmount } });
+      }
 
       if (fullRefund) {
         // Same as a tradie cancellation: the job reopens so the homeowner can accept another quote.
@@ -490,11 +498,11 @@ export async function resolveDispute(args: {
       : `The dispute on "${title}" was decided in your favour. No lock amount was held on this booking. Your job has been reopened so you can accept another quote.`;
     tradieText = `The dispute on "${title}" was decided in the homeowner's favour and the lock amount has been refunded to them.`;
   } else if (args.outcome === "SPLIT") {
-    hwText = `The dispute on "${title}" has been decided. ${money(refund)} of your lock amount is being refunded. ${refundTiming} The remaining ${money(tradieAmount)} goes to the tradie.`;
-    tradieText = `The dispute on "${title}" has been decided. ${money(refund)} of the lock amount has been refunded to the homeowner. The remaining ${money(tradieAmount)} will be released to you as normal.`;
+    hwText = `The dispute on "${title}" has been decided. ${money(refund)} of your lock amount is being refunded. ${refundTiming} The remaining ${money(share)} is not refunded.`;
+    tradieText = `The dispute on "${title}" has been decided. ${money(refund)} of the lock amount has been refunded to the homeowner. Your share is ${money(tradieAmount)}${feeKept > 0 ? `, after GeTradie's ${money(feeKept)} platform fee` : ""}, and will be paid to you by GeTradie.`;
   } else {
     hwText = `The dispute on "${title}" was decided in the tradie's favour. The lock amount will be released to them.`;
-    tradieText = `The dispute on "${title}" was decided in your favour. The lock amount will be released to you as normal.`;
+    tradieText = `The dispute on "${title}" was decided in your favour. ${tradieAmount > 0 ? `${money(tradieAmount)}${feeKept > 0 ? ` (the lock amount less GeTradie's ${money(feeKept)} platform fee)` : ""} will be paid to you by GeTradie.` : "No lock amount was held on this booking."}`;
   }
 
   await notify(homeowner.id, "Dispute resolved", `${hwText} ${reason}`.trim());
