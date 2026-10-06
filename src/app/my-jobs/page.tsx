@@ -109,7 +109,7 @@ function MyJobsPageInner() {
           ...j,
           bookings: j.bookings.map(b => b.id === bookingId ? { ...b, status: "COMPLETED" } : b)
         })));
-      }
+      } else { const d = await res.json().catch(() => ({})); alert(d.error || "Could not confirm the job. Please refresh and try again."); }
     } catch {} finally { setBusy(null); }
   };
 
@@ -122,7 +122,7 @@ function MyJobsPageInner() {
         body: JSON.stringify({ bookingId, action: "cancel" }),
       });
       if (res.ok) { setJobs(prev => prev.map(j => ({ ...j, bookings: j.bookings.map(b => b.id === bookingId ? { ...b, status: "CANCELLED" } : b) }))); }
-      else { alert("Failed to cancel booking."); }
+      else { const d = await res.json().catch(() => ({})); alert(d.error || "Failed to cancel booking."); }
     } catch { alert("Something went wrong."); }
   };
 
