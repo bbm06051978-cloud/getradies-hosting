@@ -59,8 +59,11 @@ TRADIE VERIFICATION:
 - Verified badge shown on profile
 - Takes 24-48 hours after signup
 DISPUTES:
-- Raise from booking screen in app or website
-- Resolved within 24 hours
+- Either the homeowner or the tradie can raise one from the job card
+- Bookings can be cancelled for a full lock refund until 12 hours before the confirmed start time; after that, raise a dispute instead
+- Disputes can be raised until 3 days after the tradie marks the job done
+- A no-show can be reported from 1 hour after the start time
+- The other party has 48 hours to respond (24 hours for a no-show), then GeTradie decides
 - Lock amount held until resolved
 COMMON Q&A:
 Q: What is GeTradie?
@@ -74,7 +77,7 @@ A: Most jobs get first quote within a few hours. Up to 5 quotes within 24 hours.
 Q: Are tradies verified?
 A: Yes. Licence and insurance independently verified before any tradie can quote.
 Q: What if I am unhappy with the work?
-A: Raise a dispute from the booking screen. Resolved within 24 hours. Lock amount held until resolved.
+A: Raise a dispute from the job card, choosing a reason and describing what happened. The other party has 48 hours to respond (24 hours for a no-show), then GeTradie decides. Lock amount held until resolved.
 Q: How does a tradie get paid?
 A: Payout released immediately after homeowner confirms job complete.
 Q: Is GeTradie available across Australia?

@@ -117,8 +117,9 @@ const sections: Section[] = [
   {
     title: "8. Cancellations and refunds",
     body: [
-      "A Homeowner may cancel a booking before work starts. The Lock Amount will be refunded, less GeTradie's fixed platform fee, unless the Tradie has already incurred costs agreed with the Homeowner.",
-      "If a Tradie or Agency cancels a booking, the Lock Amount is refunded to the Homeowner in full and the job is reopened for new quotes.",
+      "Either the Homeowner or the Tradie (or Agency) may cancel a booking through the Platform at any time before the Tradie confirms it, and after that until 12 hours before the start time confirmed by the Tradie. If no start time has been confirmed, the booking may be cancelled until the job is marked done.",
+      "When a booking is cancelled within these times, the Lock Amount is refunded to the Homeowner in full, including GeTradie's platform fee. If the Tradie or Agency cancels, the job is reopened for new quotes.",
+      "From 12 hours before the confirmed start time a booking can no longer be cancelled through the Platform. If something goes wrong after that point, either party may raise a dispute under section 9.",
       "Repeated late cancellations may result in account restrictions.",
       "Nothing in this section limits any refund or remedy you are entitled to under the Australian Consumer Law.",
     ],
@@ -126,8 +127,12 @@ const sections: Section[] = [
   {
     title: "9. Disputes",
     body: [
-      `If you are not satisfied with a job, you must raise a dispute through the Platform within ${DISPUTE_DAYS} days after the job is marked complete, with details and any photos.`,
-      "While a dispute is open, the Lock Amount is held. GeTradie will review the information from both parties and may decide to release all, part or none of the Lock Amount to either party. We will act reasonably and in good faith, but our decision relates only to the Lock Amount.",
+      `Either the Homeowner or the Tradie (or Agency) may raise a dispute through the Platform from 12 hours before the confirmed start time (or from when the booking is confirmed, if no start time has been set) until ${DISPUTE_DAYS} days after the Tradie marks the job done. You must choose a reason and describe what happened. Please try to resolve the issue with the other party by chat or phone first, and keep your messages and photos as evidence.`,
+      `If the Homeowner does not confirm completion or raise a dispute within ${DISPUTE_DAYS} days after the Tradie marks the job done, the job is treated as complete and can no longer be disputed through the Platform.`,
+      "A report that the Tradie did not arrive, or that the Homeowner was not available or did not give access, can be made from one hour after the confirmed start time.",
+      "The other party has 48 hours to respond (24 hours for a report that someone did not attend). If they accept the dispute, it is resolved in favour of the party who raised it, except that GeTradie decides the amount where a Tradie reports that the Homeowner was not available. If a Tradie does not respond within 24 hours to a report that they did not arrive at a confirmed start time, the Lock Amount is refunded to the Homeowner in full.",
+      "The party who raised a dispute may withdraw it at any time before it is resolved, and the booking then continues.",
+      "While a dispute is open, the Lock Amount is held. In all other cases GeTradie will review the information from both parties and may decide to refund all or part of the Lock Amount to the Homeowner, or release all or part of it to the Tradie or Agency. A full refund includes GeTradie's platform fee. We will act reasonably and in good faith, and will give both parties the reason for the decision, but our decision relates only to the Lock Amount.",
       "GeTradie's dispute process does not replace your legal rights. You may also contact NSW Fair Trading (or your state equivalent) or pursue other remedies against the other party.",
     ],
   },

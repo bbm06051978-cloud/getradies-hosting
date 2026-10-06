@@ -13,6 +13,7 @@ import {
 import { Sidebar } from "@/app/components/dashboard/Sidebar";
 import { Topbar } from "@/app/components/dashboard/Topbar";
 import { formatWhen } from "@/lib/dateTime";
+import { DisputePanel } from "@/app/components/booking/DisputePanel";
 
 type Quote = { id: string; amount: number; status: string };
 type BookingRef = {
@@ -54,7 +55,9 @@ const getStatusBadge = (job: Job) => {
 
 const getJobTab = (job: Job): "open" | "inprogress" | "closed" => {
   const bookingStatus = job.bookings[0]?.status;
-  if (bookingStatus === "COMPLETED" || bookingStatus === "DISPUTED") return "closed";
+  // A disputed booking is still live: both parties have things to do on it.
+  if (bookingStatus === "DISPUTED") return "inprogress";
+  if (bookingStatus === "COMPLETED") return "closed";
   if (bookingStatus === "CANCELLED" && job.status === "OPEN") return "open";
   if (bookingStatus === "CANCELLED" && job.status !== "OPEN") return "closed";
   if (job.status === "COMPLETED" || job.status === "CANCELLED" || job.status === "DISPUTED") return "closed";
@@ -79,13 +82,14 @@ function MyJobsPageInner() {
     if (t === "inprogress" || t === "closed") setTab(t);
   }, [searchParams]);
 
-  useEffect(() => {
+  const loadJobs = () =>
     fetch("/api/my-jobs")
       .then(r => r.json())
       .then(async d => { if (d.jobs) { setJobs(d.jobs); const photoMap: Record<string, string[]> = {}; await Promise.all(d.jobs.map(async (job: Job) => { if (job.photos && job.photos.length > 0) { photoMap[job.id] = await getSignedImageUrls(job.photos.map(p => p.url)); } })); setSignedJobPhotos(photoMap); } })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+
+  useEffect(() => { loadJobs(); }, []);
 
   const handleCancel = async (jobId: string) => {
     const res = await fetch("/api/my-jobs", {
@@ -223,9 +227,9 @@ function MyJobsPageInner() {
                 const acceptedQuote = job.quotes.find(q => q.status === "ACCEPTED");
                 const isExpanded    = expandedId === job.id;
                 const showConfirmDone = booking?.status === "PENDING_CONFIRMATION";
-                const showDispute     = booking?.status === "PENDING_CONFIRMATION";
+                const showDisputePanel = !!booking && isExpanded;
                 const showCancel      = booking?.status === "PENDING" || booking?.status === "CONFIRMED";
-                const showChat        = booking && !["COMPLETED", "CANCELLED", "DISPUTED"].includes(booking.status) && getJobTab(job) !== "closed";
+                const showChat        = booking && !["COMPLETED", "CANCELLED"].includes(booking.status) && getJobTab(job) !== "closed";
 
                 return (
                   <motion.div key={job.id}
@@ -272,7 +276,7 @@ function MyJobsPageInner() {
                     </div>
 
                     {/* Expanded panel */}
-                    <div style={{ maxHeight: isExpanded ? "800px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
+                    <div style={{ maxHeight: isExpanded ? "3000px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
                       className="border-t border-gray-100 bg-slate-50">
                       <div className="p-5 space-y-4">
 
@@ -349,7 +353,7 @@ function MyJobsPageInner() {
                         {showConfirmDone && (
                           <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
                             <p className="text-sm font-bold text-purple-800 mb-1">🔔 Tradie has marked this job as done</p>
-                            <p className="text-xs text-purple-600">Please confirm the job is complete to release payment, or raise a dispute if you are not satisfied.</p>
+                            <p className="text-xs text-purple-600">Please confirm the job is complete, or raise a dispute if you are not satisfied. If you do nothing for 3 days it is confirmed automatically.</p>
                           </div>
                         )}
 
@@ -391,25 +395,6 @@ function MyJobsPageInner() {
                             )
                           )}
 
-                          {/* Cancel Booking */}
-                          {showCancel && (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleCancelBooking(booking.id); }}
-                              className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-2 rounded-lg transition-colors border border-red-200">
-                              ❌ Cancel Booking
-                            </button>
-                          )}
-
-                          {/* Raise Dispute */}
-                          {showDispute && (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleDispute(booking.id); }}
-                              disabled={busy === booking.id}
-                              className="flex items-center gap-1 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
-                              <AlertTriangle size={12}/> Raise Dispute
-                            </button>
-                          )}
-
                           {/* Chat with Tradie */}
                           {showChat && (
                             <Link href={`/chats?jobId=${job.id}&receiverId=${booking.tradieProfile.user.id}&receiverName=${encodeURIComponent(booking.tradieProfile.businessName)}&jobTitle=${encodeURIComponent(job.title)}&trade=${encodeURIComponent(job.trade)}`}>
@@ -417,6 +402,23 @@ function MyJobsPageInner() {
                                 <MessageSquare size={12}/> Chat with Tradie
                               </button>
                             </Link>
+                          )}
+
+                          {/* Cancel (while allowed), dispute, and dispute status */}
+                          {showDisputePanel && (
+                            <DisputePanel
+                              bookingId={booking.id}
+                              bookingStatus={booking.status}
+                              scheduledAt={booking.scheduledAt}
+                              onChanged={loadJobs}
+                              cancelButton={showCancel ? (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleCancelBooking(booking.id); }}
+                                  className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-2 rounded-lg transition-colors border border-red-200">
+                                  ❌ Cancel Booking
+                                </button>
+                              ) : null}
+                            />
                           )}
 
                           {/* Cancel Job */}

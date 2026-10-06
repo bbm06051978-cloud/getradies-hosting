@@ -39,7 +39,7 @@ const categories = [
       },
       {
         q: "What if the tradie doesn't show up?",
-        a: "If a tradie fails to show up or cancels, contact GeTradie support immediately via the Contact page. Your lock amount is protected and will be refunded. You can then hire another tradie for your job.",
+        a: "First try calling or messaging the tradie. From one hour after the confirmed start time you can open the job in 'My Jobs', click 'Raise Dispute' and choose 'Tradie didn't arrive'. The tradie has 24 hours to respond. If they accept or do not reply, your lock amount is refunded in full and the job is reopened so you can hire another tradie.",
       },
     ],
   },
@@ -89,11 +89,11 @@ const categories = [
     faqs: [
       {
         q: "How do I raise a dispute?",
-        a: "If you're unhappy with the work, go to 'My Bookings', find the relevant booking and click 'Raise Dispute'. Describe the issue clearly and our team will review it within 24 hours. The lock amount is held by GeTradie until the dispute is resolved.",
+        a: "If you're unhappy with the work, open the job in 'My Jobs' and click 'Raise Dispute'. Choose a reason and describe what happened. Either the homeowner or the tradie can raise a dispute, from 12 hours before the confirmed start time until 3 days after the tradie marks the job done. Before that point you can simply cancel for a full refund of the lock amount. Please try to sort it out by chat or phone first.",
       },
       {
         q: "What happens during a dispute?",
-        a: "GeTradie holds the lock amount securely. Our team reviews evidence from both parties (photos, messages, job description). We aim to resolve disputes within 24–48 hours. The outcome determines whether the lock amount is released to the tradie or refunded to the homeowner.",
+        a: "GeTradie holds the lock amount securely. The other party has 48 hours to accept or disagree (24 hours if someone did not turn up). If they accept, it is resolved straight away. Otherwise our team reviews what both sides have said and decides whether the lock amount is refunded to the homeowner, released to the tradie, or split. Whoever raised the dispute can withdraw it at any time.",
       },
       {
         q: "Is my money safe?",

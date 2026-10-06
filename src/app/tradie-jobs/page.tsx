@@ -12,6 +12,7 @@ import { getSignedImageUrls } from "@/lib/signedUrl";
 import { TradieSidebar } from "@/app/components/tradie/TradieSidebar";
 import { TradieTopbar } from "@/app/components/tradie/TradieTopbar";
 import { ConfirmTimePanel } from "@/app/components/booking/ConfirmTimePanel";
+import { DisputePanel } from "@/app/components/booking/DisputePanel";
 import { formatWhen } from "@/lib/dateTime";
 
 type UserRef = { id: string; name: string; suburb: string | null; state: string | null };
@@ -63,6 +64,7 @@ function TradieJobsPageInner() {
   const [busy, setBusy]                           = useState<string | null>(null);
   const [expandedId, setExpandedId]               = useState<string | null>(null);
   const [timeFor, setTimeFor]                     = useState<{ id: string; action: "confirm" | "set_time" } | null>(null);
+  const [reloadTick, setReloadTick]               = useState(0);
   const searchParams                              = useSearchParams();
   const pollRef                                   = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -99,7 +101,7 @@ function TradieJobsPageInner() {
     load();
     pollRef.current = setInterval(load, 30000);
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, []);
+  }, [reloadTick]);
 
   // Confirming a booking means committing to a start time, so it opens the time panel.
   const handleConfirmBooking = (bookingId: string) => setTimeFor({ id: bookingId, action: "confirm" });
@@ -138,8 +140,10 @@ function TradieJobsPageInner() {
   };
 
   const activeQuotes   = myQuotes.filter(q => q.status === "PENDING" && !cancelledBookingJobIds.includes(q.job.id));
-  const activeBookings = bookings.filter(b => !["COMPLETED", "CANCELLED", "DISPUTED"].includes(b.status));
-  const closedBookings = [...bookings, ...completedBookings].filter(b => ["COMPLETED", "CANCELLED", "DISPUTED"].includes(b.status));
+  // A disputed booking is still live, so it stays in Active until the dispute is resolved.
+  const allBookings    = [...bookings, ...completedBookings.filter(c => !bookings.some(b => b.id === c.id))];
+  const activeBookings = allBookings.filter(b => !["COMPLETED", "CANCELLED"].includes(b.status));
+  const closedBookings = allBookings.filter(b => ["COMPLETED", "CANCELLED"].includes(b.status));
   const rejectedQuotes = myQuotes.filter(q => q.status === "REJECTED");
   const activeCount    = activeQuotes.length + activeBookings.length;
   const closedCount    = closedBookings.length + rejectedQuotes.length;
@@ -411,7 +415,7 @@ function TradieJobsPageInner() {
                               </div>
                             </div>
                           </div>
-                          <div style={{ maxHeight: isExpanded ? "1200px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
+                          <div style={{ maxHeight: isExpanded ? "3000px" : "0", overflow: "hidden", transition: "max-height 0.3s ease, opacity 0.3s ease", opacity: isExpanded ? 1 : 0 }}
                                 className="border-t border-orange-100 bg-orange-50/30">
                                 <div className="p-5 space-y-4">
                                   {booking.payment && (
@@ -479,18 +483,25 @@ function TradieJobsPageInner() {
                                         <CheckCircle size={13}/>{busy === booking.id ? "Submitting..." : "Mark Job Done"}
                                       </button>
                                     )}
-                                    {(booking.status === "PENDING" || booking.status === "CONFIRMED") && (
-                                      <button onClick={(e) => { e.stopPropagation(); handleCancelBooking(booking.id); }}
-                                        className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-4 py-2 rounded-xl transition-colors border border-red-200">
-                                        ❌ Cancel
-                                      </button>
-                                    )}
                                     <Link href={`/tradie-chats?jobId=${booking.job.id}&receiverId=${booking.job.user.id}&receiverName=${encodeURIComponent(booking.job.user.name)}&jobTitle=${encodeURIComponent(booking.job.title)}&trade=${encodeURIComponent(booking.job.trade)}`}>
                                       <button className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 border border-gray-200 hover:border-gray-400 px-4 py-2 rounded-xl transition-colors">
                                         <MessageSquare size={13}/> Message
                                       </button>
                                     </Link>
-                                    
+                                    {isExpanded && (
+                                      <DisputePanel
+                                        bookingId={booking.id}
+                                        bookingStatus={booking.status}
+                                        scheduledAt={booking.scheduledAt}
+                                        onChanged={() => setReloadTick(t => t + 1)}
+                                        cancelButton={(booking.status === "PENDING" || booking.status === "CONFIRMED") ? (
+                                          <button onClick={(e) => { e.stopPropagation(); handleCancelBooking(booking.id); }}
+                                            className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-4 py-2 rounded-xl transition-colors border border-red-200">
+                                            ❌ Cancel
+                                          </button>
+                                        ) : null}
+                                      />
+                                    )}
                                   </div>
                                 </div>
                               </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { AdminDisputes } from "@/app/components/admin/AdminDisputes";
 import {
   Users, Briefcase, CheckCircle, AlertCircle,
   ShieldCheck, XCircle, DollarSign, BarChart2,
@@ -413,34 +414,12 @@ export default function AdminPage() {
 
               {/* ── DISPUTES ── */}
               {tab === "disputes" && (
-                <div className="space-y-4">
-                  {disputes.length === 0 ? (
-                    <div className="bg-gray-900 rounded-2xl border border-gray-800 p-12 text-center">
-                      <CheckCircle size={48} className="text-gray-700 mx-auto mb-4"/>
-                      <p className="text-gray-400">No active disputes</p>
-                    </div>
-                  ) : disputes.map(d => (
-                    <div key={d.id} className="bg-gray-900 rounded-2xl border border-red-900 p-5">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="font-bold text-white">{d.job.title}</h3>
-                          <p className="text-sm text-gray-400 mt-1">
-                            Homeowner: {d.job.user.name} · Tradie: {d.tradieProfile.businessName}
-                          </p>
-                          <p className="text-sm text-gray-400">Amount: ${d.totalAmount}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Raised: {new Date(d.createdAt).toLocaleDateString("en-AU")}
-                          </p>
-                        </div>
-                        <button onClick={() => handleResolveDispute(d.id)} disabled={busy === d.id}
-                          className="bg-green-600 hover:bg-green-700 disabled:bg-green-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2">
-                          <CheckCircle size={13}/>
-                          {busy === d.id ? "Resolving..." : "Mark Resolved"}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <AdminDisputes
+                  legacy={disputes}
+                  onLegacyResolve={handleResolveDispute}
+                  legacyBusy={busy}
+                  onChanged={fetchData}
+                />
               )}
 
               {/* ── VERIFICATION ── */}

@@ -116,7 +116,7 @@ export async function GET(req: NextRequest) {
     prisma.booking.findMany({
       where: {
         tradieProfileId: tradieProfile.id,
-        status: { in: ["CONFIRMED", "PENDING", "PENDING_CONFIRMATION"] },
+        status: { in: ["CONFIRMED", "PENDING", "PENDING_CONFIRMATION", "DISPUTED"] },
       },
       orderBy: { scheduledAt: "asc" },
       include: {
@@ -143,7 +143,7 @@ export async function GET(req: NextRequest) {
     prisma.booking.findMany({
       where: {
         tradieProfileId: tradieProfile.id,
-        status: { in: ["COMPLETED", "CANCELLED", "DISPUTED"] },
+        status: { in: ["COMPLETED", "CANCELLED"] },
       },
       orderBy: { updatedAt: "desc" },
       take: 20,
