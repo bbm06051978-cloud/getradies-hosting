@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/lib/auth";
+import { getAdminFromRequest, verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   DisputeError,
@@ -51,12 +51,13 @@ const RULES = {
 // GET /api/disputes?bookingId=...  -> the dispute and what this person can do on that booking
 // GET /api/disputes                -> admin only: every dispute, newest first
 export async function GET(req: NextRequest) {
-  const user = getUser(req);
+  const bookingId = new URL(req.url).searchParams.get("bookingId");
+  // The full list is the admin panel's request, which carries the admin session.
+  const user = bookingId ? getUser(req) : (getAdminFromRequest(req) || getUser(req));
   if (!user) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   try {
     await processDueItems();
-    const bookingId = new URL(req.url).searchParams.get("bookingId");
     const now = new Date();
 
     if (!bookingId) {
@@ -149,11 +150,11 @@ export async function POST(req: NextRequest) {
 
 // PATCH /api/disputes  { disputeId, action: "respond" | "withdraw" | "resolve", ... }
 export async function PATCH(req: NextRequest) {
-  const user = getUser(req);
-  if (!user) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
-
   try {
     const body = await req.json().catch(() => ({}));
+    // Deciding a dispute is the admin panel's request, which carries the admin session.
+    const user = body.action === "resolve" ? (getAdminFromRequest(req) || getUser(req)) : getUser(req);
+    if (!user) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
     if (body.action === "respond") {
       const dispute = await respondToDispute({

@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/lib/auth";
+import { getAdminFromRequest } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { DisputeError, processDueItems, resolveDispute } from "@/lib/disputes";
 
 async function verifyAdmin(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
-  if (!token) return null;
-  const decoded = verifyToken(token);
-  if (!decoded || decoded.role !== "ADMIN") return null;
-  return decoded;
+  return getAdminFromRequest(req);
 }
 
 export async function GET(req: NextRequest) {

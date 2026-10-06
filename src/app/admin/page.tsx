@@ -64,6 +64,7 @@ export default function AdminPage() {
     setLoading(true);
     try {
       const res  = await fetch("/api/admin");
+      if (res.status === 401 || res.status === 403) { window.location.href = "/admin/login"; return; }
       const data = await res.json();
       if (data.stats)    setStats(data.stats);
       if (data.users)    setUsers(data.users);
@@ -169,11 +170,11 @@ export default function AdminPage() {
           })}
         </nav>
         <div className="p-3 border-t border-gray-800">
-          <Link href="/dashboard">
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
-              <LogOut size={16}/> Exit Admin
-            </button>
-          </Link>
+          <button
+            onClick={async () => { try { await fetch("/api/admin/logout", { method: "POST" }); } catch {} window.location.href = "/admin/login"; }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+            <LogOut size={16}/> Sign out of Admin
+          </button>
         </div>
       </aside>
 

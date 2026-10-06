@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { verifyToken } from "@/lib/auth";
+import { getAdminFromRequest, verifyToken } from "@/lib/auth";
 
 const s3 = new S3Client({
   region: process.env.GETRADIE_S3_REGION || "ap-southeast-2",
@@ -17,8 +17,9 @@ const BUCKET = process.env.GETRADIE_S3_BUCKET || "getradie-documents";
 export async function POST(req: NextRequest) {
   try {
     const token = req.cookies.get("token")?.value || req.headers.get("authorization")?.replace("Bearer ", "");
-    if (!token) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
-    const decoded = verifyToken(token) as any;
+    // The admin panel has its own session, which also counts here.
+    const admin = getAdminFromRequest(req);
+    const decoded = (admin || (token ? verifyToken(token) : null)) as any;
     if (!decoded) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
 
     const { key } = await req.json();
