@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { processDueItems } from "@/lib/disputes";
 
 function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -68,6 +69,8 @@ export async function GET(req: NextRequest) {
   }) : null;
 
   const serviceRadius = tradieProfile.serviceRadius || 30;
+
+  await processDueItems();
 
   const [availableJobs, myQuotes, cancelledBookings, activeBookings, completedBookings] = await Promise.all([
 

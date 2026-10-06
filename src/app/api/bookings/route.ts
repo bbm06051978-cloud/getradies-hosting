@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-06-24.dahlia" });
+import { cancelState, hasAgreedTime, validateScheduleTime } from "@/lib/bookingRules";
+import {
+  DisputeError,
+  completeBooking,
+  loadBooking,
+  money,
+  notifyAdmins,
+  processDueItems,
+  raiseDispute,
+  refundPayment,
+} from "@/lib/disputes";
+import type { BookingWithParties } from "@/lib/disputes";
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -15,6 +24,8 @@ export async function GET(req: NextRequest) {
   if (!decoded) {
     return NextResponse.json({ error: "Invalid token." }, { status: 401 });
   }
+
+  await processDueItems();
 
   const bookings = await prisma.booking.findMany({
     where: {
@@ -64,203 +75,142 @@ export async function PATCH(req: NextRequest) {
 
   const { bookingId, action, scheduledAt } = await req.json();
 
+  // Every action here is the homeowner acting on their own booking.
+  let booking: BookingWithParties;
+  try {
+    booking = await loadBooking(bookingId);
+  } catch {
+    return NextResponse.json({ error: "Booking not found." }, { status: 404 });
+  }
+  if (booking.job.userId !== decoded.id) {
+    return NextResponse.json({ error: "This booking is not yours." }, { status: 403 });
+  }
+
   if (action === "confirm_complete") {
-    const booking = await prisma.booking.update({
-      where: { id: bookingId },
-      data: { status: "COMPLETED" },
-      include: {
-        tradieProfile: { select: { userId: true, businessName: true, user: { select: { name: true, email: true, emailNotifications: true } } } },
-        job: { select: { title: true, suburb: true, state: true, user: { select: { name: true, email: true, emailNotifications: true } } } },
-      },
-    });
-    await prisma.job.update({
-      where: { id: booking.jobId },
-      data: { status: "COMPLETED" },
-    });
-    // Notify tradie
-    if (booking.tradieProfile?.userId) {
-      await prisma.notification.create({
-        data: {
-          userId: booking.tradieProfile.userId,
-          title: "Job Confirmed Complete!",
-          message: `The homeowner confirmed "${booking.job.title}" is complete. Payment will be released shortly.`,
-        },
-      });
+    const done = await completeBooking(booking.id, "HOMEOWNER");
+    if (!done) {
+      return NextResponse.json({ error: "This job is not waiting for your confirmation." }, { status: 400 });
     }
-
-    const homeowner = booking.job.user;
-    const tradieUser = booking.tradieProfile?.user;
-    const jobTitle = booking.job.title;
-    const location = [booking.job.suburb, booking.job.state].filter(Boolean).join(", ");
-
-    const emailWrap = (heading: string, bodyHtml: string) => `
-      <div style="font-family:Arial,sans-serif;padding:40px;max-width:500px;margin:0 auto;">
-        <div style="background:#0047AB;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
-          <h1 style="color:#fff;margin:0;font-size:24px;">GeTradie</h1>
-        </div>
-        <div style="background:#fff;padding:32px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
-          <h2 style="color:#111827;font-size:20px;margin:0 0 8px;">${heading}</h2>
-          ${bodyHtml}
-        </div>
-        <div style="padding:20px;text-align:center;">
-          <p style="color:#9CA3AF;font-size:12px;margin:0;">GeTradie Pty Ltd &bull; Parramatta NSW 2150 &bull; getradie.com.au</p>
-        </div>
-      </div>
-    `;
-
-    const sendCompletionEmail = async (to: string, subject: string, html: string) => {
-      try {
-        await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: { "Authorization": `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ from: "GeTradie <noreply@getradie.com.au>", to, subject, html }),
-        });
-      } catch (emailErr) {
-        console.error("Job completion email error:", emailErr);
-      }
-    };
-
-    if (homeowner?.email && homeowner.emailNotifications !== false) {
-      await sendCompletionEmail(
-        homeowner.email,
-        `Job Completed: ${jobTitle}`,
-        emailWrap("Job Completed", `
-          <p style="color:#6B7280;font-size:15px;line-height:1.6;">Hi ${homeowner.name},<br><br>
-          You've confirmed that <strong>${jobTitle}</strong>${location ? ` in ${location}` : ""} is complete.</p>
-          <div style="background:#F0FDF4;border-left:4px solid #10B981;border-radius:8px;padding:14px 16px;margin:20px 0;">
-            <p style="color:#065F46;font-size:13px;margin:0;">Payment has been released to your tradie. Thank you for using GeTradie!</p>
-          </div>
-          <p style="color:#6B7280;font-size:14px;line-height:1.6;">Had a great experience? Leave a review for your tradie in the app under My Jobs.</p>
-        `)
-      );
-    }
-
-    if (tradieUser?.email && tradieUser.emailNotifications !== false) {
-      await sendCompletionEmail(
-        tradieUser.email,
-        `Job Confirmed Complete: ${jobTitle}`,
-        emailWrap("Job Confirmed Complete", `
-          <p style="color:#6B7280;font-size:15px;line-height:1.6;">Hi ${tradieUser.name},<br><br>
-          The homeowner has confirmed <strong>${jobTitle}</strong>${location ? ` in ${location}` : ""} is complete.</p>
-          <div style="background:#F0FDF4;border-left:4px solid #10B981;border-radius:8px;padding:14px 16px;margin:20px 0;">
-            <p style="color:#065F46;font-size:13px;margin:0;">Your payment will be released shortly. Great work!</p>
-          </div>
-        `)
-      );
-    }
-
     return NextResponse.json({ success: true });
   }
 
   if (action === "dispute") {
-    // Homeowner raises a dispute
-    const disputeBooking = await prisma.booking.update({
-      where: { id: bookingId },
-      data: { status: "DISPUTED" },
-    });
-    // Also update job status to DISPUTED
-    await prisma.job.update({
-      where: { id: disputeBooking.jobId },
-      data: { status: "DISPUTED" },
-    });
-
-    // Create a notification for admin
-    const adminUser = await prisma.user.findFirst({
-      where: { role: "ADMIN" },
-    });
-
-    if (adminUser) {
-      await prisma.notification.create({
-        data: {
-          userId: adminUser.id,
-          title: "Booking Dispute Raised",
-          message: `Homeowner raised a dispute for booking ${bookingId}. Please review.`,
-        },
+    // Older versions of the app raise a dispute here without a reason.
+    // Newer screens use /api/disputes, which asks for a reason.
+    try {
+      await raiseDispute({
+        bookingId: booking.id,
+        userId: decoded.id,
+        category: "OTHER",
+        description: "No reason was given (raised from an older version of the app).",
+        legacy: true,
       });
+    } catch (err) {
+      if (err instanceof DisputeError) return NextResponse.json({ error: err.message }, { status: err.status });
+      console.error("Raise dispute error:", err);
+      return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     }
-
     return NextResponse.json({ success: true });
   }
 
   if (action === "cancel") {
-    // Get booking with payment and job info
-    const bookingToCancel = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { payment: true, job: { select: { id: true } } },
-    });
-
-    if (!bookingToCancel) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-
-    // Only allow cancel on PENDING or CONFIRMED
-    if (!["PENDING", "CONFIRMED"].includes(bookingToCancel.status)) {
-      return NextResponse.json({ error: "Cannot cancel at this stage." }, { status: 400 });
+    const state = cancelState(booking);
+    if (!state.allowed) {
+      return NextResponse.json({ error: state.reason }, { status: 400 });
     }
 
-    // Cancel booking
-    await prisma.booking.update({
-      where: { id: bookingId },
-      data: { status: "CANCELLED" },
-    });
-
-    // HW cancelled â€” close the job
-    await prisma.job.update({
-      where: { id: bookingToCancel.job.id },
-      data: { status: "CANCELLED" },
-    });
-
-    // Stripe refund
+    // Refund first. If the refund fails the booking is not cancelled, so nobody is
+    // told a refund is coming when it is not.
+    let refund: { refunded: number; manualNeeded: boolean };
     try {
-      const payment = await prisma.payment.findUnique({ where: { bookingId } });
-      if (payment && payment.stripePaymentIntentId) {
-        await stripe.refunds.create({ payment_intent: payment.stripePaymentIntentId });
-        await prisma.payment.update({ where: { bookingId }, data: { status: "refunded" } });
-      }
+      refund = await refundPayment(booking.payment, {
+        idempotencyKey: `cancel-${booking.id}`,
+        metadata: { bookingId: booking.id, reason: "booking_cancelled" },
+      });
     } catch (refundErr) {
       console.error("Stripe refund error:", refundErr);
+      await notifyAdmins("Refund failed on cancellation",
+        `The homeowner tried to cancel "${booking.job.title}" (booking ${booking.id}) but the refund could not be processed. The booking has not been cancelled.`);
+      return NextResponse.json(
+        { error: "We couldn't process your refund, so the booking has not been cancelled. Please try again shortly or contact support." },
+        { status: 502 }
+      );
     }
 
-    // Get full booking details for notifications
-    const fullBooking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: {
-        job: { select: { id: true, title: true, userId: true } },
-        tradieProfile: {
-          select: { businessName: true, user: { select: { id: true } } },
-        },
-        payment: true,
+    const claimed = await prisma.booking.updateMany({
+      where: { id: booking.id, status: booking.status },
+      data: { status: "CANCELLED" },
+    });
+    if (claimed.count !== 1) {
+      // The tradie may have cancelled at the same moment: then it is already done, with one refund.
+      const latest = await prisma.booking.findUnique({ where: { id: booking.id }, select: { status: true } });
+      if (latest?.status === "CANCELLED") {
+        return NextResponse.json({ success: true, message: "Booking cancelled." });
+      }
+      if (refund.refunded > 0) {
+        await notifyAdmins("Cancellation needs attention",
+          `${money(refund.refunded)} was refunded for "${booking.job.title}" (booking ${booking.id}) but the booking changed before it could be cancelled. Please check it.`);
+      }
+      return NextResponse.json({ error: "This booking has just changed. Please refresh and try again." }, { status: 409 });
+    }
+
+    // HW cancelled - close the job
+    await prisma.job.update({
+      where: { id: booking.job.id },
+      data: { status: "CANCELLED" },
+    });
+
+    // Notify tradie
+    await prisma.notification.create({
+      data: {
+        userId: booking.tradieProfile.user.id,
+        title: "Booking Cancelled by Homeowner",
+        message: `The homeowner has cancelled the booking for "${booking.job.title}".`,
       },
     });
 
-    if (fullBooking) {
-      // Notify tradie
+    // Notify HW of refund if applicable
+    if (refund.refunded > 0) {
       await prisma.notification.create({
         data: {
-          userId: fullBooking.tradieProfile.user.id,
-          title: "Booking Cancelled by Homeowner",
-          message: `The homeowner has cancelled the booking for "${fullBooking.job.title}".`,
+          userId: booking.job.userId,
+          title: "Lock Amount Refunded",
+          message: `Your lock amount of $${refund.refunded} AUD for "${booking.job.title}" has been refunded to your card. It may take 3-5 business days to appear.`,
         },
       });
-
-      // Notify HW of refund if applicable
-      const payment = await prisma.payment.findUnique({ where: { bookingId } });
-      if (payment && payment.status === "refunded") {
-        await prisma.notification.create({
-          data: {
-            userId: fullBooking.job.userId,
-            title: "Lock Amount Refunded",
-            message: `Your lock amount of $${payment.amount} AUD for "${fullBooking.job.title}" has been refunded to your card. It may take 3-5 business days to appear.`,
-          },
-        });
-      }
+    }
+    if (refund.manualNeeded && booking.payment) {
+      await prisma.notification.create({
+        data: {
+          userId: booking.job.userId,
+          title: "Refund Being Processed",
+          message: `Your lock amount of $${booking.payment.amount} AUD for "${booking.job.title}" will be refunded by GeTradie support. We'll be in touch if we need anything from you.`,
+        },
+      });
+      await notifyAdmins("Manual refund needed",
+        `The homeowner cancelled "${booking.job.title}" (booking ${booking.id}). The lock amount of ${money(booking.payment.amount)} has no Stripe reference and must be refunded manually.`);
     }
 
     return NextResponse.json({ success: true, message: "Booking cancelled. Job reopened." });
   }
 
   if (action === "reschedule" && scheduledAt) {
+    if (!["PENDING", "CONFIRMED"].includes(booking.status)) {
+      return NextResponse.json({ error: "This booking can no longer be rescheduled." }, { status: 400 });
+    }
+    if (hasAgreedTime(booking)) {
+      return NextResponse.json(
+        { error: "The tradie has already set the job time. Please message them to arrange a change." },
+        { status: 400 }
+      );
+    }
+    const when = validateScheduleTime(scheduledAt);
+    if (!when.date) {
+      return NextResponse.json({ error: when.error }, { status: 400 });
+    }
     await prisma.booking.update({
-      where: { id: bookingId },
-      data: { scheduledAt: new Date(scheduledAt) },
+      where: { id: booking.id },
+      data: { scheduledAt: when.date },
     });
 
     return NextResponse.json({ success: true });
@@ -316,7 +266,7 @@ export async function POST(req: NextRequest) {
   // Update job status
   await prisma.job.update({ where: { id: jobId }, data: { status: "BOOKED" } });
 
-  // Notify tradie â€” quote accepted
+  // Notify tradie - quote accepted
   const tradieProfile = await prisma.tradieProfile.findUnique({
     where: { id: tradieProfileId },
     select: { userId: true },

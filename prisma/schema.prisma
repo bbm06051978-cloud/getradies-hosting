@@ -90,6 +90,7 @@ model TradieProfile {
   subscriptionPlan   String?          @default("Free")
   subscriptionExpiry DateTime?        @db.Timestamp(6)
   freeQuotesUsed     Int?             @default(0)
+  noShowCount        Int              @default(0)
   bookings           Booking[]
   quotes             Quote[]
   documents          TradieDocument[]
@@ -139,10 +140,43 @@ model Booking {
   totalAmount     Float
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+  scheduleSetAt   DateTime?
+  markedDoneAt    DateTime?
   job             Job           @relation(fields: [jobId], references: [id])
   tradieProfile   TradieProfile @relation(fields: [tradieProfileId], references: [id])
   payment         Payment?
   review          Review?
+  disputes        Dispute[]
+}
+
+model Dispute {
+  id                    String    @id @default(cuid())
+  bookingId             String
+  raisedById            String
+  raisedByRole          String
+  category              String
+  description           String
+  status                String    @default("OPEN")
+  previousBookingStatus String
+  previousJobStatus     String
+  responseDueAt         DateTime
+  responseType          String?
+  response              String?
+  respondedAt           DateTime?
+  outcome               String?
+  refundAmount          Float?
+  tradieAmount          Float?
+  resolutionNote        String?
+  resolvedBy            String?
+  resolvedById          String?
+  resolvedAt            DateTime?
+  lastError             String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  booking               Booking   @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId])
+  @@index([status])
 }
 
 model Review {
@@ -167,6 +201,7 @@ model Payment {
   getradieFee          Float?    @default(0)
   tradieEarning        Float?    @default(0)
   stripePaymentIntentId String?
+  refundedAmount        Float?    @default(0)
   booking       Booking   @relation(fields: [bookingId], references: [id])
 }
 

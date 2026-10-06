@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { DisputeError, processDueItems, resolveDispute } from "@/lib/disputes";
 
 async function verifyAdmin(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
@@ -13,6 +14,8 @@ async function verifyAdmin(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const admin = await verifyAdmin(req);
   if (!admin) return NextResponse.json({ error: "Not authorised." }, { status: 403 });
+
+  await processDueItems();
 
   const [
     totalHomeowners, totalTradies, totalJobs, totalQuotes,
@@ -92,10 +95,37 @@ export async function PATCH(req: NextRequest) {
   }
 
   if (action === "resolve_dispute" && bookingId) {
-    await prisma.booking.update({
-      where: { id: bookingId },
+    // This older "Resolve" button closes a dispute in the tradie's favour.
+    // The newer admin screen uses /api/disputes, which offers refund, release or split.
+    const open = await prisma.dispute.findFirst({
+      where: { bookingId, status: { in: ["OPEN", "RESPONDED"] } },
+      select: { id: true },
+    });
+    if (open) {
+      try {
+        await resolveDispute({
+          disputeId: open.id,
+          outcome: "RELEASE_TRADIE",
+          note: "Resolved in the tradie's favour by GeTradie.",
+          by: "ADMIN",
+          byId: admin.id,
+        });
+      } catch (err) {
+        if (err instanceof DisputeError) return NextResponse.json({ error: err.message }, { status: err.status });
+        console.error("Resolve dispute error:", err);
+        return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+      }
+      return NextResponse.json({ success: true });
+    }
+    // Disputed bookings from before the dispute process existed have no dispute record.
+    const closed = await prisma.booking.updateMany({
+      where: { id: bookingId, status: "DISPUTED" },
       data: { status: "COMPLETED" },
     });
+    if (closed.count === 1) {
+      const b = await prisma.booking.findUnique({ where: { id: bookingId }, select: { jobId: true } });
+      if (b) await prisma.job.update({ where: { id: b.jobId }, data: { status: "COMPLETED" } });
+    }
     return NextResponse.json({ success: true });
   }
 

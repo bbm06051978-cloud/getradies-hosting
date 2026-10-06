@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { processDueItems } from "@/lib/disputes";
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -12,6 +13,8 @@ export async function GET(req: NextRequest) {
   if (!decoded) {
     return NextResponse.json({ error: "Invalid token." }, { status: 401 });
   }
+
+  await processDueItems();
 
   const jobs = await prisma.job.findMany({
     where: { userId: decoded.id },
