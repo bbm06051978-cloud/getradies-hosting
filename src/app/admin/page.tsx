@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AdminDisputes } from "@/app/components/admin/AdminDisputes";
 import { AdminPayouts } from "@/app/components/admin/AdminPayouts";
+import { AdminEarnings } from "@/app/components/admin/AdminEarnings";
 import {
   Users, Briefcase, CheckCircle, AlertCircle,
   ShieldCheck, XCircle, DollarSign, BarChart2,
@@ -136,6 +137,7 @@ export default function AdminPage() {
     { key: "jobs",         label: "Jobs",          icon: Briefcase   },
     { key: "disputes",     label: "Disputes",      icon: AlertCircle },
     { key: "payouts",      label: "Payouts",       icon: DollarSign  },
+    { key: "earnings",     label: "Earnings",      icon: BarChart2   },
     { key: "verification", label: "Verification",  icon: ShieldCheck },
   ];
 
@@ -417,6 +419,9 @@ export default function AdminPage() {
 
               {/* ── PAYOUTS ── */}
               {tab === "payouts" && <AdminPayouts/>}
+
+              {/* ── EARNINGS ── */}
+              {tab === "earnings" && <AdminEarnings/>}
 
               {/* ── DISPUTES ── */}
               {tab === "disputes" && (
